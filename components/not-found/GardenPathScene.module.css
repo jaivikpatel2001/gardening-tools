@@ -1,0 +1,267 @@
+/* ---------------------------------------------------------------------------
+   404 garden path scene.
+
+   Ambient motion is deliberately slow and small: fronds sway a few degrees,
+   leaves drift over 11 to 15 seconds, the footprint trail creeps along. Every
+   animation touches only rotate, translate, opacity or a dash offset, and all of
+   it stops under reduced motion.
+--------------------------------------------------------------------------- */
+
+.scene {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 600 / 560;
+  overflow: visible;
+}
+
+/* Pointer parallax. `--px` and `--py` come from SceneParallax; `--depth` is set
+   per layer, so nearer layers drift further. */
+.layer {
+  transform: translate3d(
+    calc(var(--px, 0) * var(--depth, 0) * 1px),
+    calc(var(--py, 0) * var(--depth, 0) * 1px),
+    0
+  );
+}
+
+/* Landscape */
+.blob {
+  fill: var(--surface-soft);
+}
+
+.sun {
+  fill: var(--accent);
+  opacity: 0.28;
+}
+
+.glowStart {
+  stop-color: var(--accent);
+  stop-opacity: 0.32;
+}
+
+.glowEnd {
+  stop-color: var(--accent);
+  stop-opacity: 0;
+}
+
+.hills {
+  fill: var(--surface-strong);
+  opacity: 0.55;
+}
+
+.ground {
+  fill: var(--surface-strong);
+}
+
+.path {
+  fill: var(--surface-warm);
+  stroke: var(--border-strong);
+  stroke-width: 1.2;
+}
+
+.stone {
+  fill: var(--canvas);
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.tuft {
+  fill: none;
+  stroke: var(--brand-soft);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  opacity: 0.8;
+}
+
+/* The footprints that wander off the path. The offset is a multiple of the
+   12.5-unit dash period, so the loop is seamless. */
+.trail {
+  fill: none;
+  stroke: var(--brand-soft);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-dasharray: 0.5 12;
+  opacity: 0.6;
+  animation: march 5s linear infinite;
+}
+
+@keyframes march {
+  to {
+    stroke-dashoffset: -125;
+  }
+}
+
+/* Signpost */
+.post {
+  fill: #7a5a3f;
+}
+
+.board {
+  fill: #b88a5c;
+  stroke: #8a6440;
+  stroke-width: 2;
+}
+
+.grain {
+  fill: none;
+  stroke: #9c724a;
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  opacity: 0.55;
+}
+
+.nail {
+  fill: #5b4330;
+}
+
+.signText {
+  font-family: var(--font-heading);
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  fill: #fbf7ef;
+}
+
+.plank {
+  fill: #a67b51;
+  stroke: #8a6440;
+  stroke-width: 1.5;
+}
+
+/* Both pivot on the nail. The sway runs forever; the tilt is a resting angle
+   that hovering corrects, so the two never fight over one property. */
+.boardSway,
+.boardTilt {
+  transform-box: view-box;
+  transform-origin: 117px 274px;
+}
+
+.boardSway {
+  animation: sway-sign 6.5s ease-in-out infinite alternate;
+}
+
+.boardTilt {
+  rotate: -9deg;
+  transition: rotate 700ms var(--ease-organic);
+}
+
+.sign:hover .boardTilt {
+  rotate: -1deg;
+}
+
+@keyframes sway-sign {
+  from {
+    rotate: -2deg;
+  }
+
+  to {
+    rotate: 2.5deg;
+  }
+}
+
+/* Trowel */
+.handle {
+  fill: #9b7350;
+}
+
+.ferrule {
+  fill: #8f988e;
+}
+
+.blade {
+  fill: #cdd3cb;
+  stroke: #8f988e;
+  stroke-width: 1.2;
+}
+
+/* Foliage sways from its base. */
+.sway {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: sway var(--duration, 7s) ease-in-out var(--delay, 0s) infinite alternate;
+}
+
+@keyframes sway {
+  from {
+    rotate: -3deg;
+  }
+
+  to {
+    rotate: 3.5deg;
+  }
+}
+
+.drift {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: drift var(--duration, 12s) ease-in-out var(--delay, 0s) infinite;
+}
+
+@keyframes drift {
+  0% {
+    opacity: 0;
+    translate: 0 0;
+    rotate: 0deg;
+  }
+
+  15% {
+    opacity: 0.9;
+  }
+
+  50% {
+    translate: -22px 34px;
+    rotate: 38deg;
+  }
+
+  85% {
+    opacity: 0.8;
+  }
+
+  100% {
+    opacity: 0;
+    translate: 14px 70px;
+    rotate: -12deg;
+  }
+}
+
+.mote {
+  fill: var(--accent);
+  opacity: 0;
+  animation: mote var(--duration, 9s) ease-in-out var(--delay, 0s) infinite;
+}
+
+@keyframes mote {
+  0% {
+    opacity: 0;
+    translate: 0 0;
+  }
+
+  30% {
+    opacity: 0.7;
+  }
+
+  100% {
+    opacity: 0;
+    translate: 6px -46px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trail,
+  .boardSway,
+  .sway,
+  .drift,
+  .mote {
+    animation: none;
+  }
+
+  .boardTilt {
+    transition: none;
+  }
+
+  .layer {
+    transform: none;
+  }
+}

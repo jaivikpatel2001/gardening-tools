@@ -1,0 +1,16 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "greentools-dev",
+      "url": "http://localhost:3005",
+      "port": 3005
+    },
+    {
+      "name": "greentools-prod",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start", "--", "-p", "3312"],
+      "port": 3312
+    }
+  ]
+}

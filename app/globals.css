@@ -1,26 +1,508 @@
 @import "tailwindcss";
 
+/* ---------------------------------------------------------------------------
+   Dark mode is driven by an explicit [data-theme] attribute on <html>, never by
+   prefers-color-scheme alone. The inline script in the root layout resolves the
+   stored preference before first paint, so the toggle is authoritative in both
+   directions and there is no flash.
+--------------------------------------------------------------------------- */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* ===========================================================================
+   LAYER 1 — palette primitives
+   Fixed values. Never reference these from a component; they exist only to be
+   assigned to the semantic aliases in layer 2.
+   =========================================================================== */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Botanical greens */
+  --green-900: #0e3f1c;
+  --green-800: #123b1c;
+  --green-700: #155a28;
+  --green-600: #3f7f35;
+  --green-300: #a8c98d;
+  --green-200: #dce9c9;
+  --green-100: #eef3e6;
+
+  /* Warm neutrals */
+  --white: #ffffff;
+  --cream: #f3f1e7;
+  --cream-light: #faf9f3;
+  --off-white: #f7f7ef;
+
+  /* Dark-theme surfaces — designed, not derived */
+  --night-900: #050f08;
+  --night-800: #08150c;
+  --night-700: #0d1c12;
+  --night-600: #102217;
+  --night-500: #162d1d;
+  --night-400: #1b3724;
+  --night-band: #0c2a14;
+  --leaf-400: #7fb56f;
+
+  /* Accents */
+  --gold: #d8a92e;
+  --gold-bright: #e5bf58;
+  --terracotta: #b86f4b;
+
+  /* Semantic states */
+  --state-success: #2e6b3a;
+  --state-error: #b63a2b;
+  --state-warning: #a56a18;
+  --state-info: #356a72;
 }
 
+/* ===========================================================================
+   LAYER 2 — semantic aliases (LIGHT, default)
+   Components reference only these.
+   =========================================================================== */
+:root {
+  --canvas: var(--off-white);
+  --surface: var(--white);
+  --surface-elevated: var(--cream-light);
+  --surface-warm: var(--cream);
+  --surface-soft: var(--green-100);
+  --surface-strong: var(--green-200);
+
+  --band-dark: var(--green-900);
+  --band-soft: var(--green-200);
+  --on-band: #ffffff;
+  --on-band-muted: #d7e2d4;
+  --on-band-soft: var(--green-800);
+
+  --ink: #1b241c;
+  --body: #3f493f;
+  /* Design.md specifies #69736A, which measures 4.36:1 on the botanical tint
+     used by the Resources and Why-Choose-Us bands — under the 4.5:1 AA floor
+     the same document requires. Darkened just enough to clear 4.5:1 on every
+     light surface in the system, hue unchanged. */
+  --muted: #5a645b;
+  --muted-soft: #8b948c;
+
+  --border: #dde2d6;
+  --border-soft: #e9ece4;
+  --border-strong: #b9c5b4;
+
+  --brand: var(--green-700);
+  --brand-hover: var(--green-900);
+  --brand-active: var(--green-800);
+  /* Design.md's Leaf Green (#3F7F35) measures 4.31:1 on the cream band, and it
+     is used for 12px eyebrow labels — normal-size text, so it needs 4.5:1.
+     Darkened ~4%; indistinguishable at label size, passes on every surface. */
+  --brand-soft: #38712c;
+  --on-brand: #ffffff;
+
+  --accent: var(--gold);
+  --ring: var(--green-600);
+  --ring-halo: rgba(63, 127, 53, 0.16);
+  --scrim: rgba(18, 59, 28, 0.52);
+
+  --shadow-card: 0 0 0 1px rgba(18, 59, 28, 0.03), 0 4px 14px rgba(18, 59, 28, 0.06);
+  --shadow-hover: 0 0 0 1px rgba(18, 59, 28, 0.05), 0 10px 26px rgba(18, 59, 28, 0.12);
+  --shadow-float: 0 0 0 1px rgba(18, 59, 28, 0.04), 0 18px 44px rgba(18, 59, 28, 0.14);
+}
+
+/* ===========================================================================
+   LAYER 2 — semantic aliases (DARK)
+   A deliberately composed botanical night palette. Not an inversion: the greens
+   warm up, the neutrals stay green-tinted, and the brand green lightens so it
+   still reads as an action against near-black.
+   =========================================================================== */
+[data-theme="dark"] {
+  --canvas: var(--night-800);
+  --surface: var(--night-600);
+  --surface-elevated: var(--night-500);
+  --surface-warm: var(--night-700);
+  --surface-soft: var(--night-700);
+  --surface-strong: var(--night-400);
+
+  --band-dark: var(--night-band);
+  --band-soft: #16301d;
+  --on-band: #f4f7f1;
+  --on-band-muted: #b8c5b8;
+  --on-band-soft: #f4f7f1;
+
+  --ink: #f4f7f1;
+  --body: #d3ded0;
+  --muted: #b8c5b8;
+  --muted-soft: #8d9c8d;
+
+  --border: rgba(220, 233, 201, 0.15);
+  --border-soft: rgba(220, 233, 201, 0.09);
+  --border-strong: rgba(220, 233, 201, 0.28);
+
+  --brand: var(--leaf-400);
+  --brand-hover: #93c283;
+  --brand-active: #6ea55e;
+  --brand-soft: var(--green-300);
+  /* Near-black-green on the light brand green. White here fails WCAG AA. */
+  --on-brand: var(--night-800);
+
+  --accent: var(--gold-bright);
+  --ring: var(--leaf-400);
+  --ring-halo: rgba(127, 181, 111, 0.22);
+  --scrim: rgba(3, 9, 5, 0.7);
+
+  --shadow-card: 0 0 0 1px rgba(220, 233, 201, 0.06), 0 4px 14px rgba(0, 0, 0, 0.45);
+  --shadow-hover: 0 0 0 1px rgba(220, 233, 201, 0.1), 0 10px 26px rgba(0, 0, 0, 0.55);
+  --shadow-float: 0 0 0 1px rgba(220, 233, 201, 0.08), 0 18px 44px rgba(0, 0, 0, 0.6);
+}
+
+/* ===========================================================================
+   TAILWIND THEME
+   `inline` keeps the utilities pointing at the live custom property, so a theme
+   swap is a single attribute change with no re-render.
+   =========================================================================== */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-surface-warm: var(--surface-warm);
+  --color-surface-soft: var(--surface-soft);
+  --color-surface-strong: var(--surface-strong);
+
+  --color-band: var(--band-dark);
+  --color-band-soft: var(--band-soft);
+  --color-on-band: var(--on-band);
+  --color-on-band-muted: var(--on-band-muted);
+  --color-on-band-soft: var(--on-band-soft);
+
+  --color-ink: var(--ink);
+  --color-body: var(--body);
+  --color-muted: var(--muted);
+  --color-muted-soft: var(--muted-soft);
+
+  --color-hairline: var(--border);
+  --color-hairline-soft: var(--border-soft);
+  --color-hairline-strong: var(--border-strong);
+
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-active: var(--brand-active);
+  --color-brand-soft: var(--brand-soft);
+  --color-on-brand: var(--on-brand);
+
+  --color-accent: var(--accent);
+  --color-ring-brand: var(--ring);
+
+  --font-heading: var(--font-manrope), "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: var(--font-inter), "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Fluid display scale — the design system's ranges expressed as clamps. */
+  /* Reaches its 64px cap at ~1405px, which is the width at which the hero's
+     text measure is finally wide enough to hold the headline in three balanced
+     lines. Scaling up any faster makes it wrap raggedly between 1128–1400px. */
+  --text-display-xl: clamp(2.375rem, 0.4rem + 4.1vw, 4rem);
+  --text-display-xl--line-height: 1.06;
+  --text-display-xl--letter-spacing: -0.032em;
+  --text-display-xl--font-weight: 800;
+
+  --text-display-lg: clamp(2rem, 1.25rem + 2.6vw, 3.25rem);
+  --text-display-lg--line-height: 1.1;
+  --text-display-lg--letter-spacing: -0.024em;
+  --text-display-lg--font-weight: 700;
+
+  --text-display-md: clamp(1.75rem, 1.2rem + 1.9vw, 2.625rem);
+  --text-display-md--line-height: 1.15;
+  --text-display-md--letter-spacing: -0.02em;
+  --text-display-md--font-weight: 700;
+
+  --text-display-sm: clamp(1.5rem, 1.2rem + 1.1vw, 2.125rem);
+  --text-display-sm--line-height: 1.18;
+  --text-display-sm--letter-spacing: -0.014em;
+  --text-display-sm--font-weight: 700;
+
+  --text-title-lg: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+  --text-title-lg--line-height: 1.2;
+  --text-title-lg--letter-spacing: -0.008em;
+  --text-title-lg--font-weight: 700;
+
+  --text-title-md: 1.1875rem;
+  --text-title-md--line-height: 1.25;
+  --text-title-md--font-weight: 700;
+
+  --text-title-sm: 1rem;
+  --text-title-sm--line-height: 1.3;
+  --text-title-sm--font-weight: 600;
+
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.6;
+
+  --text-body-md: 1rem;
+  --text-body-md--line-height: 1.55;
+
+  --text-body-sm: 0.875rem;
+  --text-body-sm--line-height: 1.55;
+
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.35;
+  --text-caption--letter-spacing: 0.008em;
+  --text-caption--font-weight: 500;
+
+  --text-caption-sm: 0.75rem;
+  --text-caption-sm--line-height: 1.35;
+  --text-caption-sm--letter-spacing: 0.016em;
+  --text-caption-sm--font-weight: 500;
+
+  --text-eyebrow: 0.75rem;
+  --text-eyebrow--line-height: 1.25;
+  --text-eyebrow--letter-spacing: 0.117em;
+  --text-eyebrow--font-weight: 700;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+
+  --shadow-card: var(--shadow-card);
+  --shadow-hover: var(--shadow-hover);
+  --shadow-float: var(--shadow-float);
+
+  /* The design system's breakpoints replace Tailwind's defaults, so `sm:` means
+     tablet (744px) and `lg:` means desktop (1128px) everywhere. Without this the
+     hero's `lg:` styles would fire at 1024px while its grid waits for 1128px,
+     leaving a 104px window with the desktop plate and the mobile layout. */
+  --breakpoint-sm: 744px;
+  --breakpoint-md: 900px;
+  --breakpoint-lg: 1128px;
+  --breakpoint-xl: 1440px;
+  --breakpoint-2xl: 1680px;
+
+  --container-page: 1400px;
+
+  --ease-organic: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ===========================================================================
+   BASE
+   =========================================================================== */
+@layer base {
+  html {
+    color-scheme: light;
+    /* Lenis owns scrolling. CSS smooth scroll would fight it. */
+    scroll-behavior: auto;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  [data-theme="dark"] {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--canvas);
+    color: var(--body);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    transition: background-color 320ms var(--ease-soft), color 320ms var(--ease-soft);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Italic runs use the dedicated Inter italic face, fetched on demand (see
+     app/layout.tsx), instead of a synthesised slant of the upright font. */
+  :where(em, i, cite, dfn, q) {
+    font-family: var(--font-inter-italic), var(--font-body);
+  }
+
+  /* One consistent, always-visible focus treatment. Never removed. */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background-color: var(--green-300);
+    color: var(--green-800);
+  }
+
+  [data-theme="dark"] ::selection {
+    background-color: var(--leaf-400);
+    color: var(--night-800);
+  }
+
+  img,
+  svg,
+  video {
+    display: block;
+    max-width: 100%;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ===========================================================================
+   UTILITIES
+   =========================================================================== */
+
+/* Page container: 1400px content cap with breakpoint-appropriate gutters. */
+@utility container-page {
+  width: 100%;
+  max-width: calc(var(--container-page) + 4rem);
+  margin-inline: auto;
+  padding-inline: 1rem;
+
+  @media (width >=744px) {
+    padding-inline: 1.5rem;
+  }
+
+  @media (width >=1128px) {
+    padding-inline: 2rem;
+  }
+}
+
+/* Standard section rhythm. Sections that need more air override the padding. */
+@utility section-y {
+  padding-block: 3.5rem;
+
+  @media (width >=744px) {
+    padding-block: 4.5rem;
+  }
+
+  @media (width >=1128px) {
+    padding-block: 5.5rem;
+  }
+}
+
+@utility section-y-lg {
+  padding-block: 4rem;
+
+  @media (width >=744px) {
+    padding-block: 5.5rem;
+  }
+
+  @media (width >=1128px) {
+    padding-block: 7rem;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Hero split. Used together with `container-page`, which supplies the gutters.
+
+   The text column is a fixed measure, not a fraction of the container. A
+   fractional column would widen with the viewport and re-wrap the headline;
+   pinning the measure keeps it at three balanced lines from 1128px all the way
+   up, while the photograph absorbs the remaining width.
+--------------------------------------------------------------------------- */
+@utility hero-grid {
+  @media (width >=1128px) {
+    display: grid;
+    grid-template-columns: calc(min(560px, 40vw) + 3rem) minmax(0, 1fr);
+    align-items: center;
+    min-height: min(88vh, 820px);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Scroll-reveal initial state.
+
+   The hidden state is set in CSS, rendered server-side, so elements never paint
+   at their final position and then jump. It is gated behind `.js-motion`, a
+   class the blocking theme script adds only when JavaScript is running AND the
+   visitor has not asked for reduced motion — so with JS disabled, or with
+   reduced motion on, every reveal target is simply visible.
+--------------------------------------------------------------------------- */
+.js-motion [data-reveal-hidden] {
+  opacity: 0;
+  transform: translate3d(0, var(--reveal-y, 18px), 0);
+}
+
+.js-motion [data-reveal-group]>* {
+  opacity: 0;
+  transform: translate3d(0, var(--reveal-y, 18px), 0);
+}
+
+/* Hero entrance start states. Same `.js-motion` gate, same reasoning: the
+   markup is server-rendered, so the hidden state has to be in CSS or the hero
+   paints fully formed and then jumps. */
+.js-motion [data-hero-fade] {
+  opacity: 0;
+  transform: translate3d(0, 22px, 0);
+}
+
+.js-motion [data-hero-line] {
+  opacity: 0;
+  transform: translate3d(0, 100%, 0);
+}
+
+.js-motion [data-hero-plate-inner] {
+  opacity: 0;
+  clip-path: inset(0 0 100% 0);
+}
+
+.js-motion [data-hero-pop] {
+  opacity: 0;
+  transform: translate3d(0, 14px, 0) scale(0.94);
+}
+
+/* ---------------------------------------------------------------------------
+   Custom cursor.
+
+   The system pointer is hidden only while the custom cursor is mounted, which
+   `CustomCursor` signals by adding `has-custom-cursor` to <html>. It never does
+   that for touch, coarse pointers or reduced motion, so those visitors keep the
+   normal pointer. Wherever text is typed, the native caret comes back.
+--------------------------------------------------------------------------- */
+.has-custom-cursor,
+.has-custom-cursor * {
+  cursor: none !important;
+}
+
+.has-custom-cursor
+  :is(
+    input:not([type="button"], [type="submit"], [type="reset"], [type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="file"]),
+    textarea,
+    [contenteditable]:not([contenteditable="false"])
+  ) {
+  cursor: text !important;
+}
+
+.has-custom-cursor select {
+  cursor: default !important;
+}
+
+/* ===========================================================================
+   REDUCED MOTION
+   Belt and braces: the JS layer never starts Lenis or the scroll timelines, and
+   this neutralises anything transition-driven that slips through.
+   =========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  [data-reveal-hidden],
+  [data-reveal-group]>*,
+  [data-hero-fade],
+  [data-hero-line],
+  [data-hero-pop] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  [data-hero-plate-inner] {
+    opacity: 1 !important;
+    clip-path: none !important;
+  }
 }

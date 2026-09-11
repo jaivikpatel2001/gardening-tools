@@ -1,0 +1,155 @@
+/* ---------------------------------------------------------------------------
+   Custom cursor.
+
+   The leaf is the cursor: its tip sits exactly on the hotspot and pivots around
+   it. A small dot eases along behind and, over anything interactive, opens into
+   the ring that carries the label. Everything moves with transforms and fades
+   with opacity; nothing here causes layout.
+--------------------------------------------------------------------------- */
+
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.pointer,
+.follower {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  /* Justified: both are repositioned on every pointer frame. */
+  will-change: transform;
+  transition: opacity 200ms ease;
+}
+
+.root[data-visible="false"] .pointer,
+.root[data-visible="false"] .follower,
+.root[data-state="text"] .pointer,
+.root[data-state="text"] .follower {
+  opacity: 0;
+}
+
+/* Leaf. Tracks the pointer exactly; its tip is the hotspot and its pivot. */
+.leaf {
+  position: absolute;
+  left: -3px;
+  top: -3px;
+  width: 22px;
+  height: 22px;
+  transform-origin: 3px 3px;
+  transition:
+    opacity 220ms ease,
+    scale 320ms var(--ease-organic);
+}
+
+.leafShape {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.leafBody {
+  fill: var(--brand);
+  /* A canvas-coloured edge keeps the leaf visible on the deep-green bands too. */
+  stroke: var(--canvas);
+  stroke-width: 1.3;
+  stroke-linejoin: round;
+}
+
+.leafVein {
+  fill: none;
+  stroke: var(--canvas);
+  stroke-width: 1;
+  stroke-linecap: round;
+  opacity: 0.55;
+}
+
+.leafStem {
+  fill: none;
+  stroke: var(--brand);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+
+/* Dot. Trails the leaf and comes to rest on the hotspot, at the leaf's tip. */
+.dot {
+  position: absolute;
+  left: -2.5px;
+  top: -2.5px;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--brand-soft);
+  box-shadow: 0 0 0 1.5px var(--canvas);
+  transition:
+    opacity 220ms ease,
+    scale 260ms var(--ease-organic);
+}
+
+/* Interaction indicator. */
+.ring {
+  position: absolute;
+  left: -32px;
+  top: -32px;
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  border: 1.5px solid var(--brand);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--canvas) 82%, transparent);
+  opacity: 0;
+  scale: 0.35;
+  transition:
+    opacity 220ms ease,
+    scale 380ms var(--ease-organic);
+}
+
+.label {
+  font-family: var(--font-body);
+  font-size: 9.5px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+
+/* Unlabelled, as on small links: the dot opens into a small ring and the leaf
+   stays in place for precise aim. */
+.root[data-state="interactive"] .dot {
+  opacity: 0;
+  scale: 0;
+}
+
+.root[data-state="interactive"] .ring {
+  opacity: 1;
+  scale: 0.6;
+}
+
+/* Labelled: the full ring carries the word, so the leaf steps aside. */
+.root[data-state="interactive"][data-labelled="true"] .ring {
+  scale: 1;
+}
+
+.root[data-state="interactive"][data-labelled="true"] .leaf {
+  opacity: 0;
+  scale: 0.4;
+}
+
+.root[data-state="interactive"][data-pressed="true"] .ring {
+  scale: 0.52;
+}
+
+.root[data-state="interactive"][data-labelled="true"][data-pressed="true"] .ring {
+  scale: 0.9;
+}
+
+.root[data-pressed="true"]:not([data-labelled="true"]) .leaf {
+  scale: 0.85;
+}
