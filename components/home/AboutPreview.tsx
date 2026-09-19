@@ -22,7 +22,7 @@ export function AboutPreview() {
                 ratio="3/4"
                 sizes="(max-width: 1127px) 100vw, 46vw"
                 zoomOnHover={false}
-                className="lg:rounded-tl-[clamp(48px,6vw,110px)]"
+                className="lg:rounded-tl-organic"
               />
               {/* Small sage plate offset behind the photograph — depth without
                   another shadow tier. */}

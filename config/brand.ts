@@ -20,7 +20,20 @@ export const BRAND_COLORS = {
   onPrimary: "#FFFFFF",
 } as const;
 
-/** The GreenTools sprout mark, drawn on a 24 by 24 grid. */
+/**
+ * The client's JIVA logo lockup (leaf, wordmark and "Everything in Gardening"),
+ * taken from jivagreens.com and trimmed by `npm run images`. The source is a
+ * 280px raster, which is enough for the header and footer at up to 2x, but not
+ * for app icons: those still use the sprout mark below until the client
+ * supplies a vector logo.
+ */
+export const BRAND_LOGO = {
+  src: "/images/brand/jiva-logo.png",
+  width: 273,
+  height: 89,
+} as const;
+
+/** Sprout mark used only for the generated app icons, drawn on a 24 by 24 grid. */
 export const BRAND_MARK = {
   viewBox: "0 0 24 24",
   strokeWidth: 1.7,

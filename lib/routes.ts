@@ -21,4 +21,9 @@ export const routes = {
   terms: "/terms",
   /** A section anchor on the Home page, for example `homeSection("complete-range")`. */
   homeSection: (id: string) => `/#${id}`,
+  /**
+   * Alternative Home design variants, presented for review beside the live Home
+   * page. The live Home page keeps `/`; variants 1 to 5 live here.
+   */
+  variant: (n: 1 | 2 | 3 | 4 | 5) => `/variant${n}`,
 } as const;

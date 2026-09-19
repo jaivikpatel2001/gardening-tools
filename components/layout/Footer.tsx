@@ -1,4 +1,4 @@
-import { Clock, Mail, MapPin, Phone } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
 import Link from "next/link";
 
 import { socialIcons, type SocialLabel } from "@/components/decor/SocialIcons";
@@ -54,27 +54,30 @@ export function Footer() {
           <div className="max-w-sm">
             <Logo tone="on-band" />
             <p className="mt-5 text-body-sm text-on-band-muted">
-              Quality gardening tools and practical solutions for healthier, happier garden spaces.
+              {site.legalName}, {site.contact.address.locality}. {site.tagline}: garden machinery, plant
+              protection equipment, hand tools and watering products.
             </p>
 
-            <ul className="mt-6 flex items-center gap-2.5">
-              {site.social.map((channel) => {
-                const Icon = socialIcons[channel.label as SocialLabel];
-                return (
-                  <li key={channel.label}>
-                    <a
-                      href={channel.href}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      aria-label={`${site.name} on ${channel.label}`}
-                      className="grid h-11 w-11 place-items-center rounded-full border border-white/18 text-on-band-muted transition-colors duration-200 hover:border-white/50 hover:text-on-band"
-                    >
-                      <Icon className="h-[17px] w-[17px]" />
-                    </a>
-                  </li>
-                );
-              })}
-            </ul>
+            {site.social.length > 0 ? (
+              <ul className="mt-6 flex items-center gap-2.5">
+                {site.social.map((channel) => {
+                  const Icon = socialIcons[channel.label as SocialLabel];
+                  return (
+                    <li key={channel.label}>
+                      <a
+                        href={channel.href}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        aria-label={`${site.name} on ${channel.label}`}
+                        className="grid h-11 w-11 place-items-center rounded-full border border-white/18 text-on-band-muted transition-colors duration-200 hover:border-white/50 hover:text-on-band"
+                      >
+                        <Icon className="h-[17px] w-[17px]" />
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : null}
           </div>
 
           <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-4 lg:col-span-4 lg:grid-cols-4">
@@ -100,6 +103,15 @@ export function Footer() {
               </li>
               <li>
                 <a
+                  href={contact.phoneAltHref}
+                  className="inline-flex items-start gap-3 text-on-band-muted transition-colors duration-200 hover:text-on-band"
+                >
+                  <Phone className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={1.7} />
+                  {contact.phoneAlt}
+                </a>
+              </li>
+              <li>
+                <a
                   href={contact.emailHref}
                   className="inline-flex items-start gap-3 text-on-band-muted transition-colors duration-200 hover:text-on-band"
                 >
@@ -110,14 +122,10 @@ export function Footer() {
               <li className="inline-flex items-start gap-3 text-on-band-muted">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={1.7} />
                 <address className="not-italic">
-                  {contact.address.street}, {contact.address.locality}
+                  {contact.address.street}, {contact.address.area}
                   <br />
-                  {contact.address.region} {contact.address.postalCode}
+                  {contact.address.locality}, {contact.address.region}
                 </address>
-              </li>
-              <li className="inline-flex items-start gap-3 text-on-band-muted">
-                <Clock className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={1.7} />
-                {contact.hours}
               </li>
             </ul>
           </div>

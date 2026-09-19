@@ -4,13 +4,13 @@ import { cursorIntent } from "@/components/cursor/cursor-intent";
 import { ArrowLink } from "@/components/ui/ArrowLink";
 import { ImagePlate } from "@/components/ui/ImagePlate";
 import { routes } from "@/lib/routes";
-import type { Tool } from "@/types/content";
+import type { PhotographedTool } from "@/types/content";
 
 /**
  * Tool showcase card. Presents a tool as an object worth looking at, not as a
  * listing: no price, no availability and no purchase control anywhere.
  */
-export function ToolShowcaseCard({ tool }: { tool: Tool }) {
+export function ToolShowcaseCard({ tool }: { tool: PhotographedTool }) {
   return (
     <Link
       href={routes.tool(tool.categorySlug, tool.slug)}

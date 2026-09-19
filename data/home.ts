@@ -1,3 +1,4 @@
+import { site } from "@/config/site";
 import { routes } from "@/lib/routes";
 import type { ImageAsset } from "@/types/content";
 
@@ -39,8 +40,8 @@ export const aboutContent = {
   eyebrow: "Who we are",
   heading: "Tools That Help You Grow With Confidence",
   paragraphs: [
-    "We began in a single workshop in Ahmedabad, repairing tools that other people had given up on. Fifteen years later, we still judge every tool by whether it will still be working after a decade of monsoons.",
-    "Everything we stock is chosen by people who garden in Indian conditions, and everything we say about it is what we would tell a neighbour across the compound wall.",
+    `${site.legalName} has supplied garden machinery, plant protection equipment and hand tools from Ahmedabad since ${site.founded}. Landscapers, institutes, corporates and home gardeners come to us for the same thing: the right tool for the job, and one that keeps working after the monsoon.`,
+    "From wheel-type and rotary lawn mowers to brush cutters, spray pumps, secateurs and the humble khurpi, everything we supply is chosen for Indian soil, Indian grass and Indian summers.",
   ],
   points: [
     "Tools chosen for how they hold up, not how they photograph",

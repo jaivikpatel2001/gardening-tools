@@ -347,3 +347,27 @@ Permanent rules for this codebase.
 **Never introduce** a third typeface, a second icon system, or a visual language that diverges from `gardening-tools-design.md`.
 
 **Always** treat photography as the primary carrier of emotion, deep green as the trust anchor, cream and sage as warmth, and typography as clarity.
+
+---
+
+## 15. Home design variants (`/variant1` to `/variant5`)
+
+Five alternative Home pages sit beside the live one. `/` is the original Home page, is unchanged, and is not numbered, so `/variantN` is always variant N.
+
+| Route | Variant | Direction |
+|---|---|---|
+| `/` | Home | The existing Home page |
+| `/variant1` | 01 | Cinematic Editorial: full-bleed photography, magazine spread, long product chapters |
+| `/variant2` | 02 | Interactive Product Experience: examined tool with hotspots, steered list, dragged rail, counted figures |
+| `/variant3` | 03 | Modern Indian Botanical: split screen, arch geometry, marked garden scene, five Indian garden environments |
+| `/variant4` | 04 | Bold Art-Directed Showcase: typographic hero, category wall, gallery hang, specification sheet |
+| `/variant5` | 05 | Structured Catalogue: cover with contents, complete range as a ruled index, specimen sheet, colophon |
+
+Rules these follow:
+
+- One design system. No variant adds a colour, a typeface or a breakpoint. The only shared additions are `--band-deep`, `display-2xl`, `display-3xl`, the `rail-x` utility and the `[data-v-*]` entrance states, all in `globals.css`.
+- Light sections by default. Client feedback (2026-09-13): too many deep green section backgrounds. Variant 2 was re-toned to light surfaces with a single dark closing band; variant 5 has no dark section before the footer. Deep green belongs to text, rules and actions, and to at most one or two bands a page, as on the live Home page.
+- One content model. Same catalogue, tools, services, resources and testimonials; variant-specific copy lives in `data/variants/`.
+- Same header, navigation and footer. `config/variants.ts` records only which routes need the white header treatment over their hero (variant 1 alone).
+- Client components receive plain props from server bindings, so the catalogue never crosses the client boundary.
+- Every variant route is `noindex` and none is in the sitemap. The floating switcher (Home, 01 to 05) is mounted on the five variant routes only; the live Home page has nothing added to it.

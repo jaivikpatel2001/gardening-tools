@@ -55,7 +55,7 @@ export function WhyChooseUs() {
                 ratio="3/4"
                 sizes="44vw"
                 zoomOnHover={false}
-                className="rounded-br-[clamp(48px,6vw,110px)]"
+                className="rounded-br-organic"
               />
             </div>
           </Reveal>

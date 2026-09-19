@@ -76,7 +76,8 @@ export function buildMetadata({
  * Organization, LocalBusiness and WebSite graph, rendered once in the root
  * layout. `LocalBusiness` matters here specifically: the business serves the
  * Indian market from a physical Ahmedabad address, and it is what lets the
- * address, opening hours and phone number surface in local search.
+ * address and phone number surface in local search. Opening hours and a
+ * postcode are omitted because the client's own site does not state them.
  */
 export function organizationJsonLd() {
   const { address, phone, email } = site.contact;
@@ -86,7 +87,6 @@ export function organizationJsonLd() {
     streetAddress: `${address.street}, ${address.area}`,
     addressLocality: address.locality,
     addressRegion: address.region,
-    postalCode: address.postalCode,
     addressCountry: address.countryCode,
   };
 
@@ -105,7 +105,7 @@ export function organizationJsonLd() {
         email,
         address: postalAddress,
         areaServed: { "@type": "Country", name: "India" },
-        sameAs: site.social.map((channel) => channel.href),
+        ...(site.social.length > 0 ? { sameAs: site.social.map((channel) => channel.href) } : {}),
       },
       {
         "@type": "LocalBusiness",
@@ -116,7 +116,6 @@ export function organizationJsonLd() {
         telephone: phone,
         email,
         address: postalAddress,
-        openingHours: "Mo-Sa 09:30-18:30",
         currenciesAccepted: "INR",
         parentOrganization: { "@id": `${site.url}/#organization` },
       },

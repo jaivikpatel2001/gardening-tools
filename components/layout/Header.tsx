@@ -7,6 +7,7 @@ import { Logo } from "@/components/layout/Logo";
 import { MobileMenu } from "@/components/layout/MobileMenu";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { Button } from "@/components/ui/Button";
+import { headerSchemeFor } from "@/config/variants";
 import { primaryNav } from "@/data/navigation";
 import { useScrollThreshold } from "@/hooks/useScrollThreshold";
 import { cn } from "@/lib/cn";
@@ -19,12 +20,22 @@ const SCROLL_THRESHOLD = 24;
  * border; past the threshold it settles onto a translucent surface with a
  * hairline and a slightly reduced height.
  *
+ * A page whose hero is a full-bleed photograph or a dark stage registers an
+ * `on-band` scheme in `config/variants.ts`, and the header then paints white
+ * over that hero and reverts to ink the moment it lands on a surface. Nothing
+ * else about the header changes between pages: same navigation, same order,
+ * same actions.
+ *
  * Only `background-color`, `border-color` and `height` transition, and the
  * scrolled state re-renders once per threshold crossing, never per scroll frame.
  */
 export function Header() {
   const scrolled = useScrollThreshold(SCROLL_THRESHOLD);
   const pathname = usePathname();
+
+  // The white treatment only applies while the header is still over the hero.
+  // Once it has a surface behind it, ink is the readable choice on every page.
+  const overHero = !scrolled && headerSchemeFor(pathname) === "on-band";
 
   return (
     <header
@@ -41,7 +52,7 @@ export function Header() {
           scrolled ? "h-[68px]" : "h-[76px]",
         )}
       >
-        <Logo />
+        <Logo tone={overHero ? "on-band" : "ink"} />
 
         {/* Full navigation from the tablet breakpoint up, per the design
             system's collapsing strategy. The CTA holds back until desktop,
@@ -57,14 +68,19 @@ export function Header() {
                     aria-current={active ? "page" : undefined}
                     className={cn(
                       "group/nav relative inline-flex h-11 items-center px-2.5 font-body text-[0.875rem] font-semibold transition-colors duration-200 lg:px-3.5 lg:text-[0.9375rem]",
-                      active ? "text-brand" : "text-ink/85 hover:text-brand",
+                      overHero
+                        ? "text-on-band/85 hover:text-on-band"
+                        : active
+                          ? "text-brand"
+                          : "text-ink/85 hover:text-brand",
                     )}
                   >
                     {item.label}
                     <span
                       aria-hidden="true"
                       className={cn(
-                        "absolute inset-x-2.5 bottom-2 h-0.5 origin-left rounded-full bg-brand transition-transform duration-300 ease-[var(--ease-organic)] lg:inset-x-3.5",
+                        "absolute inset-x-2.5 bottom-2 h-0.5 origin-left rounded-full transition-transform duration-300 ease-[var(--ease-organic)] lg:inset-x-3.5",
+                        overHero ? "bg-on-band" : "bg-brand",
                         active ? "scale-x-100" : "scale-x-0 group-hover/nav:scale-x-100",
                       )}
                     />
@@ -76,15 +92,19 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2.5">
-          <ThemeToggle />
+          <ThemeToggle tone={overHero ? "on-band" : "ink"} />
           {/* `max-lg:hidden` rather than `hidden lg:inline-flex`: Button's base
               class already sets `inline-flex`, and between two unconditional
               display utilities Tailwind's sort order lets `inline-flex` win. A
               variant is emitted later in the sheet, so it reliably wins. */}
-          <Button href={routes.contact} className="max-lg:hidden">
+          <Button
+            href={routes.contact}
+            variant={overHero ? "on-band" : "primary"}
+            className="max-lg:hidden"
+          >
             Get in Touch
           </Button>
-          <MobileMenu />
+          <MobileMenu tone={overHero ? "on-band" : "ink"} />
         </div>
       </div>
     </header>

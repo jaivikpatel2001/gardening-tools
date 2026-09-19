@@ -1,9 +1,16 @@
-import type { Tool } from "@/types/content";
+import type { PhotographedTool, Tool } from "@/types/content";
 
 /**
  * Tool catalogue. The Home page samples the `featured` entries; the future
  * Tools and Tool Detail pages will render the same array, so a tool is added
  * once, here, and appears everywhere it should.
+ *
+ * The last four entries come from the client's existing catalogue at
+ * jivagreens.com (reviewed September 2026): the khurpi, drop-forged hedge
+ * shears, a rotary electric lawn mower and a petrol brush cutter are core lines
+ * there, and the Home page showed none of them. They carry no `image` yet, so they stay off every photo grid
+ * until their photographs arrive (prompts in resources/image-generation.md,
+ * section 6). Adding `image` is the only change needed to show them.
  */
 export const tools: Tool[] = [
   {
@@ -54,6 +61,43 @@ export const tools: Tool[] = [
     },
     featured: true,
   },
+  {
+    slug: "forged-khurpi",
+    name: "Forged Khurpi",
+    category: "Hand Tools",
+    categorySlug: "hand-tools",
+    description: "The Indian hand hoe: a triangular forged blade for weeding, loosening and opening seed drills.",
+    featured: true,
+  },
+  {
+    slug: "drop-forged-hedge-shears",
+    name: "Drop-Forged Hedge Shears",
+    category: "Pruning Tools",
+    categorySlug: "pruning-tools",
+    description: "Long, wavy-edged blades that shape boundary hedges and topiary without tearing the leaf.",
+    featured: true,
+  },
+  {
+    slug: "rotary-electric-lawn-mower",
+    name: "Rotary Electric Lawn Mower",
+    category: "Lawn Mowers",
+    categorySlug: "lawn-mowers",
+    description: "A single-phase mower with a grass box and stepped cutting heights for bungalow and society lawns.",
+    featured: true,
+  },
+  {
+    slug: "petrol-brush-cutter",
+    name: "Petrol Brush Cutter",
+    category: "Brush Cutters",
+    categorySlug: "brush-cutters",
+    description: "A straight-shaft cutter with a harness and metal blade for plots, bunds and orchard floors.",
+    featured: true,
+  },
 ];
 
-export const featuredTools = tools.filter((tool) => tool.featured);
+function isPhotographed(tool: Tool): tool is PhotographedTool {
+  return tool.image !== undefined;
+}
+
+/** Featured tools that have been photographed, in catalogue order. */
+export const featuredTools: PhotographedTool[] = tools.filter(isPhotographed).filter((tool) => tool.featured);

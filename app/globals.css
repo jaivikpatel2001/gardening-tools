@@ -68,6 +68,10 @@
   --on-band: #ffffff;
   --on-band-muted: #d7e2d4;
   --on-band-soft: var(--green-800);
+  /* The brand accent on a deep band. `brand-soft` is a light-surface colour
+     and measures about 2:1 on the band, so anything green set on a band (the
+     wordmark, eyebrows, numerals) uses this instead. */
+  --on-band-accent: var(--green-300);
 
   --ink: #1b241c;
   --body: #3f493f;
@@ -76,6 +80,8 @@
      the same document requires. Darkened just enough to clear 4.5:1 on every
      light surface in the system, hue unchanged. */
   --muted: #5a645b;
+  /* About 3:1 on the light surfaces: for rules, disabled states and icons
+     only, never text. Small text, index numerals included, uses `muted`. */
   --muted-soft: #8b948c;
 
   --border: #dde2d6;
@@ -120,6 +126,7 @@
   --on-band: #f4f7f1;
   --on-band-muted: #b8c5b8;
   --on-band-soft: #f4f7f1;
+  --on-band-accent: var(--green-300);
 
   --ink: #f4f7f1;
   --body: #d3ded0;
@@ -165,6 +172,7 @@
   --color-on-band: var(--on-band);
   --color-on-band-muted: var(--on-band-muted);
   --color-on-band-soft: var(--on-band-soft);
+  --color-on-band-accent: var(--on-band-accent);
 
   --color-ink: var(--ink);
   --color-body: var(--body);
@@ -248,11 +256,24 @@
   --text-eyebrow--letter-spacing: 0.117em;
   --text-eyebrow--font-weight: 700;
 
+  /* Radius scale. One family for the whole brand, every variant included.
+     The level follows the size and role of the element, never taste:
+       sm   8px   buttons, inputs, rectangular tags, thumbnails up to 64px
+       md  12px   compact panels floating over media, thumbnails up to ~200px
+       lg  18px   cards and standard photographs (the ImagePlate default)
+       xl  24px   hero and feature media, large panels
+       2xl 32px   full-width section panels
+       full       pills, chips, avatars, icon badges, floating controls
+     `organic` and `arch` are the botanical signature: one oversized corner, or
+     an arched top, on a photograph or panel. Used by the live Home page and
+     the botanical variant only. Never write a `rounded-[…]` value. */
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 18px;
   --radius-xl: 24px;
   --radius-2xl: 32px;
+  --radius-organic: clamp(3rem, 7vw, 7rem);
+  --radius-arch: clamp(6rem, 15vw, 11rem);
 
   --shadow-card: var(--shadow-card);
   --shadow-hover: var(--shadow-hover);
@@ -505,4 +526,129 @@
     opacity: 1 !important;
     clip-path: none !important;
   }
+}
+/* ===========================================================================
+   HOME DESIGN CONCEPTS  (/variant1 … /variant4)
+
+   Four alternative Home compositions are presented alongside the original so
+   the client can compare five directions. They share this design system: the
+   palette, the type scale, the breakpoints and the motion easings below are the
+   same ones every other page uses. What follows is the small amount of extra
+   vocabulary those compositions need and the original Home page does not: one
+   deeper band surface, two display sizes above `display-xl`, and the shared
+   entrance states their heroes animate from.
+   =========================================================================== */
+
+:root {
+  /* A near-black botanical green, deeper than `band-dark`. Used where a concept
+     is art-directed as a dark experience (the interactive product stage, the
+     closing statements) and the ordinary band green would read as a section
+     rather than as an environment. */
+  --band-deep: #061a0d;
+}
+
+[data-theme="dark"] {
+  --band-deep: var(--night-900);
+}
+
+@theme inline {
+  --color-band-deep: var(--band-deep);
+
+  /* Editorial display sizes. `display-xl` caps at 64px, which is right for a
+     page whose hero shares its line with body copy. A full-bleed cinematic
+     headline and a typographic wall need more, so the scale continues here
+     rather than being improvised with arbitrary clamps at the call site. */
+  --text-display-2xl: clamp(2.75rem, 1rem + 6vw, 5.5rem);
+  --text-display-2xl--line-height: 1.02;
+  --text-display-2xl--letter-spacing: -0.036em;
+  --text-display-2xl--font-weight: 800;
+
+  --text-display-3xl: clamp(3.25rem, 0.5rem + 11vw, 9rem);
+  --text-display-3xl--line-height: 0.92;
+  --text-display-3xl--letter-spacing: -0.045em;
+  --text-display-3xl--font-weight: 800;
+}
+
+/* A horizontal rail the reader drags. The scrollbar is suppressed because the
+   rail carries its own progress indicator; keyboard and screen-reader access is
+   unaffected, since the track is still a focusable scroll container. */
+@utility rail-x {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Concept entrance states.
+
+   Same contract as the original hero's `[data-hero-*]` attributes: the hidden
+   state is CSS, rendered server-side, and gated behind `.js-motion` so that
+   with JavaScript off or reduced motion requested every element simply renders
+   visible. The four concepts share these three, rather than each inventing its
+   own.
+--------------------------------------------------------------------------- */
+.js-motion [data-v-fade] {
+  opacity: 0;
+  transform: translate3d(0, 24px, 0);
+}
+
+.js-motion [data-v-line] {
+  opacity: 0;
+  transform: translate3d(0, 105%, 0);
+}
+
+.js-motion [data-v-mask] {
+  opacity: 0;
+  clip-path: inset(0 0 100% 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  [data-v-fade],
+  [data-v-line] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  [data-v-mask] {
+    opacity: 1 !important;
+    clip-path: none !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Type over photographs.
+
+   Every caption, label or numeral set on a photograph uses one of these two,
+   so legibility never depends on how bright a particular image happens to be.
+   `scrim-caption` darkens the lower part of a plate under a caption block;
+   `photo-chip` gives a short label its own translucent ground, for corners of
+   a frame that the caption scrim does not reach.
+--------------------------------------------------------------------------- */
+@utility scrim-caption {
+  background-image: linear-gradient(
+    to top,
+    rgba(5, 16, 9, 0.84) 0%,
+    rgba(5, 16, 9, 0.5) 38%,
+    rgba(5, 16, 9, 0) 72%
+  );
+}
+
+@utility photo-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  background-color: rgba(5, 16, 9, 0.52);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  padding: 0.3125rem 0.75rem;
+  color: #ffffff;
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.18em;
 }

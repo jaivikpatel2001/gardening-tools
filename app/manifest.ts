@@ -15,7 +15,7 @@ import { site } from "@/config/site";
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: site.name,
-    short_name: site.name,
+    short_name: site.shortName,
     description: site.description,
     start_url: "/",
     scope: "/",
