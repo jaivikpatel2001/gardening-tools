@@ -14,7 +14,7 @@
 export const APP_ENVIRONMENTS = ["development", "staging", "production"] as const;
 export type AppEnvironment = (typeof APP_ENVIRONMENTS)[number];
 
-const DEFAULT_SITE_URL = "https://greentools.in";
+const DEFAULT_SITE_URL = "https://www.jivagreens.com";
 
 function parseAppEnvironment(value: string | undefined): AppEnvironment {
   const match = APP_ENVIRONMENTS.find((environment) => environment === value);

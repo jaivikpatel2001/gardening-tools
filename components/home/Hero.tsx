@@ -74,7 +74,7 @@ export function Hero() {
                   the right, so it reads as a shape rather than a cropped box. */}
               <div
                 data-hero-plate-inner
-                className="relative aspect-[4/3] overflow-hidden rounded-lg lg:aspect-auto lg:h-[min(74vh,660px)] lg:rounded-l-[clamp(72px,9vw,160px)] lg:rounded-br-[clamp(40px,5vw,88px)] lg:rounded-tr-[clamp(20px,2.4vw,40px)]"
+                className="relative aspect-[4/3] overflow-hidden rounded-xl lg:aspect-auto lg:h-[min(74vh,660px)] lg:rounded-l-organic"
               >
                 <Image
                   data-hero-zoom

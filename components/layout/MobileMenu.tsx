@@ -21,7 +21,7 @@ const EASE = [0.22, 1, 0.36, 1] as const;
  * sheet on open and back to the trigger on close, Tab is trapped inside it, and
  * Escape closes it. Background scroll is locked while it is open.
  */
-export function MobileMenu() {
+export function MobileMenu({ tone = "ink" }: { tone?: "ink" | "on-band" }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -93,7 +93,12 @@ export function MobileMenu() {
         onClick={() => setOpen(true)}
         aria-label="Open navigation menu"
         aria-expanded={open}
-        className="grid h-11 w-11 place-items-center rounded-full border border-hairline text-ink transition-colors duration-300 hover:border-brand hover:text-brand sm:hidden"
+        className={cn(
+          "grid h-11 w-11 place-items-center rounded-full border transition-colors duration-300 sm:hidden",
+          tone === "ink"
+            ? "border-hairline text-ink hover:border-brand hover:text-brand"
+            : "border-white/25 text-on-band hover:border-white/60",
+        )}
       >
         <Menu className="h-[19px] w-[19px]" strokeWidth={1.7} />
       </button>

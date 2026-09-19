@@ -1,8 +1,10 @@
 @AGENTS.md
 
-# GreenTools Project Rules
+# Jiva Greens Project Rules
 
-A premium, photography-led **static brand website** for an Indian gardening tools company.
+A premium, photography-led **static brand website** for **Jiva Greens** (JIVA, "Everything in Gardening"), the trading brand of **Shree Khodiyar Garden Tools**, Ahmedabad. The client's existing site is jivagreens.com.
+
+**Brand facts are real, never placeholder.** Name, legal name, address, phones, email and founding year live in `config/site.ts` and come from the client's own site. Copy reads years and names from `site`, never retyped. Anything the old site does not state (postcode, opening hours, social profiles, customer counts) is left out until the client supplies it, never invented. "GreenTools" was a working placeholder name and must not reappear.
 
 It is **not** e-commerce. No cart, checkout, payment, pricing, wishlist, stock levels, discount badges, commerce filters or shopping accounts, anywhere, ever. Tools are presented editorially, and every conversion path leads to an **enquiry**.
 
@@ -124,7 +126,7 @@ Sample data must be Indian and realistic: Indian names, `+91` numbers, `.in` ema
 
 Never fabricate regulated identifiers (GSTIN, CIN, licence numbers). Leave them out until the real ones are supplied.
 
-`sharpex.com` and `sharpexindia.com` are **reference only**. Study the product and terminology landscape; never copy content, wording, branding, layout or structure.
+jivagreens.com is the **client's own site**: its facts, product names and terminology are authoritative. `sharpex.com` and `sharpexindia.com` are **reference only**. Study the product and terminology landscape; never copy content, wording, branding, layout or structure.
 
 ## Environment and configuration
 
@@ -134,6 +136,14 @@ Never fabricate regulated identifiers (GSTIN, CIN, licence numbers). Leave them 
 - `NEXT_PUBLIC_APP_ENV` must be `production` on the live deployment. Any other value, including unset, makes every page `noindex` and robots.txt disallow-all. This is deliberate, so staging can never be indexed.
 - The WhatsApp number comes only from `NEXT_PUBLIC_WHATSAPP_NUMBER`. The floating button renders nothing until it is set.
 - The contact form and email delivery are future scope: their variables are documented, not implemented. Do not build them without being asked.
+
+## Visual system rules
+
+- **Radius scale only:** `sm` 8, `md` 12, `lg` 18, `xl` 24, `2xl` 32 and `full`, plus `organic` and `arch` (Home and variant 3 only), all defined in `globals.css`. Choose the level by the element's size and role: thumbnail, card, hero media, panel or pill. Never write `rounded-[…]`. Photographs are always rounded. Only full-bleed backgrounds, and plates clipped by an already rounded card, use `radius="none"`.
+- **Background rhythm.** A page body has at most one deep band, used where it carries hierarchy. The section directly above the footer is never a deep band. Neighbouring sections never share a surface.
+- **Type on photographs** sits on `scrim-caption` (caption blocks) or `photo-chip` (short corner labels), never as bare white text on an unscrimmed image. Keep photographs out from under the transparent header.
+- **Colour on bands.** Green on a deep band uses `on-band-accent`, never `brand-soft`. `muted-soft` is for rules, icons and disabled states, never text.
+- **Tools follow the category photo rule.** A tool gets `image` only once it has been photographed. `featuredTools` returns photographed tools only.
 
 ## Images
 
@@ -147,7 +157,8 @@ Follow `resources/image-generation.md` exactly. Slots, filenames, dimensions, ra
 
 ## Brand assets and icons
 
-- The sprout mark and brand colours live in `config/brand.ts`, shared by the header logo, the viewport, the web manifest and the icon generator.
+- The logo is the client's JIVA lockup, `gardening images/jiva-logo.png`, trimmed losslessly into `public/images/brand/` by `npm run images` and described by `BRAND_LOGO` in `config/brand.ts`. Never recolour, redraw or knock it out; on a deep band or in the dark theme it sits on a small white plate.
+- Brand colours and the sprout mark in `config/brand.ts` feed the viewport, web manifest and icon generator. The sprout is a stand-in for app icons only, until the client supplies a vector logo.
 - `npm run icons` regenerates `app/icon.svg`, `app/favicon.ico`, `app/apple-icon.png` and `public/icons/*`. Never hand-edit those outputs.
 - Next.js emits the icon `<link>` tags from the `app/` files. Never add `metadata.icons` as well; it would duplicate them.
 - The share image is `public/images/og-home.jpg`, JPEG on purpose, referenced once through `lib/seo.ts`.

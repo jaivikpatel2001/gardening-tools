@@ -94,9 +94,16 @@ export interface Tool {
   category: string;
   categorySlug: string;
   description: string;
-  image: ImageAsset;
+  /**
+   * Added only once the tool has been photographed, with alt text describing
+   * that photograph. Until then the tool is part of the range but is never
+   * shown as a photo card, the same rule the categories follow.
+   */
+  image?: ImageAsset;
   featured: boolean;
 }
+
+export type PhotographedTool = Tool & { image: ImageAsset };
 
 /* -------------------------------------------------------------------------- */
 /* Services, resources, testimonials                                          */

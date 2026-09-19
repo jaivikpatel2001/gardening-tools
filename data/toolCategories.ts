@@ -1,7 +1,7 @@
 import type { PowerSource, ToolCategory, ToolGroup } from "@/types/content";
 
 /**
- * The complete GreenTools range.
+ * The complete Jiva Greens range.
  *
  * Two groups: the traditional and hand tools Indian gardens have always been
  * worked with, and the electric, battery and petrol machinery that modern
@@ -16,6 +16,12 @@ import type { PowerSource, ToolCategory, ToolGroup } from "@/types/content";
  * `resources/image-generation.md` for the pending slots. `featured` categories
  * with an image appear as cards on the Home page. Every category, photographed
  * or not, appears in the complete range index.
+ *
+ * Tool lists were checked in September 2026 against the client's existing
+ * catalogue at jivagreens.com and use its trade terminology: "branch cutter" is
+ * the counter name for a lopper, secateurs come as bypass and roll-cut, mowers
+ * are sold by type (wheel, rotary, roller, zero-cut) rather than by power source
+ * alone, and "garden pipe" is what most customers call a hose.
  */
 
 export const toolGroups: readonly ToolGroup[] = [
@@ -51,11 +57,13 @@ export const toolCategories: readonly ToolCategory[] = [
       "Khurpis, trowels, forks and weeders for close work in grow bags, terrace pots and kitchen garden beds.",
     tools: [
       { localName: "Khurpi", name: "hand hoe and weeder" },
+      { localName: "Khurpa", name: "heavy hand hoe" },
       { name: "Hand trowel" },
       { name: "Transplanter" },
       { name: "Hand fork" },
       { name: "Hand cultivator" },
       { name: "Hand weeder" },
+      { name: "Bulb planter" },
       { name: "Dibber" },
     ],
     image: {
@@ -93,13 +101,17 @@ export const toolCategories: readonly ToolCategory[] = [
     title: "Pruning & Cutting",
     shortTitle: "Pruning Tools",
     description:
-      "Secateurs, loppers, saws, sickles and axes that cut hibiscus, mango branches and thick grass cleanly.",
+      "Secateurs, branch cutters, hedge shears, saws and sickles that cut hibiscus, mango wood and thick grass cleanly.",
     tools: [
-      { name: "Secateurs (pruning shears)" },
+      { name: "Bypass and roll-cut secateurs" },
       { localName: "Kainchi", name: "garden scissors" },
-      { name: "Loppers" },
-      { name: "Hedge and grass shears" },
-      { name: "Pruning saw" },
+      { name: "Branch cutters (loppers)" },
+      { name: "Drop-forged hedge shears" },
+      { name: "Grass shears" },
+      { name: "Bonsai cutters" },
+      { name: "Folding and fixed pruning saws" },
+      { name: "Telescopic tree pruners" },
+      { name: "Grafting tools" },
       { localName: "Daranti", name: "sickle" },
       { localName: "Kulhadi", name: "axe" },
     ],
@@ -118,10 +130,11 @@ export const toolCategories: readonly ToolCategory[] = [
       "Watering cans, hose pipes, reels, nozzles and sprinklers that keep beds alive through a long pre-monsoon summer.",
     tools: [
       { name: "Watering cans" },
-      { name: "Garden hose pipes" },
+      { name: "Garden pipes (hoses)" },
+      { name: "Self-coiling hoses" },
       { name: "Hose reels" },
-      { name: "Spray guns and nozzles" },
-      { name: "Sprinklers" },
+      { name: "Multi-pattern spray nozzles" },
+      { name: "Four-arm, oscillating and brass sprinklers" },
       { name: "Hose connectors" },
     ],
     image: {
@@ -152,14 +165,17 @@ export const toolCategories: readonly ToolCategory[] = [
     title: "Garden Accessories & Safety",
     shortTitle: "Garden Accessories",
     description:
-      "Gloves, grow bags, jute twine, labels, tool storage and the safety gear that every power tool calls for.",
+      "Gloves, grow bags, planter stands, twine, labels, snake catchers and the safety gear every power tool calls for.",
     tools: [
       { name: "Gardening gloves" },
       { name: "Knee pads" },
       { name: "Grow bags" },
       { name: "Jute twine and plant ties" },
       { name: "Plant labels" },
+      { name: "Planters and planter stands" },
+      { name: "Garden solar lights" },
       { name: "Tool storage" },
+      { name: "Snake catcher" },
       { name: "Safety goggles and ear protection" },
     ],
     image: {
@@ -178,13 +194,14 @@ export const toolCategories: readonly ToolCategory[] = [
     title: "Lawn Mowers & Lawn Cutters",
     shortTitle: "Lawn Mowers",
     description:
-      "Cylinder, rotary and self-propelled mowers for bungalow lawns, society greens, schools and sports grounds.",
+      "Wheel, rotary, roller and zero-cut mowers for bungalow lawns, society greens, schools and sports grounds.",
     tools: [
-      { name: "Manual cylinder mowers" },
-      { name: "Electric rotary mowers" },
+      { name: "Wheel-type manual lawn mowers" },
+      { name: "Rotary electric lawn mowers" },
+      { name: "Roller-type electric lawn mowers" },
+      { name: "Roller-type petrol lawn mowers" },
+      { name: "Zero-cut lawn mowers" },
       { name: "Battery lawn mowers" },
-      { name: "Petrol lawn mowers" },
-      { name: "Self-propelled mowers" },
     ],
     powerSources: ["manual", "electric", "battery", "petrol"],
   },
@@ -197,6 +214,7 @@ export const toolCategories: readonly ToolCategory[] = [
       "Grass cutting machines and trimmers for overgrown plots, farm bunds, orchard floors and roadside verges.",
     tools: [
       { name: "Petrol brush cutters" },
+      { name: "Electric brush cutters" },
       { name: "Backpack brush cutters" },
       { name: "Battery grass trimmers" },
       { name: "Electric line trimmers" },
@@ -258,11 +276,11 @@ export const toolCategories: readonly ToolCategory[] = [
     description:
       "Knapsack, pressure, battery and power sprayers for neem oil, bio-pesticides and liquid fertiliser.",
     tools: [
-      { name: "Knapsack sprayers" },
+      { name: "16-litre knapsack spray pumps" },
       { name: "Pressure sprayers" },
       { name: "Battery sprayers" },
       { name: "Petrol power sprayers" },
-      { name: "Mist blowers" },
+      { name: "Mist blower sprayers" },
     ],
     powerSources: ["manual", "battery", "petrol"],
   },
@@ -294,6 +312,7 @@ export const toolCategories: readonly ToolCategory[] = [
       { name: "Micro sprinklers" },
       { name: "Rain guns" },
       { name: "Irrigation timers" },
+      { name: "Fountain nozzles" },
       { name: "Electric water pumps" },
       { name: "Petrol water pumps" },
     ],

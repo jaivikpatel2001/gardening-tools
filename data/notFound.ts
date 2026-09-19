@@ -10,7 +10,7 @@ import { routes } from "@/lib/routes";
 export const notFoundContent = {
   metaTitle: "Page not found",
   metaDescription:
-    "This page could not be found. Head back to GreenTools to explore gardening tools, services and practical guides for Indian gardens.",
+    "This page could not be found. Head back to Jiva Greens to explore gardening tools, services and practical guides for Indian gardens.",
   eyebrow: "Error 404",
   heading: "This page wandered off the garden path",
   body: "The page you were looking for has moved, been renamed or never quite took root. Let's get you back on familiar ground.",

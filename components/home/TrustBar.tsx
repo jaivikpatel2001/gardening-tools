@@ -4,12 +4,13 @@ import { Section } from "@/components/ui/Section";
 import { trustItems } from "@/data/trust";
 
 /**
- * Deep-green band immediately under the hero. Its job is the transition: it
- * closes the hero's warm canvas and opens the body of the page.
+ * A white strip ruled top and bottom, immediately under the hero. Its job is
+ * the transition: it closes the hero's warm canvas and opens the body of the
+ * page without spending one of the page's few deep bands this early.
  */
 export function TrustBar() {
   return (
-    <Section tone="band" size="none" className="py-12 md:py-14 lg:py-16">
+    <Section tone="surface" size="none" className="border-y border-hairline-soft py-12 md:py-14 lg:py-16">
       <Container>
         <h2 className="sr-only">Why gardeners work with us</h2>
 
@@ -24,14 +25,14 @@ export function TrustBar() {
               <li key={item.title}>
                 <span
                   aria-hidden="true"
-                  className="grid h-10 w-10 place-items-center rounded-full bg-white/10 text-on-band"
+                  className="grid h-10 w-10 place-items-center rounded-full bg-surface-soft text-brand"
                 >
                   <Icon className="h-[18px] w-[18px]" strokeWidth={1.7} />
                 </span>
-                <h3 className="mt-4 font-heading text-[1.0625rem] font-bold text-on-band">
+                <h3 className="mt-4 font-heading text-[1.0625rem] font-bold text-ink">
                   {item.title}
                 </h3>
-                <p className="mt-1.5 text-body-sm text-on-band-muted">{item.description}</p>
+                <p className="mt-1.5 text-body-sm text-muted">{item.description}</p>
               </li>
             );
           })}

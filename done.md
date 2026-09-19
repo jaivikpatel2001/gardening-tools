@@ -455,3 +455,314 @@ See also: [resources/plan.md](resources/plan.md) for the project plan and archit
 **Pending follow-up**
 
 - Watch the dot's trail and the ring opening in a normal browser window; the in-app pane still runs no animation frames.
+
+---
+
+## 2026-09-12
+
+### 23:45 IST: Four alternative Home design concepts at /variant1 to /variant4
+
+**Work completed**
+
+Built four complete alternative Home pages so the client can compare five design directions side by side. The live Home page is untouched and is concept 1.
+
+| Route | Concept | Direction |
+|---|---|---|
+| `/` | 01 | The existing Home page, unchanged |
+| `/variant1` | 02 | Cinematic Editorial |
+| `/variant2` | 03 | Interactive Product Experience |
+| `/variant3` | 04 | Modern Indian Botanical |
+| `/variant4` | 05 | Bold Art-Directed Showcase |
+
+Every major section differs between concepts, not just the hero:
+
+| Section | 01 Original | 02 Cinematic | 03 Interactive | 04 Botanical | 05 Art directed |
+|---|---|---|---|---|---|
+| Hero | Contained split | Full-bleed photograph, wipe reveal | Dark stage, one tool, four hotspots | True split screen with a cut arc | Two words with the object between them |
+| Categories | Card grid plus index | Asymmetric magazine spread | Steered list with a cross-fading panel | Ring of names around one arch | Typographic wall that changes the surroundings |
+| Products | Four equal cards | Four alternating long chapters | Dragged horizontal rail | Tools marked inside a garden scene | Gallery hung four different ways |
+| Solutions | Service card grid | Vertical ledger with sticky heading | Question and answer disclosure | Walk through five Indian gardens | Specification sheet, sticky macro |
+| Brand story | Photo band | Photographic band, layered type | Scroll-lit durability checks | Four chapters, four arches | Six technical notes |
+| Editorial | Resource cards | Magazine front page | Counted figures | Warm pull quote plus two | Three differently shaped journal entries |
+| Closing | Contained CTA | Cinematic full bleed | Type on an empty dark room | Warm arch with drifting photograph | Display-size statement |
+
+**Files affected**
+
+- Routes: `app/variant1/page.tsx`, `app/variant2/page.tsx`, `app/variant3/page.tsx`, `app/variant4/page.tsx`
+- Copy: `data/variants/cinematic.ts`, `data/variants/interactive.ts`, `data/variants/botanical.ts`, `data/variants/artDirected.ts`
+- Shared: `components/variants/shared/ConceptIntro.tsx`, `ScrollLines.tsx`, `ConceptSwitcher.tsx`
+- Concept 2: `components/variants/cinematic/` (CinematicHero, EditorialCollage, ProductStories, StoryBand, SolutionsLedger, MagazineJournal, EditorialVoices, CinematicClosing)
+- Concept 3: `components/variants/interactive/` (InteractiveHero, ProductStage, InteractiveCategories, CategorySelector, InteractiveProducts, ProductRail, InteractiveSolutions, SolutionFinder, InteractiveTrust, TrustCounters, InteractiveDurability, DurabilityScroller, InteractiveClosing)
+- Concept 4: `components/variants/botanical/` (BotanicalHero, BotanicalCategories, CategoryOrbit, BotanicalShowcase, GardenScene, CraftStory, GardenJourney, BotanicalVoices, BotanicalClosing)
+- Concept 5: `components/variants/artdirected/` (TypeHero, TypeHeroMotion, ArtCategories, CategoryWall, ArtGallery, TechnicalSpecs, VisualJournal, ArtClosing)
+- Shared system: `app/globals.css` (one deeper band surface, two display sizes, the `rail-x` utility, three concept entrance states), `config/variants.ts` (new), `lib/routes.ts` (`routes.concept`), `components/layout/Header.tsx`, `components/layout/MobileMenu.tsx` (`tone` prop)
+
+**Decisions**
+
+- **One design system, four art directions.** No concept introduces a colour, a font or a breakpoint of its own. The additions to `globals.css` are `--band-deep` (a near-black botanical green for the concepts art-directed as dark environments), `display-2xl` and `display-3xl` above the existing scale, and the `[data-v-*]` entrance states, which all four heroes share.
+- **Header scheme by route.** `config/variants.ts` records which routes need the white header over their hero; the header reverts to ink the moment it lands on a surface. Nothing else about the header, navigation or footer changes between concepts.
+- **Concept 3 stays a dark experience** rather than a dark theme: the page is composed dark in both themes, which is an art direction, not a colour inversion.
+- **No new content model.** Every concept renders the same catalogue, tools, services, resources and testimonials. Concept-specific copy lives in `data/variants/`, and the counted figures in concept 3 are derived from the catalogue and the founding year rather than typed.
+- **Client components take plain props.** `lib/catalogue` and `data/toolCategories` are read in server bindings and reduced to serialisable props, so no concept ships the catalogue to the browser.
+- **The concept switcher is a review aid**, mounted only on the four concept routes and removable by deleting one line per page. The live Home page has nothing added to it.
+- Concept pages are `noindex` in every deployment, and none of them is in the sitemap.
+
+**Verification**
+
+| Check | Result |
+|---|---|
+| `tsc --noEmit`, `eslint`, `next build` | pass; 13 static routes including the four concepts |
+| Horizontal overflow at 390px and 1440px | none on any of the four pages, after clipping the product-story breakout on concept 2 |
+| Collage geometry at 1440px | five entries, no overlapping rectangles, after the third entry's negative offset was reduced below the row gap |
+| Hotspots, disclosure, category steering | verified by script: the hero panel swaps on selection, a closed row reports `aria-expanded="false"`, the rail scrolls one panel per press |
+| Rail snapping | mandatory snapping dragged the rail back to the start when it only just overflowed; changed to proximity snapping and a measured one-panel step |
+| Dark theme | concept 4 checked at 390px; the warm surfaces resolve to the botanical night palette |
+| Images | every photograph 200; the only 404s are route prefetches for pages that do not exist yet, which the live Home page also produces |
+
+**Pending follow-up**
+
+- Review the four concepts in a normal browser window. The in-app pane still runs no animation frames and can only capture part of a wide viewport, so the entrance timelines, the drag rail and the full desktop compositions were verified by measurement and by script rather than by eye.
+- `tool-pruning-shears.webp` carries legible baked-in lettering on the crate behind the tool. It is the hero object on concept 3 at large size, where the floating specification card covers it from 744px up but not on a phone. Worth regenerating with the section 6 prompt in the image manifest.
+- Concept 4's garden scene and concept 2's hero both use `hero-main.webp`. A second wide garden photograph would let the two concepts stop sharing their signature image.
+
+---
+
+## 2026-09-13
+
+### 00:05 IST: Variant numbering fixed, variant 2 re-toned light, new variant 5 (Structured Catalogue)
+
+**Work completed**
+
+- **Numbering.** The live Home page at `/` is now a separate, unnumbered entry, and the variants are numbered by their URL: `/variant1` is variant 01 through `/variant5` is variant 05. Page titles, the switcher chips (Home, 01 to 05) and every doc comment were renumbered. `routes.concept` became `routes.variant` and accepts 1 to 5.
+- **Variant 2 re-toned light.** Client feedback: the page was deep green from top to bottom. Every section now sits on a light surface (canvas, cream, sage tint, white, elevated), with ink type, hairline rules and brand-green actions. The product stage became a raised white plate on the warm canvas, hotspots became brand-green dots, the spec card and detail panel became light panels, and the rail, finder, counters and durability list were redrawn in the light palette. One deep green band remains, the closing statement, matching the live Home page's rhythm. The header over its hero switched back to ink.
+- **New variant 5, Structured Catalogue** (`/variant5`), the printed trade catalogue brought to the web and light throughout:
+  - Hero: a masthead strip of facts, the title, and a numbered contents list that jumps to each section, then one wide captioned plate.
+  - Range: all 14 categories in both groups as a ruled index (number, category, what is inside, tool count, plate), the only variant that lists the complete range at the top level.
+  - Tools: a framed specimen sheet of four cells, each with a plate and three spec lines.
+  - Services: four printed columns under a heavy rule, each saying who the service is for.
+  - About: a fact sheet with a tall plate, the founding statement and four ruled facts.
+  - Resources: a numbered reading list whose plate grows on hover.
+  - Closing: the enquiry inside a framed page, with a colophon of the contact facts from `config/site.ts`.
+
+**Files affected**
+
+- `config/variants.ts` (rewritten: `originalHome`, `homeVariants`, `allHomeVariants`), `lib/routes.ts`, `components/variants/shared/ConceptSwitcher.tsx`
+- `app/variant1/page.tsx` to `app/variant4/page.tsx` (titles and routes), `app/variant5/page.tsx` (new)
+- Variant 2: `InteractiveHero`, `ProductStage`, `InteractiveCategories`, `CategorySelector`, `InteractiveProducts`, `ProductRail`, `InteractiveSolutions`, `SolutionFinder`, `InteractiveTrust`, `TrustCounters`, `InteractiveDurability`, `DurabilityScroller`, `InteractiveClosing` (comment)
+- Variant 5: `data/variants/catalogue.ts`; `components/variants/catalogue/` (CatalogueHero, CatalogueRange, SpecimenBoard, ServiceColumns, WorkshopFactSheet, ReadingList, CatalogueClosing)
+- `resources/plan.md` section 15 rewritten
+
+**Decisions**
+
+- Numbering follows the URL, so a client reading "variant 3" in feedback and a developer opening `/variant3` always mean the same page.
+- Variant 2 keeps its interaction design unchanged; only the palette moved. The direction was never the dark background.
+- Variant 5's hero plate is cropped high (`object-[50%_20%]`, 16:9 and 21:9 only) because `resource-choosing-tools.webp` carries small printed labels along its foot.
+- Inactive labels in the variant 2 selector and finder were raised to 60% and 70% ink after the light re-tone, to keep AA contrast on cream and sage.
+- Photo captions make no claim about where a photograph was taken.
+
+**Verification**
+
+| Check | Result |
+|---|---|
+| `tsc --noEmit`, `eslint`, `next build` | pass; `/variant1` to `/variant5` all static |
+| Variant 2 section backgrounds | six light sections (luminance 241 to 255) and one dark closing band |
+| Variant 5 section backgrounds | all seven light (luminance 241 to 255) |
+| Horizontal overflow | none on variant 2 at 390 and 1440px; none on variant 5 at 390, 800, 1128 and 1440px |
+| Variant 5 range index | 14 rows; desktop columns 48, 282, 487, 64 and 72px at 1128px |
+| Images | none broken; console 404s are prefetches of the interior routes that do not exist yet |
+| Em dashes | none in visitor-facing strings |
+
+**Pending follow-up**
+
+- Review the variants in a normal browser window; the in-app pane runs no animation frames and captures only part of a wide viewport.
+- Variants 1 and 4 still close on a deep green band and use one more in the middle (variant 1's story band, variant 4's category wall). If the light-background feedback applies site-wide, those two bands are the next to re-tone.
+- `resource-choosing-tools.webp` and `tool-pruning-shears.webp` carry baked-in lettering; both are worth regenerating.
+
+
+---
+
+## 2026-09-19
+
+### 18:09 IST: Homepage variant audit, background rhythm, radius system, product review
+
+**Homepage variants audited**
+
+The live Home page (`/`) and all five variants (`/variant1` to `/variant5`) were rendered in headless Chrome at 1440, 1280, 1024, 768, 390 and 360px in the light theme, and at 1440 and 390px in the dark theme. Each render ran a scripted check of text contrast against its real background, horizontal overflow, the section background sequence and image corner radii. Full-page captures were then reviewed by eye. Final pass: zero horizontal overflow and zero AA contrast failures across all 48 renders.
+
+**Layout issues fixed**
+
+- Variant 1 product stories, text placement: whenever the text sat left of the photograph, grid auto-placement pushed it into a second row. Half the band was left empty beside the image, with the copy stranded underneath (the "missing text" in the client screenshots). Both columns are now pinned to row 1.
+- Variant 1 product stories, responsive layout: the two-column layout now starts at 900px instead of 1128px, and the stacked photograph is 4:3 rather than a full-width square. At 1024px the page is 3,800px shorter.
+- Variant 1 product stories, breakout: removed the photograph breakout that ran flush to the viewport edge. Everything sits inside the container.
+- Variant 1 category collage: the row-spanning lead photograph stretched the rows beside it and opened dead gaps of 150 to 200px. It is now two independent columns. On a phone these dissolve (`display: contents`) into catalogue order. The column ends now differ by 24px at 1440px.
+- Variant 3 hero: the photograph ran under the transparent header, putting "Resources", "Contact" and the theme toggle on the image. It now starts below the header and keeps to the container's right gutter.
+- Variant 4 hero on phones: the photograph sat absolutely centred over the two display words and covered the "w" of "Grow". Below 1128px it now sits in the flow between them.
+- Variant 4 gallery: the side-captioned entry used an `auto` text column, which squeezed its photograph to a 44px thumbnail. It now uses two equal columns and sits vertically centred beside the tall entry.
+- Concept switcher: from 1128px it sits at bottom centre, so the framework's development badge no longer clips the "Home" chip.
+
+**Contrast issues fixed**
+
+- The green "Tools" in the wordmark measured 2.0:1 on the deep band. This affected the footer on every page and the header over variant 1's hero. A new token, `on-band-accent` (#A8C98D, about 6:1), is now used for any green on a band.
+- `muted-soft` (about 3:1) was used for index numerals and "Drag to explore" in variants 2 and 5. Every text use is now `muted`, and the token is documented as non-text only.
+- Faded display numerals (`brand-soft/35` and `/40`) in variants 1 and 5 were raised to solid colour. Where they are purely decorative they are 70% and `aria-hidden`.
+- Labels on photographs vanished on bright images: the white "01" numerals in the variant 1 collage and the blended `text-ink/45` numerals in the variant 4 gallery. Two shared utilities now carry all type on photographs: `scrim-caption`, a graded scrim under caption blocks, and `photo-chip`, a translucent pill for short corner labels.
+
+**Background and colour balance**
+
+- Home: the deep-green sections in the body went from three to one.
+  - The trust bar is now a white strip ruled top and bottom.
+  - The final CTA sits on the soft sage band with brand buttons.
+  - The newsletter strip is white.
+  - The photographic community band is the one dark beat, and the dark footer always follows a light section.
+  - Sequence: canvas, white, warm, canvas, soft, white, elevated, soft, photo, canvas, sage, white, footer.
+- Variant 1: the closing photograph is now an inset rounded panel on the warm surface, not a full-bleed dark band above the dark footer.
+- Variant 2: the counted-figures section is now the variant's one deep band, and the closing moved to the soft sage band.
+- Variant 4: the closing typographic statement is now ink on the warm surface, with the last word in brand green. The category wall stays as the variant's dark feature.
+- Variants 3 and 5 were already balanced and are unchanged.
+
+**Border-radius consistency**
+
+Before this pass there were 22 hard-coded radius values across the variants: `rounded-[2px]`, `[28px]`, `[2rem]`, `[7rem]`, `[9rem]`, `[13rem]` and six different `clamp()` corners. Photographs in variants 1, 4 and 5 had square corners while every other variant rounded them.
+
+One scale is now documented in `globals.css`:
+
+| Level | Size | Used for |
+|---|---|---|
+| `sm` | 8px | Buttons, inputs, rectangular tags, thumbnails up to 64px |
+| `md` | 12px | Compact floating panels, thumbnails up to about 200px |
+| `lg` | 18px | Cards and standard photographs |
+| `xl` | 24px | Hero and feature media, large panels |
+| `2xl` | 32px | Full-width section panels |
+| `full` | n/a | Pills, chips, avatars, floating controls |
+| `organic`, `arch` | n/a | Botanical signature corners, on Home and variant 3 only |
+
+- `ImagePlate` gained `sm` and lost the unused `2xl`.
+- No `rounded-[…]` value remains.
+- The logo tile moved to `sm`, which matches the 0.22 corner of the generated icons.
+
+**Jiva Greens reference research**
+
+jivagreens.com is the catalogue of Shree Khodiyar Garden Tools ("JIVA"), Ahmedabad. Its range covers:
+
+- **Lawn mowers,** sold by type: wheel-type manual, rotary electric, roller-type electric and petrol, and zero-cut.
+- **Cutting equipment:** brush cutters, chainsaws, hedge trimmers and a mist blower from a major brand, plus branch cutters and drop-forged hedge shears.
+- **Watering:** garden pipes, self-coiling hoses, hose reels, multi-pattern nozzles, and four-arm, oscillating and brass sprinklers.
+- **Hand tools:** khurpi, heavy khurpa, pavda (phawda), bulb planter, grafting tool, bypass and roll-cut secateurs, and bonsai cutters.
+- **Also:** folding pruning saws, a telescopic tree pruner, a 16-litre spray pump, planter stands, fountain nozzles, solar lights and a snake catcher.
+
+The site was used as a factual and terminology reference only. No copy, design, images or branding were taken.
+
+**Product names and categories updated**
+
+- `data/toolCategories.ts`:
+  - Hand tools add the khurpa and a bulb planter.
+  - Pruning lists bypass and roll-cut secateurs, branch cutters (loppers), drop-forged hedge shears, grass shears, bonsai cutters, folding and fixed saws, telescopic tree pruners and grafting tools.
+  - Watering uses "garden pipes", self-coiling hoses, multi-pattern nozzles and named sprinkler types.
+  - Accessories add planters and stands, solar lights and a snake catcher.
+  - Lawn mowers are listed by type: wheel, rotary, roller electric, roller petrol, zero-cut and battery.
+  - Brush cutters add electric models.
+  - Sprayers name the 16-litre knapsack spray pump.
+  - Irrigation adds fountain nozzles.
+- `data/tools.ts`: four new tools, not yet photographed: Forged Khurpi, Drop-Forged Hedge Shears, Rotary Electric Lawn Mower and Petrol Brush Cutter. `Tool.image` is now optional (`PhotographedTool`), and `featuredTools` returns only photographed tools. This is the rule the categories already follow, so no grid shows a missing or mismatched photograph.
+- Variant 2's solution finder uses the same mower types and "branch cutters".
+- Company facts in `config/site.ts` were **not** changed (see pending).
+
+**Image-generation prompts updated**
+
+- `resources/image-generation.md` status table: the four featured tools, `why-choose` and the three resource images are now marked for regeneration. They carry legible baked-in slogans and labels that are plainly visible at variant sizes.
+- Section 6 was rewritten as eight exact-product prompts: four regenerations and the four new tools. Each covers physical form, materials, handle and blade detail, Indian setting, lens, angle, light, placement, background, 1:1 ratio and negative space, under shared set rules.
+- Category prompts 4c, 4d, 4f and 4l now use the renamed products.
+- `scripts/process-images.mjs` maps the four new slots.
+
+**Important decisions**
+
+- The section directly above the footer is never a deep band. A dark closing plus the dark footer reads as one slab.
+- Each page gets at most one deep band in the body, used where it carries hierarchy.
+- The variants keep their own art direction: arches only in variant 3, editorial rules in variant 1, the dark category wall in variant 4. They share one radius scale, one pair of photo-label utilities and one set of contrast tokens.
+- A new tool enters the catalogue without a photograph rather than borrowing another tool's.
+
+**Files affected**
+
+- `app/globals.css`, `app/page.tsx`, `CLAUDE.md`
+- `components/ui/ImagePlate.tsx`, `components/layout/Logo.tsx`, `components/cards/ToolShowcaseCard.tsx`
+- `components/home/`: Hero, TrustBar, AboutPreview, WhyChooseUs, FinalCTA, Newsletter
+- `components/variants/cinematic/`: EditorialCollage, ProductStories, SolutionsLedger, MagazineJournal, CinematicClosing
+- `components/variants/interactive/`: InteractiveTrust, TrustCounters, InteractiveClosing, ProductStage, CategorySelector, InteractiveDurability, ProductRail, SolutionFinder, DurabilityScroller
+- `components/variants/botanical/`: BotanicalHero, BotanicalClosing, BotanicalVoices, CategoryOrbit, CraftStory, GardenJourney, GardenScene
+- `components/variants/artdirected/`: TypeHero, ArtGallery, TechnicalSpecs, VisualJournal, CategoryWall, ArtClosing
+- `components/variants/catalogue/`: CatalogueHero, CatalogueRange, ReadingList, SpecimenBoard, WorkshopFactSheet, ServiceColumns
+- `components/variants/shared/ConceptSwitcher.tsx`
+- `types/content.ts`, `data/tools.ts`, `data/toolCategories.ts`, `data/variants/interactive.ts`
+- `resources/image-generation.md`, `scripts/process-images.mjs`
+
+**Verification**
+
+| Check | Result |
+|---|---|
+| `npm run check`, `npm run build` | Pass. All 14 routes are static. |
+| Horizontal overflow: 6 pages at 6 widths, plus dark theme at 2 widths | 0px everywhere |
+| AA contrast, scripted over every visible text node | No failures outside photographs |
+| Radius inventory | Only scale values; `organic` and `arch` appear on Home and variant 3 only |
+| Em dashes in visitor-facing strings | None |
+
+**Pending follow-up**
+
+- Resolved at 18:45 IST: the client confirmed Jiva Greens is the brand; see the next entry.
+- Generate the eight section 6 product photographs. Once the four new tools are photographed, the Home featured grid grows to eight cards. Decide then whether the trowel and spade leave `featured`.
+- Regenerate `why-choose` and the three resource images, which carry baked-in lettering.
+- Check entrance animations and hover states in a normal browser window. The audit ran with reduced motion so that every reveal was visible.
+
+
+### 18:45 IST: Rebrand from the "GreenTools" placeholder to the client, Jiva Greens
+
+**Work completed**
+
+The client confirmed the site is for **Jiva Greens (JIVA)**, the trading brand of **Shree Khodiyar Garden Tools**, Ahmedabad, whose current site is jivagreens.com. Every placeholder brand fact has been replaced with the client's real details, checked today against their home, company and contact pages.
+
+| Fact | Now | Source |
+|---|---|---|
+| Name | Jiva Greens (short name JIVA) | Domain, logo, copyright line |
+| Legal name | Shree Khodiyar Garden Tools | Home and company pages |
+| Tagline | Everything in Gardening | Logo lockup |
+| Address | 30, 31, Silicon Valley, Shivranjani Cross Road, Satellite, Ahmedabad, Gujarat | Contact page |
+| Phones | +91 79 4004 6010, +91 79 2675 0730 | Contact page |
+| Email | jivagreen@yahoo.com | Contact page |
+| Established | 1998 | Company page, which says "established in 1998" (see pending) |
+| Site URL fallback | https://www.jivagreens.com | Domain |
+
+- **Logo.** The client's JIVA logo (`gardening images/jiva-logo.png`, from their site) is trimmed losslessly by `npm run images` into `public/images/brand/jiva-logo.png`. `Logo.tsx` now renders it in the header and footer.
+  - It is never recoloured.
+  - On the deep footer band, over variant 1's photographic hero and in the dark theme, it sits on a small white plate.
+- **Removed, not invented.** The old site does not state these, so they are gone rather than guessed:
+  - opening hours, from the footer, the variant 5 colophon and the LocalBusiness JSON-LD;
+  - the postcode;
+  - the placeholder social links. The footer social row and `sameAs` now render only when real profiles exist.
+- **Invented history rewritten.**
+  - "We began in a single workshop repairing tools" and "Fifteen years" appeared on Home, variant 1 and variant 5. They now describe what the company actually states: it supplies garden machinery, plant protection equipment, spares and hand tools to landscapers, institutes, corporates and individual gardeners.
+  - Every "2009" is replaced with `site.founded`, read from config rather than retyped.
+- **Copy and metadata.**
+  - The name changes to Jiva Greens across page titles, the web manifest (short name JIVA), JSON-LD, the WhatsApp greeting, the 404 copy, the variant eyebrows and the footer blurb.
+  - The comments in `data/tools.ts` and `data/toolCategories.ts` now name jivagreens.com as the client's own catalogue.
+
+**Files affected**
+
+`config/site.ts`, `config/env.ts`, `config/brand.ts`, `.env.example`, `components/layout/Logo.tsx`, `components/layout/Footer.tsx`, `components/variants/catalogue/CatalogueClosing.tsx`, `lib/seo.ts`, `app/manifest.ts`, `data/home.ts`, `data/notFound.ts`, `data/tools.ts`, `data/toolCategories.ts`, `data/variants/{cinematic,catalogue,artDirected,botanical}.ts`, `scripts/process-images.mjs`, `resources/image-generation.md`, `CLAUDE.md`
+
+**Decisions**
+
+- `CLAUDE.md` now states that brand facts are real and come from `config/site.ts`, and that the old site is the client's own and therefore authoritative.
+- A trademark is placed, not altered: a white plate rather than a white knockout on dark surfaces.
+- The app icons and favicon keep the generated sprout for now. The only logo source is a 280px raster with a baked-in drop shadow, which cannot produce a sharp 16px favicon or a 512px home-screen icon.
+
+**Verification**
+
+- `npm run check` and `npm run build` pass.
+- Home and variant 1 at 1440px, and Home at 390px in dark, show no overflow and no contrast failures.
+- The logo was checked by eye on the light header, over the photographic hero and in the dark theme.
+
+**Pending follow-up**
+
+- **Founding year:** the client's site says both "established in 1998" (company page) and "Since 2003" (home page). The site currently uses 1998; confirm with the client.
+- Ask the client for a vector (SVG or AI) logo, so the favicon and app icons can carry the JIVA mark and the header logo is sharp on high-density screens.
+- Ask for opening hours, postcode and any social profiles, to restore those blocks with real data.
+- Testimonials in `data/testimonials.ts` are still sample quotes marked as placeholder in the file. They need real, permissioned customer quotes before launch.

@@ -73,6 +73,10 @@ const SLOTS = [
   { source: "hand-trowel.png", out: "tool-hand-trowel", width: 1200, height: 1200 },
   { source: "garden-spade.png", out: "tool-garden-spade", width: 1200, height: 1200 },
   { source: "watering-can.png", out: "tool-watering-can", width: 1200, height: 1200 },
+  { source: "khurpi.png", out: "tool-khurpi", width: 1200, height: 1200 },
+  { source: "hedge-shears.png", out: "tool-hedge-shears", width: 1200, height: 1200 },
+  { source: "lawn-mower.png", out: "tool-lawn-mower", width: 1200, height: 1200 },
+  { source: "brush-cutter.png", out: "tool-brush-cutter", width: 1200, height: 1200 },
 
   // Services (16:10)
   { source: "tool-selection.png", out: "service-tool-selection", width: 1600, height: 1000 },
@@ -96,6 +100,24 @@ const SLOTS = [
   // Open Graph card
   { source: "og-home..png", out: "og-home", width: 1200, height: 630, format: "jpeg" },
 ];
+
+/**
+ * The client's logo, taken from their existing site (jivagreens.com). It is
+ * only trimmed of transparent margin and re-saved losslessly: a trademark is
+ * never recoloured, cropped into or re-drawn here. Where it sits on a dark
+ * surface, the Logo component gives it a white plate instead.
+ */
+const LOGO = { source: "jiva-logo.png", out: "brand/jiva-logo.png" };
+
+async function processLogo() {
+  const outputPath = join(OUT_DIR, LOGO.out);
+  await mkdir(join(OUT_DIR, "brand"), { recursive: true });
+  const info = await sharp(join(SOURCE_DIR, LOGO.source))
+    .trim()
+    .png({ compressionLevel: 9 })
+    .toFile(outputPath);
+  console.log(`${LOGO.out.padEnd(30)} ${info.width}x${info.height}  (logo, trimmed, lossless)`);
+}
 
 function outputName(slot) {
   return `${slot.out}.${slot.format === "jpeg" ? "jpg" : "webp"}`;
@@ -158,6 +180,8 @@ async function run() {
   const available = new Set(await readdir(SOURCE_DIR));
   const ready = SLOTS.filter((slot) => available.has(slot.source));
   const pending = SLOTS.filter((slot) => !available.has(slot.source));
+
+  if (available.has(LOGO.source)) await processLogo();
 
   let sourceBytes = 0;
   let outputBytes = 0;

@@ -19,11 +19,15 @@ const RATIO_CLASS: Record<Ratio, string> = {
 
 // Written out in full rather than interpolated — Tailwind only sees literal
 // class names, so `rounded-${radius}` would silently produce no CSS.
+// The level follows the plate's size (see the radius scale in globals.css):
+// `sm` for thumbnails up to 64px, `md` up to ~200px, `lg` for card and body
+// imagery, `xl` for hero and feature media. `none` is only for a plate clipped
+// by a rounded parent card.
 const RADIUS_CLASS = {
+  sm: "rounded-sm",
   md: "rounded-md",
   lg: "rounded-lg",
   xl: "rounded-xl",
-  "2xl": "rounded-2xl",
   none: "",
 } as const;
 

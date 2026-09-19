@@ -8,52 +8,51 @@ import { env } from "@/config/env";
  * Separated from `data/` on purpose. `data/` holds page content that changes
  * with marketing; this holds facts about the company.
  *
- * NOTE: contact details, address and social links are realistic placeholder
- * data for an Ahmedabad-based gardening brand. Replace them with the real
- * business details before launch. No GSTIN or CIN is included: those are
- * regulated identifiers and must only ever come from the real registration
- * certificate.
+ * Every fact below comes from the client's existing website, jivagreens.com
+ * (home, company and contact pages, checked 19 September 2026). Nothing is
+ * invented: where the old site does not state something (postcode, opening
+ * hours, social profiles) it is left out rather than guessed. The old site gives
+ * two founding years, "established in 1998" on the company page and "Since
+ * 2003" on the home page; the company page's establishment date is used here
+ * until the client confirms. No GSTIN or CIN is included: those are regulated
+ * identifiers and must only ever come from the registration certificate.
  *
  * The WhatsApp number is deliberately absent. It is deployment configuration,
  * read from NEXT_PUBLIC_WHATSAPP_NUMBER through `config/env.ts`.
  */
 export const site = {
-  name: "GreenTools",
-  legalName: "GreenTools Garden Equipment Pvt. Ltd.",
-  tagline: "Tools for better gardens",
+  name: "Jiva Greens",
+  /** The trading name printed on the old site and on the logo lockup. */
+  shortName: "JIVA",
+  legalName: "Shree Khodiyar Garden Tools",
+  tagline: "Everything in Gardening",
   url: env.siteUrl,
   description:
-    "Traditional Indian garden tools and modern garden machinery, with practical guidance for terraces, kitchen gardens, farms, nurseries and professional landscaping teams.",
-  founded: "2009",
+    "Garden machinery, lawn mowers, plant protection equipment, hand tools and watering products from Shree Khodiyar Garden Tools, Ahmedabad, for landscapers, institutions, corporates and home gardeners.",
+  founded: "1998",
   locale: "en-IN",
   contact: {
-    phone: "+91 79 4023 8800",
-    phoneHref: "tel:+917940238800",
-    mobile: "+91 98250 41276",
-    mobileHref: "tel:+919825041276",
-    email: "hello@greentools.in",
-    emailHref: "mailto:hello@greentools.in",
+    phone: "+91 79 4004 6010",
+    phoneHref: "tel:+917940046010",
+    phoneAlt: "+91 79 2675 0730",
+    phoneAltHref: "tel:+917926750730",
+    email: "jivagreen@yahoo.com",
+    emailHref: "mailto:jivagreen@yahoo.com",
     address: {
-      street: "214, Shivalik Business Centre, Sanand–Sarkhej Road",
-      area: "Bopal",
+      street: "30, 31, Silicon Valley",
+      area: "Shivranjani Cross Road, Satellite",
       locality: "Ahmedabad",
       region: "Gujarat",
-      postalCode: "380058",
       country: "India",
       countryCode: "IN",
     },
-    hours: "Mon–Sat, 9:30 am to 6:30 pm IST",
   },
   whatsapp: {
     /** Pre-filled opening message for the floating WhatsApp button. */
-    defaultMessage: "Hello GreenTools, I would like some help choosing the right gardening tools.",
+    defaultMessage: "Hello Jiva Greens, I would like some help choosing the right gardening tools.",
   },
-  social: [
-    { label: "Instagram", href: "https://instagram.com" },
-    { label: "Facebook", href: "https://facebook.com" },
-    { label: "YouTube", href: "https://youtube.com" },
-    { label: "LinkedIn", href: "https://linkedin.com" },
-  ],
+  /** No social profiles are listed on the old site. Add real ones here when supplied. */
+  social: [] as readonly { label: string; href: string }[],
 } as const;
 
 export type Site = typeof site;
