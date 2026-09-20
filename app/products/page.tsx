@@ -1,15 +1,27 @@
 import type { Metadata } from "next";
 
+import { SolutionCard } from "@/components/cards/SolutionCard";
 import { ProductCatalogue } from "@/components/products/ProductCatalogue";
+import { CollectionSection } from "@/components/sections/CollectionSection";
+import { HighlightsBand } from "@/components/sections/HighlightsBand";
 import { CtaBand } from "@/components/sections/CtaBand";
 import { PageHero } from "@/components/sections/PageHero";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { productsCatalogue, productsHero, productsNotice, productDetail } from "@/data/products-page";
+import { highlightsContent } from "@/data/home";
+import {
+  productsCatalogue,
+  productsHero,
+  productsNotice,
+  productsSolutions,
+  productDetail,
+} from "@/data/products-page";
+import { solutions } from "@/data/solutions";
 import { productGroups } from "@/data/productCategories";
 import { getProductListRows, getRangeCounts } from "@/lib/catalogue";
+import { getHighlights } from "@/lib/highlights";
 import { enforcePageVisibility } from "@/lib/page-guard";
 import { routes } from "@/lib/routes";
 import { breadcrumbJsonLd, buildMetadata } from "@/lib/seo";
@@ -84,6 +96,36 @@ export default function ProductsPage() {
           </Reveal>
         </Container>
       </Section>
+
+      {/* The figures the range earns, counted from the catalogue rather than
+          typed. The same band appears on About and Clients, so somebody who
+          arrives on Products first sees the same evidence. */}
+      <HighlightsBand
+        eyebrow={highlightsContent.eyebrow}
+        heading={highlightsContent.heading}
+        description={highlightsContent.body}
+        items={getHighlights()}
+        tone="warm"
+        layout="grid"
+      />
+
+      {/* Choosing and caring for what is on this page. There is no Services
+          page by design, so the selection guidance and the care and maintenance
+          content the range needs are carried here as gardening solutions, which
+          is where somebody browsing the catalogue actually wants them. */}
+      <CollectionSection
+        id="choosing"
+        tone="surface"
+        eyebrow={productsSolutions.eyebrow}
+        heading={productsSolutions.heading}
+        description={productsSolutions.body}
+        align="center"
+        items={solutions}
+        getKey={(solution) => solution.slug}
+        renderItem={(solution) => <SolutionCard solution={solution} />}
+        columns={4}
+        stagger={0.07}
+      />
 
       <CtaBand
         eyebrow={productDetail.cta.eyebrow}

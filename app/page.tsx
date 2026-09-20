@@ -10,7 +10,6 @@ import { CommunityStory } from "@/components/home/CommunityStory";
 import { FinalCTA } from "@/components/home/FinalCTA";
 import { Hero } from "@/components/home/Hero";
 import { Highlights } from "@/components/home/Highlights";
-import { Newsletter } from "@/components/home/Newsletter";
 import { TrustBar } from "@/components/home/TrustBar";
 import { WhyChooseUs } from "@/components/home/WhyChooseUs";
 import { enforcePageVisibility } from "@/lib/page-guard";
@@ -46,7 +45,6 @@ export default function HomePage() {
       <CommunityStory />
       <Testimonials />
       <FinalCTA />
-      <Newsletter />
     </>
   );
 }

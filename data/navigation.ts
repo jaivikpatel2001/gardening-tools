@@ -55,3 +55,16 @@ export const footerCompanyLinks: NavItem[] = [
   { label: "All Products", href: routes.products },
   { label: "Contact", href: routes.contact },
 ];
+
+/**
+ * The footer's enquiry panel.
+ *
+ * It replaced a newsletter sign-up, which the client asked to be taken off the
+ * site entirely. Nothing here collects an address: the site has no mailing
+ * list, and every route to us is a conversation.
+ */
+export const footerEnquiry = {
+  body: "Tell us the site, the season and who will be using the equipment, and we will specify it. Bulk and institutional supply is quoted by enquiry.",
+  ctaLabel: "Send an Enquiry",
+  whatsappLabel: "WhatsApp",
+} as const;

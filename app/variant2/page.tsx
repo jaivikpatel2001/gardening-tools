@@ -11,7 +11,6 @@ import { ConceptSwitcher } from "@/components/variants/shared/ConceptSwitcher";
 import { VariantAbout } from "@/components/variants/shared/VariantAbout";
 import { VariantClients } from "@/components/variants/shared/VariantClients";
 import { VariantCommunity } from "@/components/variants/shared/VariantCommunity";
-import { VariantNewsletter } from "@/components/variants/shared/VariantNewsletter";
 import { VariantSolutions } from "@/components/variants/shared/VariantSolutions";
 import { VariantTestimonials } from "@/components/variants/shared/VariantTestimonials";
 import { VariantTrust } from "@/components/variants/shared/VariantTrust";
@@ -31,7 +30,7 @@ import { buildMetadata } from "@/lib/seo";
  * this page's highlights band, so the shared one is not repeated. The solution
  * finder is this page's treatment of "which product for which job", and the
  * four gardening solutions themselves follow it, so no content from `/` is
- * lost. The trust strip, about, clients, testimonials, community and newsletter
+ * lost. The trust strip, about, clients, testimonials and community
  * sections come from the shared variant bands.
  *
  * The counted figures already spend this page's one deep band, so the community
@@ -64,7 +63,6 @@ export default function InteractiveProductPage() {
       <VariantTestimonials variant={2} layout="plates" tone="surface" />
       <VariantCommunity variant={2} layout="plate" tone="soft" />
       <InteractiveClosing />
-      <VariantNewsletter variant={2} layout="panel" tone="surface" />
       <ConceptSwitcher />
     </>
   );

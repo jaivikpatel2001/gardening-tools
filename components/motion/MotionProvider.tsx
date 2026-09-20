@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 
 /**
  * Motion is used for exactly three things on this site — the theme-toggle icon
- * crossfade, the mobile navigation sheet, and the newsletter success state.
+ * crossfade and the mobile navigation sheet.
  * None of them need layout animations or drag, so shipping the full `motion`
  * component would pay for a lot of unused feature code.
  *

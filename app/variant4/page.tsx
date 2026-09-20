@@ -10,7 +10,6 @@ import { VariantAbout } from "@/components/variants/shared/VariantAbout";
 import { VariantClients } from "@/components/variants/shared/VariantClients";
 import { VariantCommunity } from "@/components/variants/shared/VariantCommunity";
 import { VariantHighlights } from "@/components/variants/shared/VariantHighlights";
-import { VariantNewsletter } from "@/components/variants/shared/VariantNewsletter";
 import { VariantSolutions } from "@/components/variants/shared/VariantSolutions";
 import { VariantTestimonials } from "@/components/variants/shared/VariantTestimonials";
 import { VariantTrust } from "@/components/variants/shared/VariantTrust";
@@ -60,7 +59,6 @@ export default function ArtDirectedPage() {
       <VariantCommunity variant={4} layout="plate" tone="soft" />
       <VariantTestimonials variant={4} layout="columns" tone="canvas" />
       <ArtClosing />
-      <VariantNewsletter variant={4} layout="ruled" tone="surface" />
       <ConceptSwitcher />
     </>
   );

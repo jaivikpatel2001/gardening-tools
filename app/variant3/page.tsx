@@ -12,7 +12,6 @@ import { VariantBenefits } from "@/components/variants/shared/VariantBenefits";
 import { VariantClients } from "@/components/variants/shared/VariantClients";
 import { VariantCommunity } from "@/components/variants/shared/VariantCommunity";
 import { VariantHighlights } from "@/components/variants/shared/VariantHighlights";
-import { VariantNewsletter } from "@/components/variants/shared/VariantNewsletter";
 import { VariantSolutions } from "@/components/variants/shared/VariantSolutions";
 import { VariantTrust } from "@/components/variants/shared/VariantTrust";
 import { enforcePageVisibility } from "@/lib/page-guard";
@@ -61,7 +60,6 @@ export default function IndianBotanicalPage() {
       <VariantCommunity variant={3} layout="photo" />
       <BotanicalVoices />
       <BotanicalClosing />
-      <VariantNewsletter variant={3} layout="inline" tone="surface" />
       <ConceptSwitcher />
     </>
   );

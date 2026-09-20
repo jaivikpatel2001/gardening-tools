@@ -11,7 +11,6 @@ import { VariantBenefits } from "@/components/variants/shared/VariantBenefits";
 import { VariantClients } from "@/components/variants/shared/VariantClients";
 import { VariantCommunity } from "@/components/variants/shared/VariantCommunity";
 import { VariantHighlights } from "@/components/variants/shared/VariantHighlights";
-import { VariantNewsletter } from "@/components/variants/shared/VariantNewsletter";
 import { VariantTestimonials } from "@/components/variants/shared/VariantTestimonials";
 import { VariantTrust } from "@/components/variants/shared/VariantTrust";
 import { enforcePageVisibility } from "@/lib/page-guard";
@@ -57,7 +56,6 @@ export default function StructuredCataloguePage() {
       <VariantCommunity variant={5} layout="plate" tone="soft" />
       <VariantTestimonials variant={5} layout="rows" tone="surface" />
       <CatalogueClosing />
-      <VariantNewsletter variant={5} layout="panel" tone="canvas" />
       <ConceptSwitcher />
     </>
   );

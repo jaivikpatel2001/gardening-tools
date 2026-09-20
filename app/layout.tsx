@@ -11,6 +11,7 @@ import { SmoothScrollProvider } from "@/components/motion/SmoothScrollProvider";
 import { BRAND_COLORS } from "@/config/brand";
 import { site } from "@/config/site";
 import { getProductMenu } from "@/lib/catalogue";
+import { getSocialChannels } from "@/lib/social";
 import { DEFAULT_TITLE, buildMetadata, organizationJsonLd } from "@/lib/seo";
 
 import "./globals.css";
@@ -153,7 +154,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             {/* Product links are resolved here, on the server. The header and
                 the mobile sheet are client components and must never import the
                 catalogue themselves. */}
-            <Header productMenu={getProductMenu()} />
+            <Header productMenu={getProductMenu()} socialChannels={getSocialChannels()} />
             {/* tabIndex lets the skip link actually move focus here, not just scroll. */}
             <main id="main" tabIndex={-1} className="outline-none">
               {children}

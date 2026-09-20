@@ -1443,3 +1443,86 @@ First-load JavaScript is about 279 KB gzipped, and the single largest contributo
 **Files:** `CLAUDE.md`, `app/error.tsx`, `app/global-error.tsx`, `data/errorPage.ts`, `components/not-found/LazyGardenPathScene.tsx`, `components/not-found/NotFoundView.tsx`, `components/cursor/CursorLayer.tsx`, `components/cursor/CustomCursor.tsx`, `components/layout/Logo.tsx`, `data/notFound.ts`, `next.config.ts`.
 
 **Verified:** `npm run check` and `npm run build` pass, 45 routes prerendered. In a production build: Home, a product page and the 404 all render correctly; the error boundary renders and recovers; at 375px neither deferred chunk is fetched; the logo still delivers its full-resolution bitmap. No em dashes in any new visitor-facing string, no `console.log`, nothing secret staged.
+
+### 22:40 IST: Six-page completeness audit, social links, footer, and the newsletter removed
+
+Requirement 23: audit all six primary pages against the reference structure, complete what is missing, add social and contact links, review the footer, and take the newsletter off the site.
+
+#### The audit, page by page
+
+The reference sheet is the old GreenTools structure diagram. It is used here for **section coverage only**. Its page list is not the site's: it shows Services, Resources, Blog and FAQ, all of which this project has deliberately removed, and the GreenTools name is a placeholder that must not reappear. So each of its page columns was read as a checklist of the content types that page should carry, and applied to the six pages that exist.
+
+| Page | Reference sections | Current | Verdict |
+|---|---|---|---|
+| Home | 10 | 12 | Exceeds. Only the newsletter removed. |
+| About | 7 | 11 | Exceeds. No change needed. |
+| Products | 7 | 3 | **Thin. Two sections added.** |
+| Product Detail | 8 | 8 | Matches. No change needed. |
+| Clients | n/a | 7 | Complete. No change needed. |
+| Contact | 6 | 4 | **Missing solutions and social. Both added.** |
+
+Home, About and Clients were already more complete than the reference, so nothing was added to them for its own sake. Product Detail already carries all eight content types: hero, types, range, features, specifications, benefits, related and enquiry.
+
+#### The newsletter is gone
+
+Removed everywhere, not hidden. Three components deleted (`components/home/Newsletter.tsx`, `components/ui/NewsletterForm.tsx`, `components/variants/shared/VariantNewsletter.tsx`), six call sites removed (Home and all five variants), the footer panel replaced, `newsletterContent` dropped from `data/home.ts`, and the `newsletter` key removed from the variant copy type and from all five variants in `data/variants/shared.ts`. Two stale comments that mentioned it, in `MotionProvider` and `ArrowIcon`, were corrected.
+
+A sweep of the whole repository returns two hits, both explanatory comments recording that the panel was removed and why. No form, no input, no heading, no copy and no component remains. Verified on all six pages and on a variant: nothing matching newsletter, subscribe or an email-address field appears anywhere.
+
+The canonical section list drops from thirteen to twelve, and `resources/section-parity.md` was updated to match, including the marker string that the parity check script looked for.
+
+#### Social links: the infrastructure, and the honest empty state
+
+**jivagreens.com publishes no social profile at all.** The home page was loaded and its 87 links enumerated, then the contact page and the site-wide footer. Not one points at Facebook, Instagram, LinkedIn, YouTube, X or Pinterest. Their footer offers an address, two phone numbers and an email address, and nothing else.
+
+So no profile has been invented. What was built instead is the whole path, ready for real URLs:
+
+- `types/content.ts` gains `SocialPlatform`, a closed union of the four platforms a mark is drawn for, plus `SocialProfile` and `SocialChannel`. A platform with no icon cannot be added, so a typo fails the build rather than rendering an empty circle on every page.
+- `config/site.ts` types `social` against it and carries the note above, including the date it was verified and what to do when the client supplies a real handle.
+- `lib/social.ts` resolves the row once for the whole site. It merges the profile list with **WhatsApp**, which is not a profile: it is a phone number from `NEXT_PUBLIC_WHATSAPP_NUMBER`, so it appears only when that is set, exactly like the floating button.
+- `components/decor/SocialLinks.tsx` renders it, in two tones, and **renders nothing at all when there is nothing to render**.
+
+One entry added to `config/site.ts` now appears in the footer, on the Contact page, in the mobile sheet and in the organisation JSON-LD's `sameAs`, with no other edit anywhere.
+
+WhatsApp is configured in this environment, so the row is live today: three WhatsApp routes on every page and five on Contact.
+
+#### Footer
+
+It was already close: brand block, four link columns, two phone numbers, email and address, copyright. Three changes.
+
+- The newsletter panel is replaced by a **Get in Touch** block: the enquiry line, a primary button to Contact, and a WhatsApp button when the number is configured. Deliberately not another large section, because the client asked for the newsletter to go, not to be swapped for something equally big. Every conversion path on this site ends in an enquiry, so that is what the space carries.
+- The hand-rolled social markup is replaced by `SocialLinks`, so the footer can no longer drift from the Contact page.
+- `footerEnquiry` copy moved into `data/navigation.ts`, where the rest of the footer's content lives.
+
+Checked in the browser on all six pages: six headed blocks, identical everywhere, and **zero dead links**.
+
+#### Contact
+
+Two gaps, both now closed.
+
+- **Gardening solutions were missing.** The project rule says service content is carried contextually on Home, About and Contact, and Contact did not have it. It now sits after the enquiry form, where it answers the question somebody has just before writing to us: what can I actually ask you for. Rendered from `data/solutions.ts` through the existing `CollectionSection`, so no copy is duplicated.
+- **A social block** under the address, which hides itself entirely, heading included, when there is no channel to show.
+
+The reference asks for a Business Hours section. The client has never published opening hours, so none are printed. The page already said so plainly and invites a call instead, which is the correct answer and is left as it was.
+
+#### Products
+
+The thinnest page on the site: hero, catalogue, notice, CTA. The reference asks for a selection guide and a care and maintenance section as well. Both already existed as solutions, one of them literally called Care & Maintenance, so they are rendered from `data/solutions.ts` rather than written a second time. A highlights band was added above them, the same figures About and Clients carry, counted from the catalogue rather than typed.
+
+Products goes from three sections to five, using only components that already existed. Because solutions now appear there too, the project rule in `CLAUDE.md` was updated from "Home, About and Contact" to "Home, About, Products and Contact".
+
+#### Rules recorded
+
+`CLAUDE.md` gains a section, "No newsletter, and no invented social profiles": the newsletter is not to be reintroduced in any form, social profiles are real or absent, a guessed handle sends a customer to a stranger's account, and the same note covers why opening hours are not printed. The architecture map, the client component inventory and the key-documents table were all updated.
+
+#### Not done, and why
+
+- **No social profile was added**, because none exists to add. This is the one part of the request that cannot be completed from this side. The moment the client supplies a real Facebook, Instagram, LinkedIn or YouTube URL, it is a single entry in `config/site.ts` and it appears in all four places at once.
+- **No opening hours**, for the same reason.
+- Nothing was removed from Home, About, Clients or Product Detail. They already exceeded the reference, and the instruction was not to remove meaningful sections.
+
+**Files:** `CLAUDE.md`, `resources/section-parity.md`, `types/content.ts`, `config/site.ts`, `lib/social.ts`, `components/decor/SocialLinks.tsx`, `components/layout/Footer.tsx`, `components/layout/Header.tsx`, `components/layout/MobileMenu.tsx`, `app/layout.tsx`, `app/contact/page.tsx`, `app/products/page.tsx`, `app/page.tsx`, `app/variant1` to `app/variant5`, `data/navigation.ts`, `data/contact.ts`, `data/products-page.ts`, `data/home.ts`, `data/variants/shared.ts`, `components/motion/MotionProvider.tsx`, `components/ui/ArrowIcon.tsx`. Deleted: `components/home/Newsletter.tsx`, `components/ui/NewsletterForm.tsx`, `components/variants/shared/VariantNewsletter.tsx`.
+
+**Note on the working tree:** unrelated in-progress work was already present and uncommitted when this started (`data/variants/productFilm.ts`, and edits to `config/variants.ts`, `lib/routes.ts`, `lib/visibility.ts` and `ConceptSwitcher.tsx`). None of it was touched, and the build passes with it in place.
+
+**Verified:** `npm run check` and `npm run build` pass, 45 routes prerendered. In a production build all six pages return 200 with no newsletter anywhere, the footer is identical across them with no dead links, Products has five sections and Contact five, variant 2 still carries its full set, and the console is clean. No em dashes in any new visitor-facing string.

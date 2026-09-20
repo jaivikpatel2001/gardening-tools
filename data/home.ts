@@ -83,11 +83,6 @@ export const finalCtaContent = {
   secondaryCta: { label: "Explore Products", href: routes.products },
 };
 
-export const newsletterContent = {
-  heading: "Stay Connected to Your Garden",
-  body: "Practical gardening tips, useful guides and season-by-season advice for Indian gardens.",
-};
-
 /**
  * Figures for the highlights band.
  *
