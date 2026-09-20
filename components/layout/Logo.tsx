@@ -28,9 +28,13 @@ export function Logo({ className, tone = "ink" }: { className?: string; tone?: "
         alt=""
         width={BRAND_LOGO.width}
         height={BRAND_LOGO.height}
-        sizes="140px"
         quality={90}
         preload
+        // No `sizes`: this is a fixed-size image, not a responsive one, so Next
+        // emits a 1x/2x srcset from `width`. With `sizes` it was treated as
+        // responsive and the preload tag carried the full width ladder up to
+        // 3840w, about 1.4 KB of markup on every page, for artwork whose source
+        // is 273px wide and which never renders wider than about 140.
         className="h-10 w-auto sm:h-11"
       />
     </Link>

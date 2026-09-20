@@ -1362,3 +1362,84 @@ Generated data is kept out of `data/productCategories.ts`, which is written by h
 **Files:** `data/clients.ts`, `lib/catalogue.ts`, `components/cards/IndustryCard.tsx`, `components/variants/shared/VariantClients.tsx`.
 
 **Verified:** `npm run check` and `npm run build` pass. Home, variant 2, Clients and a product page all load with no key warning, six chip lists on Home and none with a duplicate href. The one console line left is a Next.js CSS preload warning, which is framework-level and unrelated.
+
+### 18:21 IST: Next.js audit against the installed documentation, and the optimisations it justified
+
+Requirement 22: audit the codebase against current official Next.js practice, then improve it without rewriting what already works. The audit came first, and most of it came back clean, which is worth recording as plainly as the changes.
+
+**The rule, added first.** `CLAUDE.md` gains a section, "Follow the installed Next.js documentation": read `node_modules/next/dist/docs/` before touching a framework API, treat that copy as the only authority, prefer the framework's own answer to a hand-rolled one, and measure changes rather than assuming them. It is the standing project rule behind the `AGENTS.md` block that `next dev` keeps re-adding. Six new entries were added to the Next.js 16 traps list underneath it, all of them found during this pass.
+
+#### What the audit found clean
+
+Worth stating, because these are the usual sources of trouble and none of them applied here.
+
+- **Images.** No raw `<img>` anywhere. Every `fill` image carries `sizes`. No deprecated `priority`. AVIF ahead of WebP, and `qualities` declared so Next does not coerce them.
+- **Fonts.** `next/font` with no Google stylesheet anywhere near it, `display: swap`, and the italic instance correctly left unpreloaded. Checked in the browser: exactly two font files are preloaded and exactly two faces load. Nothing is wasted.
+- **Server and client boundaries.** 33 client components, each one justified. The catalogue does not cross a client boundary: the Products page computes its rows on the server and the header resolves the product menu in the layout, exactly as the project rules require.
+- **Rendering.** All 45 routes prerender. `generateStaticParams` on the product route, metadata on every page, no stray `dynamic` or `revalidate`, no request-time data fetching to get wrong.
+- **Prefetching.** Measured rather than assumed: a cold page load issues no RSC prefetches at all, and opening the products dropdown costs 48 KB across the four top-level nav routes. The 27-item menu does not prefetch 27 payloads. No change needed.
+
+#### The gap: there were no error boundaries at all
+
+No `error.tsx` and no `global-error.tsx` anywhere in `app/`. Any uncaught render error dropped the visitor onto the framework's default screen, with no header, no footer and no way back.
+
+- `app/error.tsx` catches a failure inside a route, with the layout still standing, so the header and footer remain as ways out. Typographic on purpose.
+- `app/global-error.tsx` handles a failure of the root layout itself. It supplies its own `html` and `body` and is styled inline from `config/brand.ts`, because at that point the fonts, the design tokens and the theme script are all part of what may have failed. Its home link is a plain anchor: a full document load is likelier to recover than a client navigation through the router that just broke.
+- Copy lives in `data/errorPage.ts`, alongside `data/notFound.ts`, per the project rule about where copy goes.
+- **Next 16 passes `{ error, retry }`, not `{ error, reset }`.** The old name type-checks as an unused prop and leaves a dead button, which is exactly the class of mistake the new documentation rule exists to prevent.
+
+Verified rather than assumed: a temporary throwing route was added, built, and clicked in a production build. The boundary rendered on-brand with the header intact, and "Try again" recovered the route. The route was then removed.
+
+#### The find: the 404 illustration was in every page
+
+Next.js serialises the `not-found` boundary into the payload of **every** route, so a client-side navigation to a missing page renders without a round trip. The garden path scene is several hundred server-rendered SVG nodes, so a copy of it sat in the HTML of the home page, the products page and every other page on the site.
+
+`components/not-found/LazyGardenPathScene.tsx` loads it through `next/dynamic` with `ssr: false`, leaving a reference in the payload instead of the drawing. The placeholder holds the same 600 by 560 box, written as a utility rather than borrowed from the scene's stylesheet, because importing that CSS module in the wrapper put its class map back on every page and undid most of the saving. `ssr: false` is only legal inside a client component, which is why the wrapper exists.
+
+**An earlier measurement of this was wrong and is corrected here.** A first pass reported 35 to 64 KB per page by measuring the span between the first and last mention of the scene, which swept up unrelated content in between. The true figure, from a stashed before-and-after build, is about 9 KB of HTML per page.
+
+#### Smaller changes
+
+- **The custom cursor is now fetched on demand.** The pointer logic moved to `components/cursor/CursorLayer.tsx`; `CustomCursor` keeps the media query gate and loads the layer dynamically. Confirmed in the browser at 375px: neither the cursor chunk nor the 404 scene chunk is requested at all. For a range aimed at Indian customers, where most traffic is a phone, that matters more than the raw number suggests. The native cursor stays visible until the layer mounts and adds `has-custom-cursor`, so there is never a moment with no pointer.
+- **The logo no longer declares `sizes`.** It is a fixed-size image, so `sizes="140px"` made Next treat it as responsive and emit the entire width ladder up to `w=3840`, about 1.4 KB of preload markup on every page, for artwork whose source is 273 pixels wide. Dropping it gives a two-entry 1x and 2x srcset and a 194-byte tag. Checked in the browser that the delivered bitmap is still the full 273 by 89: the optimiser never upscales past the source, so both candidates return the same pixels. Nothing looks different.
+- **`images.minimumCacheTTL` raised from the four hour default to seven days.** Every image is a build-time file, so an optimised variant only goes stale when the artwork is replaced. A week is the compromise while photography is still arriving product by product; the comment in `next.config.ts` says to raise it to 31 days once the imagery is final, and how to bust it in the meantime.
+
+#### A correctness fix found on the way
+
+The 404 page's recovery links still pointed at `/#services` and `/#resources`. Both sections had been removed from the Home page, so two of the four ways out of the 404 page scrolled nowhere, and "Resources" contradicted the rule that Clients replaced it. They now point at the interior pages, which exist. Because those pages are released one at a time, `NotFoundView` filters them through `visibleLinks()`, the same filter the header, the footer and the sitemap use, and the secondary button and the whole link block disappear rather than offering a route to a withdrawn page. The meta description was reworded for the same reason: it advertised services and guides that are not on the site.
+
+#### Measured result
+
+A true before-and-after, from stashing the work and rebuilding, rather than comparing across re-split chunks.
+
+| Route | HTML before | HTML after | HTML change | Eager JS change |
+|---|---|---|---|---|
+| `/` | 332.0 KB | 320.2 KB | -11.8 KB | +6.4 KB |
+| `/products` | 146.2 KB | 134.3 KB | -11.9 KB | +6.4 KB |
+| `/about` | 159.0 KB | 147.1 KB | -11.9 KB | +6.4 KB |
+| `/clients` | 153.0 KB | 141.1 KB | -11.9 KB | +6.4 KB |
+| `/contact` | 107.0 KB | 95.1 KB | -11.9 KB | +6.3 KB |
+
+On top of that, 3.9 KB of cursor code is never fetched on a touch device, and 7.7 KB of illustration is never fetched unless someone actually lands on a 404.
+
+The JavaScript went **up** by 6.4 KB a page, and that is the honest cost of the error boundaries: a capability the site did not have before. Isolated, the two code splits were within a kilobyte of neutral on eager JavaScript while taking 9 KB off the HTML, because `next/dynamic` brings its own small runtime. Net for a first-time visitor, the page is about 5 KB lighter and now fails gracefully.
+
+#### Two console warnings, explained rather than silenced
+
+Both were investigated in a production build and neither is a misconfiguration.
+
+- **"font preloaded but not used within a few seconds."** The preloader covers the page for 3200 ms, which pushes first text paint past Chrome's heuristic window. The fonts are correct: two files preloaded, two files fetched, two faces used. The fetch happening during the preloader is arguably ideal, since it uses otherwise dead time.
+- **"CSS preloaded but not used."** A 319-byte chunk holding the 404 page's entrance animation, preloaded because the `not-found` boundary is reachable from every route. Harmless, and not worth contorting the code to satisfy a heuristic.
+
+#### Not done, and why
+
+- **`loading.tsx` was deliberately not added.** Every route is prerendered at build time, so there is no loading state to show; the file would be dead weight in every payload for a spinner that can never render. Worth revisiting only if a route ever becomes dynamic.
+- **The preloader was left loading eagerly.** It is armed before first paint on every document load, so deferring it would delay the brand moment it exists to deliver, and it sits in the shared layout chunk that a document load fetches anyway. There is no saving to take.
+
+#### The open item worth a decision
+
+First-load JavaScript is about 279 KB gzipped, and the single largest contributor is that the site runs **three animation runtimes**: GSAP with ScrollTrigger (46.6 KB gzipped), Motion (17.8 KB) and Lenis. GSAP drives `Reveal`, which appears in nearly every section including above the fold, so it cannot simply be deferred without reveals failing to fire. Consolidating onto one library is a design decision with visible consequences, not a mechanical optimisation, so it is flagged here rather than taken unilaterally. It is the only remaining change on the list that would move the number significantly.
+
+**Files:** `CLAUDE.md`, `app/error.tsx`, `app/global-error.tsx`, `data/errorPage.ts`, `components/not-found/LazyGardenPathScene.tsx`, `components/not-found/NotFoundView.tsx`, `components/cursor/CursorLayer.tsx`, `components/cursor/CustomCursor.tsx`, `components/layout/Logo.tsx`, `data/notFound.ts`, `next.config.ts`.
+
+**Verified:** `npm run check` and `npm run build` pass, 45 routes prerendered. In a production build: Home, a product page and the 404 all render correctly; the error boundary renders and recovers; at 375px neither deferred chunk is fetched; the logo still delivers its full-resolution bitmap. No em dashes in any new visitor-facing string, no `console.log`, nothing secret staged.
