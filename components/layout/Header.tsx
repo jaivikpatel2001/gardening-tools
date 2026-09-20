@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 
 import { Logo } from "@/components/layout/Logo";
 import { MobileMenu } from "@/components/layout/MobileMenu";
+import { ProductsMenu } from "@/components/layout/ProductsMenu";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { Button } from "@/components/ui/Button";
 import { headerSchemeFor } from "@/config/variants";
@@ -12,6 +13,8 @@ import { primaryNav } from "@/data/navigation";
 import { useScrollThreshold } from "@/hooks/useScrollThreshold";
 import { cn } from "@/lib/cn";
 import { routes } from "@/lib/routes";
+import { visibleLinks } from "@/lib/visibility";
+import type { ProductMenuLink } from "@/types/content";
 
 const SCROLL_THRESHOLD = 24;
 
@@ -28,10 +31,23 @@ const SCROLL_THRESHOLD = 24;
  *
  * Only `background-color`, `border-color` and `height` transition, and the
  * scrolled state re-renders once per threshold crossing, never per scroll frame.
+ *
+ * `productMenu` is resolved from the catalogue in the root layout, on the
+ * server, and passed in. The header and the mobile sheet are client components,
+ * so neither may import `lib/catalogue.ts`; handing them plain labels and
+ * hrefs is what keeps the range out of the browser bundle. One header serves
+ * every page and every Home variant, so the Products menu is defined once here
+ * and nowhere else.
  */
-export function Header() {
+export function Header({ productMenu }: { productMenu: readonly ProductMenuLink[] }) {
   const scrolled = useScrollThreshold(SCROLL_THRESHOLD);
   const pathname = usePathname();
+  // Unreleased pages never reach the menu. The flags are inlined at build time,
+  // so a withdrawn page is absent from the markup rather than hidden by CSS.
+  const navItems = visibleLinks(primaryNav);
+  // Product pages share one visibility flag, so filtering the top level is
+  // enough: if Products is withdrawn the whole menu goes with it.
+  const productItems = visibleLinks(productMenu) as ProductMenuLink[];
 
   // The white treatment only applies while the header is still over the hero.
   // Once it has a surface behind it, ink is the readable choice on every page.
@@ -59,8 +75,26 @@ export function Header() {
             where there is room for it beside six nav items. */}
         <nav aria-label="Primary" className="hidden sm:block">
           <ul className="flex items-center gap-1">
-            {primaryNav.map((item) => {
+            {navItems.map((item) => {
               const active = pathname === item.href;
+
+              // Products opens a menu instead of navigating. "All Products"
+              // inside it is what goes to the listing page.
+              if (item.href === routes.products) {
+                return (
+                  <li key={item.href}>
+                    <ProductsMenu
+                      label={item.label}
+                      allLabel="All Products"
+                      allHref={routes.products}
+                      items={productItems}
+                      active={pathname.startsWith(routes.products)}
+                      overHero={overHero}
+                    />
+                  </li>
+                );
+              }
+
               return (
                 <li key={item.href}>
                   <Link
@@ -104,7 +138,7 @@ export function Header() {
           >
             Get in Touch
           </Button>
-          <MobileMenu tone={overHero ? "on-band" : "ink"} />
+          <MobileMenu tone={overHero ? "on-band" : "ink"} productMenu={productItems} />
         </div>
       </div>
     </header>

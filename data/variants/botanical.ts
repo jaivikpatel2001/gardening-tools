@@ -29,7 +29,7 @@ export const botanicalHero = {
   eyebrow: "Gardening tools for India",
   headingLines: ["Grow", "Better."] as const,
   body: "Tools chosen for black cotton soil and laterite, for six weeks of monsoon damp and forty degree afternoons. The garden you want is mostly a question of the right tool in your hand.",
-  primaryCta: { label: "Explore Our Tools", href: routes.tools },
+  primaryCta: { label: "Explore Our Products", href: routes.products },
   secondaryCta: { label: "Get in Touch", href: routes.contact },
   meta: [
     { value: site.founded, label: "Growing with Indian gardeners" },
@@ -37,7 +37,7 @@ export const botanicalHero = {
   ] as const,
   image: {
     src: "/images/about-preview.webp",
-    alt: "A gardener in an apron kneeling to plant seedlings in a raised timber bed on a bright afternoon",
+    alt: "A gardener in an apron kneeling to plant seedlings in a raised timber bed on a terrace, with potted plants and rooftops behind",
   } satisfies ImageAsset,
 };
 
@@ -45,7 +45,7 @@ export const botanicalNav = {
   eyebrow: "Find your tools",
   heading: "The range, arranged the way a garden is",
   body: "Move through the categories and the photograph at the centre follows you.",
-  cta: { label: "See the complete range", href: routes.tools },
+  cta: { label: "See the complete range", href: routes.products },
 };
 
 export const botanicalScene = {
@@ -65,7 +65,7 @@ export const botanicalScene = {
       name: "Hardwood Hand Trowel",
       category: "Hand Tools & Planting",
       feature: "Balanced for a hundred transplants in an afternoon",
-      href: routes.toolCategory("hand-tools"),
+      href: routes.productCategory("hand-tools"),
     },
     {
       id: "gloves",
@@ -74,16 +74,16 @@ export const botanicalScene = {
       name: "Leather-palmed Gloves",
       category: "Garden Accessories & Safety",
       feature: "Enough grip for thorns, thin enough to feel a seedling",
-      href: routes.toolCategory("garden-accessories"),
+      href: routes.productCategory("plastic-planters-and-stands"),
     },
     {
       id: "beds",
       x: 74,
       y: 66,
       name: "Watering Cans & Roses",
-      category: "Watering Tools",
+      category: "Watering Solutions",
       feature: "A fine brass rose leaves young beds where you planted them",
-      href: routes.toolCategory("watering-tools"),
+      href: routes.productCategory("watering-solutions"),
     },
     {
       id: "border",
@@ -92,7 +92,7 @@ export const botanicalScene = {
       name: "Bypass Secateurs",
       category: "Pruning & Cutting",
       feature: "Clean cuts on flowering shrubs, so they come back thicker",
-      href: routes.toolCategory("pruning-tools"),
+      href: routes.productCategory("cutting-tools"),
     },
   ] satisfies readonly SceneMarker[],
 };
@@ -154,7 +154,7 @@ export const botanicalJourney = {
       body: "Grow bags, a few pots on a railing and a metre of working space. Everything has to be small, light and storable behind the door.",
       tools: ["Khurpi (hand hoe and weeder)", "Hand trowel", "Watering can", "Secateurs"],
       image: {
-        src: "/images/category-hand-tools.webp",
+        src: "/images/product-hand-tools.webp",
         alt: "A hand trowel, hand fork and weeder with hardwood handles laid out on a weathered wooden bench beside potted herbs",
       } satisfies ImageAsset,
     },
@@ -165,7 +165,7 @@ export const botanicalJourney = {
       body: "Full sun, wind, and a summer that dries a pot out by noon. Watering stops being a chore and starts being a system.",
       tools: ["Hose pipe and reel", "Spray gun", "Drip kit", "Grow bags"],
       image: {
-        src: "/images/category-watering-tools.webp",
+        src: "/images/product-watering-solutions.webp",
         alt: "A galvanised watering can with a brass rose beside a bed of freshly watered seedlings",
       } satisfies ImageAsset,
     },
@@ -177,7 +177,7 @@ export const botanicalJourney = {
       tools: ["Phawda (digging spade)", "Digging fork", "Harvesting knife", "Tasla (carrying pan)"],
       image: {
         src: "/images/about-preview.webp",
-        alt: "A gardener in an apron kneeling to plant seedlings in a raised timber bed on a bright afternoon",
+        alt: "A gardener in an apron kneeling to plant seedlings in a raised timber bed on a terrace, with potted plants and rooftops behind",
       } satisfies ImageAsset,
     },
     {
@@ -215,9 +215,9 @@ export const botanicalClosing = {
   heading: "Let us help you grow something better",
   body: "Tell us your soil, your season and your space. We will tell you what you need, and what you can happily do without.",
   primaryCta: { label: "Get in Touch", href: routes.contact },
-  secondaryCta: { label: "Explore Tools", href: routes.tools },
+  secondaryCta: { label: "Explore Products", href: routes.products },
   image: {
-    src: "/images/category-garden-accessories.webp",
+    src: "/images/product-hand-tools.webp",
     alt: "Gardening gloves, jute twine and wooden plant labels arranged on a potting bench",
   } satisfies ImageAsset,
 };

@@ -1,22 +1,21 @@
-import Link from "next/link";
-
 import { cursorIntent } from "@/components/cursor/cursor-intent";
-import { ArrowIcon } from "@/components/ui/ArrowIcon";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { ImagePlate } from "@/components/ui/ImagePlate";
 import { Reveal } from "@/components/ui/Reveal";
 import { cinematicSolutions } from "@/data/variants/cinematic";
-import { services } from "@/data/services";
-import { routes } from "@/lib/routes";
+import { solutions } from "@/data/solutions";
 
 /**
  * Variant 1 solutions: a ledger of four entries down the page, with the section
  * heading pinned beside them on desktop.
  *
- * Cards would give four services equal weight and equal silence. Rows let each
+ * Cards would give four solutions equal weight and equal silence. Rows let each
  * one carry a full line of explanation, and the small photograph at the end of
  * the row grows on hover instead of a card lifting.
+ *
+ * The rows are not links. There is no Services page anywhere on the site, so
+ * each row states who it is for and the closing section carries the enquiry.
  */
 export function SolutionsLedger() {
   const { eyebrow, heading, body } = cinematicSolutions;
@@ -35,10 +34,9 @@ export function SolutionsLedger() {
         </Reveal>
 
         <Reveal as="ul" className="mt-12 border-t border-hairline lg:col-span-8 lg:mt-0" stagger={0.07}>
-          {services.map((service, index) => (
-            <li key={service.slug} className="border-b border-hairline">
-              <Link
-                href={routes.service(service.slug)}
+          {solutions.map((solution, index) => (
+            <li key={solution.slug} className="border-b border-hairline">
+              <div
                 className="group flex items-start gap-6 py-8 lg:gap-10 lg:py-10"
                 {...cursorIntent("view")}
               >
@@ -48,25 +46,25 @@ export function SolutionsLedger() {
 
                 <div className="min-w-0 flex-1">
                   <h3 className="text-display-sm text-ink transition-colors duration-300 group-hover:text-brand">
-                    {service.title}
+                    {solution.title}
                   </h3>
-                  <p className="mt-3 max-w-[46ch] text-body-md text-body">{service.description}</p>
-                  <span className="mt-5 inline-flex items-center gap-2 font-body text-[0.875rem] font-semibold text-brand">
-                    Learn more
-                    <ArrowIcon className="transition-transform duration-300 ease-[var(--ease-organic)] group-hover:translate-x-1" />
-                  </span>
+                  <p className="mt-3 max-w-[46ch] text-body-md text-body">{solution.description}</p>
+                  <p className="mt-5 font-body text-caption text-muted">
+                    <span className="uppercase tracking-[0.14em] text-brand-soft">For</span>{" "}
+                    {solution.audience}
+                  </p>
                 </div>
 
                 <div className="hidden w-[120px] shrink-0 transition-all duration-500 ease-[var(--ease-organic)] group-hover:w-[190px] sm:block">
                   <ImagePlate
-                    image={service.image}
+                    image={solution.image}
                     ratio="4/5"
                     sizes="190px"
                     radius="md"
                     className="grayscale transition-[filter] duration-500 group-hover:grayscale-0"
                   />
                 </div>
-              </Link>
+              </div>
             </li>
           ))}
         </Reveal>

@@ -2,12 +2,13 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "greentools-dev",
-      "url": "http://localhost:3005",
+      "name": "jiva-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--", "-p", "3005"],
       "port": 3005
     },
     {
-      "name": "greentools-prod",
+      "name": "jiva-prod",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "start", "--", "-p", "3312"],
       "port": 3312

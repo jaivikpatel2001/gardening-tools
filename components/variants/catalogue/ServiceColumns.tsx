@@ -1,23 +1,20 @@
-import Link from "next/link";
-
-import { ArrowIcon } from "@/components/ui/ArrowIcon";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Reveal } from "@/components/ui/Reveal";
 import { catalogueServices } from "@/data/variants/catalogue";
-import { services } from "@/data/services";
+import { solutions } from "@/data/solutions";
 import { cn } from "@/lib/cn";
-import { routes } from "@/lib/routes";
 
 /**
- * Variant 5 services: four printed columns under one heavy rule.
+ * Variant 5 solutions: four printed columns under one heavy rule.
  *
- * The range above is a table and the tools are a framed sheet, so the services
- * take the third catalogue form: text columns divided by vertical hairlines,
- * each with the one line most service pages leave out, who it is actually for.
+ * The range above is a table and the products are a framed sheet, so the
+ * solutions take the third catalogue form: text columns divided by vertical
+ * hairlines, each with the one line most service pages leave out, who it is
+ * actually for. Nothing here links out, because there is no Services page.
  */
 export function ServiceColumns() {
-  const { eyebrow, heading, body, audiences } = catalogueServices;
+  const { eyebrow, heading, body } = catalogueServices;
 
   return (
     <section
@@ -41,9 +38,9 @@ export function ServiceColumns() {
           className="mt-14 grid border-t-2 border-ink sm:grid-cols-2 lg:mt-16 lg:grid-cols-4"
           stagger={0.08}
         >
-          {services.map((service, index) => (
+          {solutions.map((solution, index) => (
             <li
-              key={service.slug}
+              key={solution.slug}
               // Rules and gutters are chosen per index rather than with
               // nth-child variants: two columns on a tablet and four on a desktop
               // disagree about which items start a row.
@@ -56,22 +53,13 @@ export function ServiceColumns() {
               <p aria-hidden="true" className="font-heading text-display-sm font-extrabold tabular-nums text-brand-soft/70">
                 {String(index + 1).padStart(2, "0")}
               </p>
-              <h3 className="mt-5 text-title-lg text-ink">{service.title}</h3>
-              <p className="mt-3 text-body-sm text-body">{service.description}</p>
+              <h3 className="mt-5 text-title-lg text-ink">{solution.title}</h3>
+              <p className="mt-3 text-body-sm text-body">{solution.description}</p>
 
               <p className="mt-5 border-t border-hairline pt-4 font-body text-caption text-muted">
                 <span className="font-semibold uppercase tracking-[0.14em] text-ink">For</span>
-                <span className="mt-1 block">{audiences[service.slug]}</span>
+                <span className="mt-1 block">{solution.audience}</span>
               </p>
-
-              <Link
-                href={routes.service(service.slug)}
-                className="group mt-6 inline-flex items-center gap-2 font-body text-[0.875rem] font-semibold text-brand"
-              >
-                Learn more
-                <span className="sr-only">{` about ${service.title}`}</span>
-                <ArrowIcon className="transition-transform duration-300 ease-[var(--ease-organic)] group-hover:translate-x-1" />
-              </Link>
             </li>
           ))}
         </Reveal>

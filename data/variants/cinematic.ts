@@ -17,7 +17,7 @@ export const cinematicHero = {
   /** Three clip-revealed lines, broken for rag rather than by wrapping. */
   headingLines: ["Premium Gardening", "Tools, Designed for", "Better Gardens"] as const,
   body: `Garden machinery and hand tools from Ahmedabad since ${site.founded}, chosen to keep working through Indian monsoons.`,
-  cta: { label: "Explore the Collection", href: routes.tools },
+  cta: { label: "Explore the Collection", href: routes.products },
   secondaryCta: { label: "Talk to us", href: routes.contact },
   scrollCue: "Scroll",
   meta: [`Est. ${site.founded}`, "Ahmedabad, Gujarat"] as const,
@@ -31,7 +31,7 @@ export const cinematicCategories = {
   eyebrow: "The collection",
   heading: "Five ways into the range",
   body: "Traditional Indian hand tools and modern garden machinery, presented the way a gardener actually reaches for them.",
-  cta: { label: "View the complete range", href: routes.tools },
+  cta: { label: "View the complete range", href: routes.products },
 };
 
 export const cinematicProducts = {
@@ -71,7 +71,7 @@ export const cinematicProducts = {
       features: ["Fine brass rose", "Galvanised body", "Balanced full or half full"],
     },
   ] as const,
-  cta: { label: "Browse the range", href: routes.tools },
+  cta: { label: "Browse the range", href: routes.products },
 };
 
 export const cinematicStory = {
@@ -96,13 +96,6 @@ export const cinematicSolutions = {
   body: "Four kinds of help, from choosing a first trowel to specifying a kit for an eight-person crew.",
 };
 
-export const cinematicJournal = {
-  eyebrow: "Learn and grow",
-  heading: "From the resources desk",
-  body: "Guides written for Indian conditions, by people who garden in them.",
-  cta: { label: "View all resources", href: routes.resources },
-};
-
 export const cinematicVoices = {
   eyebrow: "In their words",
   heading: "Trusted by gardeners",
@@ -113,9 +106,9 @@ export const cinematicClosing = {
   statement: "Every good garden starts with the right tool in your hand.",
   body: "Tell us what you are growing and where you are growing it. We will tell you honestly what you need, and what you can skip.",
   primaryCta: { label: "Get in Touch", href: routes.contact },
-  secondaryCta: { label: "Explore Tools", href: routes.tools },
+  secondaryCta: { label: "Explore Products", href: routes.products },
   image: {
     src: "/images/about-preview.webp",
-    alt: "A gardener in an apron kneeling to plant seedlings in a raised timber bed on a bright afternoon",
+    alt: "A gardener in an apron kneeling to plant seedlings in a raised timber bed on a terrace, with potted plants and rooftops behind",
   } satisfies ImageAsset,
 };

@@ -10,7 +10,7 @@ import { getHomeCategoryCards } from "@/lib/catalogue";
 import { cn } from "@/lib/cn";
 import { routes } from "@/lib/routes";
 import { cinematicCategories } from "@/data/variants/cinematic";
-import type { PhotographedToolCategory } from "@/types/content";
+import type { PhotographedProductCategory } from "@/types/content";
 
 /**
  * Variant 1 categories: a magazine spread rather than a grid of equal cards.
@@ -55,7 +55,7 @@ function CollageEntry({
   slot,
   index,
 }: {
-  category: PhotographedToolCategory;
+  category: PhotographedProductCategory;
   slot: Slot;
   index: number;
 }) {
@@ -68,7 +68,7 @@ function CollageEntry({
       start="top 90%"
       className={cn("group relative lg:order-none lg:mx-0", slot.order, MOBILE_OFFSET[index], slot.className)}
     >
-      <Link href={routes.toolCategory(category.slug)} className="block" {...cursorIntent("view")}>
+      <Link href={routes.productCategory(category.slug)} className="block" {...cursorIntent("view")}>
         <ImagePlate image={category.image} ratio={slot.ratio} sizes={slot.sizes} radius="lg">
           <div
             aria-hidden="true"

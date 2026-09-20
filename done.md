@@ -1,8 +1,8 @@
 # Project Work History
 
-Chronological implementation log for the GreenTools gardening website. Newest entries at the bottom of each day. Times are IST.
+Chronological implementation log for the Jiva Greens gardening website. Newest entries at the bottom of each day. Times are IST.
 
-See also: [resources/plan.md](resources/plan.md) for the project plan and architecture, and [resources/image-generation.md](resources/image-generation.md) for the image manifest.
+See also: [resources/plan.md](resources/plan.md) for the project plan and architecture, [resources/section-parity.md](resources/section-parity.md) for the homepage section checklist, and [resources/image-generation.md](resources/image-generation.md) for the image manifest.
 
 ---
 
@@ -766,3 +766,599 @@ The client confirmed the site is for **Jiva Greens (JIVA)**, the trading brand o
 - Ask the client for a vector (SVG or AI) logo, so the favicon and app icons can carry the JIVA mark and the header logo is sharp on high-density screens.
 - Ask for opening hours, postcode and any social profiles, to restore those blocks with real data.
 - Testimonials in `data/testimonials.ts` are still sample quotes marked as placeholder in the file. They need real, permissioned customer quotes before launch.
+
+---
+
+## 2026-09-20
+
+### 11:15 IST: Products terminology, the five interior pages, homepage section parity, the preloader and the production page switchboard
+
+The largest single phase so far. Six pieces of work, in the order they had to happen.
+
+---
+
+#### 1. Tools became Products, everywhere
+
+The range is now called Products in navigation, headings, buttons, breadcrumbs, URLs, metadata, page titles and every call to action. The rename went all the way down rather than stopping at the copy, so the code and the site use one vocabulary.
+
+- Routes: `/tools` and `/tools/[category]` became `/products` and `/products/[slug]`. `routes.services`, `routes.service()`, `routes.resources`, `routes.resource()`, `routes.faq`, `routes.privacy` and `routes.terms` were deleted; nothing pointed at a page that exists.
+- Types: `ToolCategory` to `ProductCategory`, `Tool` to `Product`, `ToolGroup` to `ProductGroup`, `ToolItem` to `ProductItem`, and the photographed variants with them. The category field `tools` became `items`.
+- Files: `data/toolCategories.ts` to `data/productCategories.ts`, `data/tools.ts` to `data/products.ts`, `ToolCategoryCard` to `ProductCategoryCard`, `ToolShowcaseCard` to `ProductShowcaseCard`, `ServiceCard` to `SolutionCard`.
+- "Hand Tools", "Cutting Tools" and "Watering Tools" stay as category names. That is what the trade and the client call them, and it is the one contextual reason the word survives.
+
+**Product scope.** Checked against the client's own navigation and catalogue. Nothing was invented: no product name, model, SKU, variant or specification that the client does not publish. Two real gaps were closed from their nav: pesticides and fertilisers, and fountain nozzles, both folded into existing categories (`sprayers`, now "Sprayers, Pesticides & Fertilisers", and `watering-tools`) rather than padded into new ones. The range stays at fourteen categories.
+
+**Category data gained `intro`, `features` and `applications`** so the detail pages have something real to say. These describe the category, not a data sheet: no measurements, capacities or model numbers appear anywhere.
+
+---
+
+#### 2. The five interior pages
+
+| Route | What it is |
+|---|---|
+| `/about` | Company introduction, brand story, mission and vision, values, product philosophy, capability, Indian focus, solutions, CTA |
+| `/products` | Premium catalogue listing: group filter, search, sort, responsive grid |
+| `/products/[slug]` | One reusable component over all fourteen categories |
+| `/clients` | Logo wall, industries served, highlights, partnership approach, testimonials |
+| `/contact` | Contact channels, enquiry form, location, CTA |
+
+Four new shared shells carry them: `PageHero`, `Breadcrumbs`, `CtaBand` and `HighlightsBand`. Nothing underneath was redesigned.
+
+**Products listing.** Rows, groups and counts are computed on the server; the client browser receives plain serialisable values with the searchable text already joined. `lib/catalogue.ts` and the catalogue data never cross the client boundary. There is no price filter, no availability filter and no cart, because none of those exist on this site.
+
+**Product detail.** One route, one component, driven entirely by `data/productCategories.ts`. Adding a category publishes its page. A category that has not been photographed renders a typographic plate rather than a borrowed photograph. The gallery component is built and falls back to the single lead image; extra frames are defined in the manifest and will appear as `gallery` entries when they exist.
+
+**Services page removed.** The client's own services page is placeholder Latin, and four cards do not justify a route. The content lives on as `data/solutions.ts`, shown on Home, About and the variants. The cards deliberately do not link anywhere: a card linking nowhere useful is worse than a card that does not link.
+
+**Resources replaced by Clients.** Three variant sections that previewed guides became client sections, `data/resources.ts` and `ResourceCard` were deleted, and the footer, sitemap and navigation followed. **No client is named and no logo is drawn.** The logo wall renders nothing at all while `clientLogos` is empty. The logos on the client's existing Clients page turned out to be the demo marks that shipped with their old template (brilliant, goodwaves, videosms, spectrum, diagblog, home-energy), so they were not reused. Testimonials remain the existing placeholder set, and the Clients page now says so on the page as well as in the data file.
+
+**Contact.** Every fact reads from `config/site.ts`. No opening hours, postcode, response time or map pin is shown, because none has been supplied: the page says hours are not published and to call first. The map is a link, not an embed, so there is no third-party request on every visit.
+
+**The enquiry form does not lie.** Delivery is not built, so it never claims an enquiry was sent. It composes the message and hands it to the visitor's own mail client, and offers the phone and WhatsApp routes beside it. Fields are declared in `data/contact.ts` so a future backend validates against the same list; only `onSubmit` has to change.
+
+---
+
+#### 3. Homepage section parity across all five variants
+
+The live Home page is the reference for content coverage. It now carries thirteen sections: Resources became Clients, and a highlights band was added.
+
+Seven shared, configurable bands were built in `components/variants/shared/` (`VariantTrust`, `VariantBenefits`, `VariantAbout`, `VariantSolutions`, `VariantHighlights`, `VariantClients`, `VariantTestimonials`, `VariantCommunity`, `VariantNewsletter`). Each takes a `variant`, a `layout` and a `tone`, so five pages carry the same content in five shapes without five copies of it. Copy lives in `data/variants/shared.ts`: shared bodies, per-variant eyebrows and headings.
+
+Thirty-one section instances were added across the five variants. The audit was run against rendered HTML, not by eye, and the checklist is in [resources/section-parity.md](resources/section-parity.md). Every cell is filled.
+
+Two judgement calls are recorded there: variants 2 and 3 carry solutions twice on purpose, because their finder and journey sections are a different story from the four gardening solutions on `/`; and variant 2 does not repeat the highlights band, because `InteractiveTrust` already counts the same figures from the same catalogue.
+
+The deep-band budget was respected. Variants 1, 2 and 4 already spend their one dark band, so their community section takes the plate layout. Variant 3 has none, so it keeps the full-bleed photographic treatment `/` uses. Variant 5 stays light throughout.
+
+---
+
+#### 4. The preloader
+
+Grass grows, a mower crosses and cuts it, the trimmed lawn hands over to the logo.
+
+- Inline SVG and CSS keyframes. No images beyond the logo the header already preloads, no Lottie, no GSAP, nothing to download before it can start.
+- Armed before first paint by the script in `app/layout.tsx`, the same technique the theme and `js-motion` use, so there is no flash of page followed by overlay.
+- Runs **once per session**. Skipped entirely on reduced motion, on reduced data (`navigator.connection.saveData`) and with JavaScript off.
+- Holds no React state: `data-preloader` on `<html>` decides everything. The whole sequence is capped at 1.75 seconds plus a 420ms fade, and the timeout fires whatever happens, so a slow device cannot trap anyone behind it.
+- Thirty blades, each a nested pair of groups: one grows, one is cut, because both are `scaleY` and cannot share an element.
+
+---
+
+#### 5. Production page visibility
+
+One file, `config/pageVisibility.ts`, decides what exists in production.
+
+- Development and staging serve every implemented page regardless of the flags.
+- Enforcement is at the route, never in the markup: `proxy.ts` blocks a withdrawn path at the edge, and every gated route calls `enforcePageVisibility()`, which calls `notFound()`.
+- `lib/visibility.ts` is the only module that reads the flags. `visibleLinks()` filters the header, the mobile sheet and the footer; `app/sitemap.ts` filters the same way; a footer column left with no links renders nothing rather than an empty heading.
+- No database, no admin panel, no feature-flag service, no authentication, no API.
+
+`middleware.ts` is deprecated in Next 16, so this is `proxy.ts`.
+
+---
+
+#### 6. `.env.example` reduced to what the code reads
+
+Every `process.env` reference in the codebase was traced. Three variables are used, all through `config/env.ts`: `NEXT_PUBLIC_APP_ENV`, `NEXT_PUBLIC_SITE_URL` and `NEXT_PUBLIC_WHATSAPP_NUMBER`.
+
+**Removed:** `NODE_ENV` (commented note), `CONTACT_FORM_TO_EMAIL`, `CONTACT_FORM_FROM_EMAIL`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, `EMAIL_PROVIDER`, `EMAIL_PROVIDER_API_KEY`, `NEXT_PUBLIC_CAPTCHA_SITE_KEY`, `CAPTCHA_SECRET_KEY`, `NEXT_PUBLIC_GA_MEASUREMENT_ID`, `NEXT_PUBLIC_GTM_CONTAINER_ID`, `CMS_API_URL`, `CMS_API_TOKEN`, `CMS_PREVIEW_SECRET`, `CMS_REVALIDATE_SECRET`, `NEXT_PUBLIC_API_BASE_URL`, `API_SECRET_KEY`. Twenty variables, none referenced anywhere in the code.
+
+No backend was built as part of this. Variables go in when the feature does.
+
+---
+
+#### Image manifest
+
+`resources/image-generation.md` was updated to the real product list.
+
+- The three Resources slots were retired. `resource-choosing-tools` was kept and renamed `products-overview`, because a bench of tools laid out for comparison is exactly what the Products page opens with; `resource-essential-tools` and `resource-clean-maintain` are gone, sources and outputs both.
+- Section 4 now states that each category image is also the lead photograph of its own page, and defines optional `-02` and `-03` gallery slots.
+- The sprayers prompt covers pesticides and fertilisers, with an explicit instruction that the bottle carries no label or packaging graphics.
+- New section 8b covers client logos: supplied by the client, never generated, traced or recoloured, with the note about the old site's demo marks.
+
+---
+
+#### Files affected
+
+New: `config/pageVisibility.ts`, `lib/visibility.ts`, `lib/page-guard.ts`, `lib/highlights.ts`, `proxy.ts`, `app/about/page.tsx`, `app/products/page.tsx`, `app/products/[slug]/page.tsx`, `app/clients/page.tsx`, `app/contact/page.tsx`, `data/about.ts`, `data/clients.ts`, `data/contact.ts`, `data/solutions.ts`, `data/products-page.ts`, `data/variants/shared.ts`, `components/about/sections.tsx`, `components/clients/sections.tsx`, `components/products/*`, `components/forms/EnquiryForm.tsx`, `components/preloader/*`, `components/cards/IndustryCard.tsx`, `components/sections/{PageHero,Breadcrumbs,CtaBand,HighlightsBand}.tsx`, `components/variants/shared/Variant*.tsx`, `resources/section-parity.md`.
+
+Renamed: `data/productCategories.ts`, `data/products.ts`, `components/cards/ProductCategoryCard.tsx`, `components/cards/ProductShowcaseCard.tsx`, `components/cards/SolutionCard.tsx`.
+
+Deleted: `data/resources.ts`, `data/services.ts`, `components/cards/ResourceCard.tsx`, `components/variants/cinematic/MagazineJournal.tsx`, `components/variants/artdirected/VisualJournal.tsx`, `components/variants/catalogue/ReadingList.tsx`, three `resource-*.webp` images.
+
+Updated: `app/page.tsx`, `app/layout.tsx`, `app/sitemap.ts`, all five variant pages, `lib/routes.ts`, `lib/catalogue.ts`, `lib/seo.ts` callers, `types/content.ts`, `config/env.ts`, `data/home.ts`, `data/navigation.ts`, all five variant data files, `components/layout/{Header,Footer,MobileMenu}.tsx`, `components/home/collections.tsx`, `scripts/process-images.mjs`, `.env.example`, `CLAUDE.md`, `resources/plan.md`, `resources/image-generation.md`, `.claude/launch.json`.
+
+---
+
+#### Verification
+
+- `npm run check` and `npm run build` pass. The build generates all fourteen product category pages and registers the proxy.
+- Section parity audited against rendered HTML for `/` and all five variants. All thirteen sections present on every page, all six returning 200.
+- Production gating tested with a real production build and server, with `products` and `clients` set to `false`: `/` `/about` `/contact` returned 200; `/products`, `/products/lawn-mowers`, `/clients` and `/variant1` returned **404** with the site's not-found page; the sitemap listed only the three released URLs; Products and Clients were absent from the header, the mobile sheet and the footer, and the two empty footer columns disappeared with them.
+- The preloader was stepped through frame by frame in the browser: grass grows, the mower crosses leaving a cut trail behind it, the logo settles.
+- No console errors on Home, Products, a product category page, Clients or Contact.
+- No em dash in any visitor-facing string.
+- Nothing secret is staged. `.env.example` is the only committed `.env*` file.
+
+---
+
+#### Decisions worth keeping
+
+- **Product detail pages are per category, not per product.** The client publishes categories, not model sheets. A page per named product would have to invent the specification table it needs to justify itself.
+- **The logo wall hides itself rather than showing placeholders.** Greyed boxes or invented brands on a credibility page would undermine the exact thing the page is for.
+- **The solutions cards do not link.** With no Services page, a "Learn more" that went nowhere useful would be worse than no link.
+- **The enquiry form is honest about not being connected**, and still does something real by composing the message for the visitor's mail client.
+- **Page visibility is enforced twice, both server side.** The route check produces the 404 page and status; the proxy makes sure a withdrawn page is never rendered at all.
+- **The variant bands are configurations, not copies.** Nine components, thirty-one uses, and a layout and tone per variant.
+
+---
+
+#### Pending follow-up
+
+- **Client logos.** Ask for real marks with permission to show them, as transparent PNG or SVG. The wall is built and hides itself until they arrive.
+- **Testimonials** are still placeholder, now labelled as such on the Clients page. Real, permissioned quotes are needed before launch, ideally with company names for the Clients page.
+- **Opening hours and postcode.** The Contact page states that hours are not published. Add them to `config/site.ts` when supplied.
+- **Photography.** Nine product categories and four featured products still have no image. The Products page and the category pages render typographic cards for them, which is honest but plainer than the photographed ones.
+- **Regenerate `products-overview`.** The current frame carries printed labels under the tools and now sits beside the Products page heading.
+- **Founding year** still unconfirmed: the client's site says both 1998 and 2003. The site uses 1998, and the derived "years" figure on the highlights band depends on it.
+- **Legal pages.** Privacy and terms links were removed from the footer because the pages do not exist. Add both, then restore the links.
+- **Enquiry delivery.** When email is built, add its variables to `.env.example` then, not before, and replace the form's `onSubmit`.
+
+### 12:05 IST: Preloader plays on every reload, and follows the theme
+
+Two changes to the preloader, both requested in review.
+
+**Every browser reload, not once per session.** The `sessionStorage` gate in the arming script in `app/layout.tsx` is gone, so the animation plays on every document load. Client-side navigation between pages never re-runs that script, so moving around the site is still instant and the preloader does not reappear between pages. Reduced motion, reduced data and no-JavaScript still skip it entirely, and the 1.75 second cap is unchanged.
+
+**Colour follows the theme.** The scene was drawing its grass in raw palette values, `--green-600` and `--green-800`. That works on the cream canvas and fails on the dark one: `#123b1c` on `#08150c` is all but invisible, so half the patch disappeared in the dark theme.
+
+Four semantic tokens now carry it, defined in both theme blocks of `globals.css`:
+
+| Token | Light | Dark |
+|---|---|---|
+| `--preloader-blade` | `green-600` | `green-300` |
+| `--preloader-blade-deep` | `green-800` | `green-600` |
+| `--preloader-mower` | `ink` | `ink` |
+| `--preloader-mower-accent` | `green-600` | `leaf-400` |
+
+Not an inversion: the greens lighten so they read against near-black, and the pair keeps the same relationship, with the deeper green still sitting behind the lighter one. The ground line, the wheel spokes, the tagline and the logo plate were already on theme tokens and needed nothing.
+
+**Files:** `app/layout.tsx`, `app/globals.css`, `components/preloader/Preloader.module.css`, `components/preloader/Preloader.tsx` (comment), `CLAUDE.md`.
+
+**Verified:** two consecutive reloads both arm the overlay (`data-preloader="active"` on both); in the dark theme the tokens resolve to `#a8c98d` and `#3f7f35` on a `#08150c` canvas, and the scene was checked by eye mid-animation in both themes. `npm run check` passes.
+
+**Pending follow-up**
+
+- The client has supplied a Lawn Preloader design at `claude.ai/design` (project `b0e1b9d6`, file `Lawn Preloader.dc.html`) to replace this scene. DesignSync has no authorization in this session; it needs `/design-login` run once from an interactive Claude Code terminal on this machine. The every-reload behaviour and the theme tokens above carry over to whatever replaces the current SVG.
+
+### 13:40 IST: The client's Lawn Preloader composition ported in
+
+The hand-drawn SVG preloader is replaced by the client's own composition from Claude Design, project `b0e1b9d6`, file `Lawn Preloader.dc.html`.
+
+**What was imported.** The design is a five second cinematic loop in five scenes: Dawn, Growth, Lush, Mow, Settle. A dense procedural lawn in three depth bands rises out of the turf, stands and sways, and a detailed mower glides in from the left cutting it, throwing clippings, before the lawn settles clean again.
+
+**What was ported, and what was not.**
+
+| File in the design | Here |
+|---|---|
+| `LawnPreloader.jsx` | `components/preloader/LawnScene.tsx` and `lawn-scene.ts` |
+| `animations-v3.jsx` (clock, easing, tweens) | Four functions in `lawn-scene.ts`, plus one rAF loop in `Preloader.tsx` |
+| `tweaks-panel.jsx` (editor sliders) | Not ported. Its saved values are the `TWEAKS` constants |
+| `support.js` (the `<x-dc>` page loader) | Not ported. The Next component boundary replaces it |
+
+The design tool's runtime is an authoring harness, so none of it ships. What ships is the composition: the same geometry, the same choreography, the same numbers.
+
+**Design decisions taken during the port.**
+
+- **The scene stays a pure function of authored time.** `LawnScene` reads no clock, holds no state and has no effect. `Preloader.tsx` owns one request-animation-frame loop and passes `t` down, which is what let the whole sequence be stepped through frame by frame in review.
+- **The field is seeded, not random.** Blades, turf, clippings and motes all come from a seeded generator, so the server and the client build byte-identical geometry.
+- **The design loops; a preloader cannot.** The authored five seconds are played through once, warped rather than scaled (see the 14:10 entry below for why).
+- **Two palettes, not one.** The design is a warm dawn on a cream sky, which is right in the light theme and wrong in the dark one. `DAWN` is the design exactly as saved. `DUSK` is the same lawn after sundown: the sky darkens toward the top instead of the horizon, the sun becomes a cool moon, the wash goes blue and the grass keeps its root-to-tip relationship while shifting down to separate against near-black. The mower is deliberately not themed, because it is the same machine at either hour and the light on it comes from the wash and vignette laid over the frame.
+- **The palette is chosen through `useSyncExternalStore`** on `data-theme`, with a `null` server snapshot. The scene is therefore absent from the server HTML rather than rendered in the wrong palette and corrected a frame later, and there is no hydration mismatch and no setState in an effect.
+- **The brand plate is white in both themes.** The scene is deep and busy either way, so the lockup sits on its own plate, which is the rule the header already follows on a deep band.
+- **Depth of field is the expensive part.** The three band Gaussian blurs are turned down below 744px or on four cores or fewer, which is the design's own `depthBlur: false` path rather than a new one.
+
+**Cost.** Twenty-four path elements on screen. The static turf mat, nearly six thousand blades of texture, is built once at module scope and joined into twelve paths; only its fills depend on the palette. The 920 animated blades are rebuilt per frame into twelve more.
+
+**Files:** new `components/preloader/lawn-scene.ts` and `components/preloader/LawnScene.tsx`; rewritten `components/preloader/Preloader.tsx` and `Preloader.module.css`; `app/globals.css` (the four `--preloader-*` scene tokens from this morning are gone, replaced by `--preloader-ground`); `CLAUDE.md`.
+
+**Verified:** stepped through the arc at a temporarily slowed `RUN_MS` and confirmed each scene in turn: grass rising, the lawn dense and standing, the mower crossing with cut turf behind it, the settled lawn. Checked in both themes, with the palette swapping live when `data-theme` changes. At 375px the depth blur drops to the design's low setting, the scene crops rather than letterboxes, and there is no horizontal overflow. No console errors, no long tasks recorded across the load, the overlay returns to `display: none` and the attribute is cleared after the run. `npm run check` and `npm run build` pass.
+
+**Pending follow-up**
+
+- `RUN_MS` is the one number to change if the client wants the full authored five seconds rather than the compressed 2.6.
+- The design ships `shots/a.png` and `shots/b.png` as reference frames. They were not imported; nothing on the site needs them.
+
+### 14:10 IST: Preloader re-timed so the mower reads
+
+Review: the grass cutter crossed far too fast.
+
+The cause was uniform compression. The whole five second timeline was being squeezed into 2600ms, so everything ran at about 1.9x, and the mower covered nearly two screen widths in 1.3 seconds. It read as a machine being yanked across the frame rather than mowing.
+
+Fixed by warping the timeline instead of scaling it. Per-section re-timing is part of the design tool's own model, so this keeps the composition honest: the mower plays close to the speed it was authored at, and the beats on either side stay brisk.
+
+```ts
+// lawn-scene.ts
+export const TIMELINE = [
+  { until: 2.18, ms: 850 },   // dawn, and the grass rising
+  { until: 4.72, ms: 2100 },  // the mower's full travel
+  { until: 5.0,  ms: 250 },   // clippings settling
+];
+```
+
+The boundaries are the mower's own travel window rather than the scene names, because its glide starts before the Mow cue and finishes inside Settle.
+
+| | Before | After |
+|---|---|---|
+| Mower travel | 1321ms | 2100ms |
+| Whole arc | 2600ms | 3200ms |
+| On screen, including fade | 3060ms | 3660ms |
+
+The mower is 59 percent slower for 600ms more on screen. `authoredTime()` maps elapsed milliseconds through the warp and `wallTime()` inverts it, which is what cues the brand plate, so nothing outside the scene needs to know the pacing. Everything inside the scene is still keyed to authored time, so the clippings, the sway, the wheel roll and the engine bob all slowed with the mower automatically.
+
+**Files:** `components/preloader/lawn-scene.ts`, `components/preloader/Preloader.tsx`, `CLAUDE.md`.
+
+**Verified:** pacing arithmetic checked against the table, the arc watched through on reload in the light theme, `npm run check` and `npm run build` pass.
+
+**To re-tune:** change the middle number in `TIMELINE`. It is the only one that affects how the machine reads.
+
+### 15:20 IST: Preloader plate removed, stale image cache cleared, brand wall live
+
+Three things from review.
+
+#### 1. The logo plate is off the preloader
+
+The white plate carrying the lockup and the tagline covered the middle of the frame the composition had been built to deliver. It is gone, and the preloader is now the scene alone. The header shows the mark a moment later anyway.
+
+`wallTime()` in `lawn-scene.ts` existed only to cue that plate, so it went with it rather than being left as dead code.
+
+#### 2. "This image is old" was a cache, not a file
+
+`public/images/about-preview.webp` on disk was already the new photograph: an Indian gardener on a terrace with rooftops and a temple dome behind. What was being served was a stale rendition out of Next's image optimiser cache, which is keyed on the URL and the URL had not changed.
+
+Cleared `.next/cache/images`. A production deploy writes a fresh `.next`, so this only bites in a long-running dev server. **If an image looks stale in dev after replacing a source file, that is where to look first.**
+
+#### 3. All twenty regenerated images checked, and the alt text caught up
+
+Every category and every featured product now has a photograph; those were already wired up. What had not caught up was the alt text on the four hand-tool categories that were reshot, which still described the previous frames:
+
+| Slot | Was | Now |
+|---|---|---|
+| `category-digging-tools` | a spade and digging fork standing upright | a spade, a phawda and a gaiti resting in turned soil at a plot edge |
+| `category-pruning-tools` | secateurs and loppers beside a pruned shrub | secateurs, branch cutter, hedge shears and a daranti against a clipped hedge in flower |
+| `category-watering-tools` | a watering can beside a bed of seedlings | a watering can, a wall-mounted hose reel and a rotating sprinkler on a wet terrace |
+| `category-hand-tools` | trowel, fork and weeder beside potted herbs | trowel, cultivator, weeder and dibber beside terracotta pots |
+
+`about-preview` alt now names the terrace and the rooftops. The nine machinery categories and the four new products were generated from the manifest's own draft alt text, so those already matched.
+
+Home still shows the same five featured categories plus the machinery teaser: the composition was approved that way, and featuring all fourteen would turn that section into a wall. The nine machinery photographs appear on the Products page and on each category page.
+
+#### 4. The brand wall is live, and it is a brand wall
+
+Five marks supplied: STIHL, Falcon Garden Tools, Concorde, Milan and Kamlesh Lawn Mowers.
+
+**They are manufacturers, not customers.** The old site files them under `images/clients/`, but STIHL makes power tools and Falcon, Concorde, Milan and Kamlesh are Indian garden tool and lawn mower makers. Presenting STIHL as a client of a garden tools dealer would be an obvious error to anyone in the trade. They are presented as the brands stocked, under "Brands we stock" and "The Names Behind the Range", which is true and is the stronger claim: carrying those names is what a serious dealer is judged on.
+
+Handling, because these are third-party trademarks:
+
+- `npm run images` copies everything in `gardening images/clients/` **byte for byte**. No resize, no re-encode, no crop, no trim.
+- The wall serves them `unoptimized`, so the exact supplied file reaches the browser. The optimiser had been emitting a 100px rendition of a 160px original, which the cell then scaled back up.
+- Each mark sits on a white cell in both themes, contained, capped at 130px wide, in its own colours. No greyscale filter: a trademark is placed, not treated.
+
+`ClientLogo` became `BrandMark` and `ClientLogoWall` became `BrandWall`, so the code says what it means.
+
+**Files:** `components/preloader/Preloader.tsx`, `Preloader.module.css`, `lawn-scene.ts`, `scripts/process-images.mjs`, `types/content.ts`, `data/clients.ts`, `data/productCategories.ts`, `data/home.ts`, `data/about.ts`, `data/variants/{cinematic,botanical}.ts`, `components/clients/sections.tsx`, `app/clients/page.tsx`, `resources/image-generation.md`.
+
+**Verified:** `npm run check` and `npm run build` pass. Checked against a fresh production build rather than the dev server, which had gone stale: the brand wall renders five marks, none broken, each at 160px natural served from `/images/clients/` and drawn at 130px, no console errors. The preloader overlay now has a single child, no logo and no tagline.
+
+**Pending follow-up**
+
+- The long-running dev server on port 3000 is holding a stale module graph and its HMR socket is dead. It needs restarting to pick up today's renames.
+- Customer logos and permissioned testimonials are still outstanding. They are a separate list from `brandMarks`, not an addition to it.
+- Worth asking the client whether any of the five brands restricts how its mark may be displayed; several manufacturers publish brand guidelines for dealers.
+
+### 16:35 IST: Products navigation is a dropdown
+
+Clicking Products in the header used to go straight to `/products`. It now opens a small menu, the way the client's existing site does.
+
+```text
+Products ˅
+──────────────
+All Products        -> /products
+Hand Tools          -> /products/hand-tools
+Digging Tools       -> /products/digging-tools
+...fourteen categories, in catalogue order
+```
+
+**Data driven, and the data stays on the server.** `getProductNavLinks()` in `lib/catalogue.ts` returns all fourteen categories as labels and hrefs. `app/layout.tsx` is a server component, so it resolves them and passes them into `Header`, which hands them to `ProductsMenu` and `MobileMenu`. All three of those are client components, and the project rule is that the catalogue never crosses a `"use client"` boundary. The alternative, retyping fourteen category names into `data/navigation.ts`, would have drifted the first time one was renamed.
+
+One header serves every page and all five Home variants, so the menu is defined once. Nothing was duplicated per variant.
+
+**A disclosure, not a menu.** Button with `aria-expanded` and `aria-controls` over a plain list of links, rather than `role="menu"`. The menu role promises application-menu semantics that would hide the links from the document, remove them from the Tab order and make arrow keys the only way through. Arrow keys, Home and End are added on top as a convenience: ArrowDown from the trigger opens and focuses the first item, focus wraps, Escape closes and returns focus to the trigger, an outside pointerdown closes, and Tab just leaves.
+
+**Two interaction details worth recording.**
+
+1. *Hover opened it, then the click closed it again.* Hovering set it open, and the click that naturally follows toggled it straight back shut, which reads as a menu refusing to open. A `openedByHover` ref now makes the first click after a hover-open a no-op and the second one close it.
+2. *`requestAnimationFrame` dropped the keyboard focus move.* Focusing the first link after an ArrowDown open was scheduled in a frame callback, and a throttled or unpainted tab never ran it. It is an effect keyed on `open` now, which runs after the commit that mounts the panel and cannot be skipped.
+
+**Mobile** does not reuse the hover menu. The Products row in the existing sheet became a button that expands a nested, indented list in place, with the same fifteen destinations and the same `aria-expanded` wiring. It collapses when the sheet navigates.
+
+**Design.** 240px single column, existing radius, hairline, shadow and type scale, `All Products` pinned at the top above a hairline, 180ms fade with 6px of travel. Absolutely positioned, so opening it never shifts the header or the page, and it caps at `min(70vh, 32rem)` with internal scroll so a short viewport cannot clip it.
+
+**Files:** `components/layout/ProductsMenu.tsx` (new), `components/layout/Header.tsx`, `components/layout/MobileMenu.tsx`, `app/layout.tsx`, `lib/catalogue.ts`, `CLAUDE.md`.
+
+**Verified** against a production build at 1280x820 and 375x812:
+
+- Trigger is a `button`, not a link, and no longer navigates.
+- Panel lists fifteen destinations: All Products plus the fourteen real categories, every href matching its slug.
+- 240 x 512px panel, bottom at 570px in an 820px viewport, no clipping and no layout shift.
+- Click opens and closes. Escape closes and returns focus to the trigger. Outside pointerdown closes.
+- ArrowDown opens and focuses All Products, ArrowDown steps to Hand Tools, End jumps to Irrigation, ArrowDown from there wraps back to All Products.
+- Mobile sheet expands fifteen items in place, no horizontal overflow.
+- Variant 1 shows the same dropdown, confirming every variant inherits it.
+- On `/products/lawn-mowers` the trigger carries `aria-current="page"`.
+- `npm run check` and `npm run build` pass.
+
+**Note:** the browser pane collapsed to zero width partway through testing, which made `innerWidth` 0 and put the header nav below the `sm` breakpoint, so it was `display: none` and clicks did nothing. Worth recognising quickly: set an explicit viewport before testing a breakpoint-dependent component.
+
+### 17:30 IST: Products dropdown rebuilt in the client's own vocabulary
+
+Three things were wrong with the first version, all raised in review.
+
+#### 1. Our names instead of theirs
+
+The menu was listing labels I had derived: Hand Tools, Digging Tools, Pruning Tools, Watering Tools. The client's own menu does not say any of that. `data/productMenu.ts` now holds their list, in their order and with their grouping:
+
+```text
+All Products
+Lawn Mowers            > Wheel Type Manual, Rotary Type Electric, Roller Type
+                         Electric, Roller Type Petrol, Zero Cut, Battery Mowers
+Brush Cutters
+Branch Cutters
+Chain Saws
+Hedge Trimmers
+Hedge Shears
+Mist Blowers & Sprayers
+Blowers
+Sprinklers
+Spray Pumps
+Planters & Stands
+Cutting & Pruning
+Hand Tools
+Watering Solutions     > Garden Pipes, Watering Cans, Hose Reels, Self Coiling Hose
+Pesticides & Fertilisers
+Fountain Nozzles
+Garden Solar Lights
+```
+
+Three of our categories are not in their menu at all (digging, tillers, garden utility). They are appended so every page the site has stays reachable from the navigation.
+
+**The menu is a vocabulary layer over the existing routes.** Several of the client's entries are different counter names for the same part of the range: branch cutters, hedge shears and cutting tools all live under Pruning & Cutting. So `label` is what the visitor reads and `slug` is what routes, and `getProductMenu()` resolves every slug against the catalogue, which means a typo in the menu fails the build instead of shipping a dead link. Child entries land on the parent category page at its range list, which is where that exact product type is named.
+
+Category names dropped our invented "Tools" suffix where the client's terminology gives a better one: "Watering Tools" became **Watering Solutions** (title and short title), "Digging Tools" became **Digging & Soil**, "Pruning Tools" became **Cutting & Pruning**. **Hand Tools** is kept, because that is the client's own menu entry and the trade name; flag if it should change too.
+
+#### 2. The scrollbar, and Lenis eating the wheel
+
+The panel had `max-h-[min(70vh,32rem)]` with `overflow-y: auto`. Two problems in one: a scrollbar running down a premium menu, and scrolling over the panel moved the page instead of the list, because Lenis takes the wheel globally and an inner scroll container has to opt out of it.
+
+Fixed by removing the constraint rather than by opting out. The panel is now exactly as tall as its contents, 703px on the full menu, which leaves it at 761px in a 900px viewport. No max height, no overflow, no scrollbar, nothing for Lenis to fight. It closes on page scroll instead, which is the honest behaviour for a menu hanging off a fixed header over a moving page.
+
+Rows tightened from 40px to 32px and the panel from 240px to 224px wide to buy that height back.
+
+#### 3. The client's second level was missing
+
+Lawn Mowers and Watering Solutions now open a flyout to the right, as theirs do. It is an enhancement and never the only route: the parent row is itself a link to the same range, so nothing in the menu is reachable by hover alone, and the mobile sheet indents the same children one step further rather than flying anything out.
+
+**Files:** `data/productMenu.ts` (new), `lib/catalogue.ts`, `types/content.ts`, `components/layout/ProductsMenu.tsx`, `components/layout/Header.tsx`, `components/layout/MobileMenu.tsx`, `app/layout.tsx`, `data/productCategories.ts`, `CLAUDE.md`.
+
+**Verified** against a production build at 1440x900 and 375x812:
+
+- 21 entries in the client's names and order, every href resolving to a real category page.
+- `overflow-y: visible`, `max-height: none`, `scrollHeight === clientHeight`. No scrollbar, nothing scrollable.
+- Panel 703px tall, bottom at 761px in a 900px viewport.
+- Hovering Lawn Mowers opens the flyout with all six mower types, each to `/products/lawn-mowers#range`.
+- Page scroll closes the menu.
+- Mobile sheet lists 21 entries plus 10 nested children, no horizontal overflow.
+- `npm run check` and `npm run build` pass.
+
+Featured product cards and the botanical garden-scene markers carried the old category labels as display text; those were realigned too, so nothing on the site still says Watering Tools, Pruning Tools or Digging Tools.
+
+**Pending follow-up**
+
+- The menu now carries more names than the site has pages, by design. If the client wants a page per menu entry, that is a catalogue restructure (roughly 17 categories instead of 14) with new copy and new photography slugs, not a navigation change.
+- On a viewport shorter than about 790px the open panel reaches the bottom edge. That matches the reference site, which does the same, but say so if it should cap and scroll after all.
+
+### 18:45 IST: The range is the client's, every product has a page, and the menu travels with the page
+
+Four things from review, and a fifth that arrived while they were being built.
+
+#### 1. Release flags: Home and the variants only
+
+`config/pageVisibility.ts` now opens Home and all five variants in production and closes everything else.
+
+Verified against a production build and server, not a dev one, which matters because the flags only bind when `NEXT_PUBLIC_APP_ENV=production`:
+
+```text
+/  /variant1  /variant3  /variant5   -> 200
+/about  /products  /clients  /contact -> 404
+/products/garden-solar-lights         -> 404
+sitemap                               -> Home only
+```
+
+#### 2. The dropdown travels with the page
+
+It used to close on scroll, which meant a menu taller than the viewport had items you could never reach. It now stays open and scrolls with the content, as the client's own menu does.
+
+The panel is **portalled to `document.body` and positioned in document coordinates**, measured off the trigger before it opens. It had to leave the header to do that: the header is `fixed`, so anything inside it is pinned to the viewport no matter how it is positioned. Consequences handled: the outside-click test now checks the portal as well as the wrapper, the panel carries its own hover handlers, a resize closes it because the measurement is stale, and `createPortal` is guarded because `document` does not exist during the server render.
+
+#### 3. The range is now the client's range
+
+The fourteen categories were mine. They read well and they were wrong: they folded the client's products into headings of my invention, which is why Garden Solar Lights opened a page called Garden Accessories.
+
+`data/productCategories.ts` is now their Products menu, entry for entry: **27 products, each with its own page.** Seventeen top level in their order, and the ten types they nest under Lawn Mowers and Watering Solutions, which carry `parent` and have pages of their own.
+
+Gone, because they are not on the client's counter list: Digging & Soil, Tillers & Cultivators, Garden Utility. Digging tools were not lost, they moved inside **Hand Tools** where the client keeps them, phawda and kudali included.
+
+The detail component renders three shapes from the same data and branches on none of them by slug: a range shows its types as cards, a type shows its parent in the breadcrumb and its siblings as related, a plain product shows neither.
+
+The menu is no longer a hand-written list. `getProductMenu()` derives it from the catalogue, so adding a product puts it in the menu, the listing, the sitemap and the search index at once. `data/productMenu.ts` was deleted.
+
+#### 4. One image slot per product, and a pending list
+
+Image slots are named after the route now: `product-<slug>`, from `gardening images/product-<slug>.png`. Twelve carried over from the old structure. **Fifteen are pending**, and section 4 of [image-generation.md](resources/image-generation.md) lists exactly which, with a full prompt for each, so they can be generated one at a time:
+
+```text
+wheel-type-manual-lawn-mower     roller-type-electric-lawn-mower
+roller-type-petrol-lawn-mower    zero-cut-lawn-mower
+other-lawn-mowers                branch-cutters
+mist-blowers-and-sprayers        sprinklers
+plastic-planters-and-stands      garden-pipes
+hose-reels                       self-coiling-hose
+pesticides-and-fertilisers       fountain-nozzles
+garden-solar-lights
+```
+
+`npm run images` prints the same list every run. Five images had no product left to sit on and their outputs were deleted; the sources are still in `gardening images/`.
+
+#### 5. Contact map is embedded
+
+Requested in review, replacing the link. It is lazy-loaded, so the third-party frame is not fetched until someone scrolls to it, and the written address above it is still the authority. The keyless `output=embed` endpoint is used, so there is no API key to configure or leak. The link out remains beside it for directions.
+
+**Files:** `config/pageVisibility.ts`, `data/productCategories.ts`, `data/navigation.ts`, `data/clients.ts`, `data/products.ts`, `data/contact.ts`, `data/variants/{botanical,interactive}.ts`, `types/content.ts`, `lib/catalogue.ts`, `components/layout/{ProductsMenu,Header,MobileMenu}.tsx`, `components/products/ProductCategoryDetail.tsx`, `components/sections/CategoryIndex.tsx`, `components/variants/catalogue/CatalogueRange.tsx`, `components/variants/interactive/InteractiveTrust.tsx`, `app/{layout,contact/page}.tsx`, `scripts/process-images.mjs`, `resources/image-generation.md`, `CLAUDE.md`. Deleted `data/productMenu.ts`.
+
+**Verified:** `npm run check` and `npm run build` pass, 45 static pages. Every one of the 27 products returns 200 and is named on the listing page. The dropdown scrolls with the page (panel top moved 58px to -342px on a 400px scroll while staying open) and carries the client's 17 names with the two flyouts. No broken image paths. Release gating confirmed under a real production build.
+
+---
+
+### 19:10 IST: Requirement 21 reference data captured
+
+The next requirement asks for real product data, specifications and multi-image galleries from 25 of the client's own product pages. Those pages turned out to be far richer than the rest of their site, so the first move was to capture them before building anything.
+
+[resources/reference/jivagreens-products.json](resources/reference/jivagreens-products.json) now holds all 25, scraped and structured: body copy, specification tables and every product image path.
+
+What is in there:
+
+- **Real model numbers and specifications.** The rotary electric mowers are KR 30, KR 35 and KR 40, with motor ratings, cutting widths, cable lengths, weights and grass box capacities. Wheel-type manual mowers come in 12, 14, 16 and 18 inch with weights from 22 to 25 kg. Roller electrics in 14, 18 and 24 inch with motor and weight per size. Eight specification tables in total.
+- **Real brand and product names.** Kamlesh for the mowers, STIHL for the brush cutters, chain saws, hedge trimmers and mist blowers, STIGA for the blowers, with their own published descriptions and power outputs.
+- **Around 430 product image references** across the range: 110 on Hand Tools, 56 on Sprinklers, 30 each on Hedge Shears and Spray Pumps, and multiple angles for most machines.
+
+**This is a phase of work, not a change**, so it has not been started: a data model carrying variants, specifications and an image array; roughly 150 images to pull, process and check; an ecommerce-style gallery with thumbnails, lightbox, keyboard and touch; and the detail page rebuilt around them. The capture above is what it will be built from, and it means the build does not depend on the client's site staying up.
+
+**Pending follow-up**
+
+- Requirement 21 itself: product data, specifications, variants and the multi-image gallery.
+- Decide with the client whether STIHL, STIGA and Kamlesh product copy may be reproduced. The captured text is theirs, not the client's, and the brand wall already raised the same question.
+- The 15 pending product photographs. Some may not be needed once the real product images from the reference pages are in.
+
+### 20:05 IST: The client's real product photographs, fetched and live
+
+Requirement 21 asked for real product data from 25 of the client's own product pages. The photographs are the first part of that, and they are in.
+
+**217 photographs, 25 pages, no failures.** Two things had to be got right to fetch them cleanly:
+
+1. **Every page carries a related-products strip**, so an image sitting on several pages is somebody else's product. Only images unique to a page are treated as belonging to it.
+2. **The site serves a `-t` thumbnail and links the full size behind it.** The full size is what was taken; the thumbnail is the fallback for pages that never link one.
+
+What arrived: mostly 800 x 533 and 783 x 588, 13.2 MB of JPEG. Fifty-one are under 600px wide. That is catalogue photography rather than hero photography, and it is sized for a gallery, not for a full-bleed band.
+
+**Seven products have no photograph on the client's own site**, only the placeholder their template ships: roller type petrol lawn mower, zero cut lawn mower, other lawn mowers, garden pipes, hose reels, self coiling hose, pesticides and fertilisers. Those stay on the pending generation list in the image manifest.
+
+**Pipeline.** `npm run images` gained a product pass: anything in `gardening images/products/<slug>/` is written to `public/images/products/<slug>/NN.webp` at 800 x 600, **contained on white and never enlarged**. Contained rather than cover-cropped because half of these are portrait or panoramic and a common crop would cut the product in half, and not enlarged because the sources top out around 800px.
+
+**Wiring.** `data/productGallery.ts` is generated from what lands in `public/images/products/`, and `getGallery()` in `lib/catalogue.ts` puts the commissioned garden photograph first and the catalogue shots after it. The detail page already had `ProductGallery`, so no new component was needed: eighteen products now show a real multi-image gallery, capped at eight in the set.
+
+Generated data is kept out of `data/productCategories.ts`, which is written by hand. Mixing them would make it impossible to regenerate either one safely.
+
+**Files:** `data/productGallery.ts` (new, generated), `lib/catalogue.ts`, `components/products/ProductCategoryDetail.tsx`, `scripts/process-images.mjs`.
+
+**Verified:** `npm run check` and `npm run build` pass, 45 pages. Chain Saws and Hand Tools render eight gallery images, Wheel Type Manual Lawn Mower renders three.
+
+**Pending follow-up**
+
+- **Alt text is provisional.** Every line names the product and its position in the set, which is true but thin, and it was written without looking at 217 photographs. It needs a pass by someone who has.
+- **Rights.** Most of this is manufacturer photography: STIHL, STIGA and Kamlesh product shots that sit on the client's site. The brand wall raised the same question and it is still open. Worth settling before launch, for the photographs and for the product copy.
+- The rest of requirement 21: specifications from the eight captured tables, variants, and the ecommerce-style gallery with lightbox and touch.
+
+
+---
+
+## 2026-09-20
+
+### 17:08 IST: Enquiry form delivers through FormSubmit, recipient from the environment
+
+**Work completed**
+
+- **Delivery.** `EnquiryForm` now posts the enquiry as JSON to FormSubmit's AJAX endpoint, `https://formsubmit.co/ajax/<target>`. No route, no server action, no SMTP credential, so the site stays static.
+- **Recipient from the environment.** New variable `NEXT_PUBLIC_FORMSUBMIT_EMAIL`, parsed and validated in `config/env.ts`, which also exports the assembled `formSubmitEndpoint`. It accepts either the recipient address or the token FormSubmit issues after activation, and anything that is neither counts as unset.
+- **Three honest outcomes.** The form no longer has a single "not connected" message:
+
+  | State | What the visitor sees |
+  |---|---|
+  | Accepted by FormSubmit | "Enquiry sent", and the fields are cleared |
+  | Refused, or the network failed | The enquiry could not be sent, with the typed values kept and the prefilled mail, phone and WhatsApp routes offered |
+  | Variable unset | Online submission is not connected, with the same three routes |
+
+- **The submit button actually submits.** `Button` renders `type="button"` by default, so the enquiry button never fired a submit event and the form could only be sent with the Enter key. It now passes `type="submit"`, and it disables itself with `aria-busy` while the request is in flight.
+- **Spam and status.** FormSubmit's `_honey` honeypot is included, hidden from people and from assistive technology. `_captcha` is off, which the AJAX endpoint requires, otherwise it answers with a challenge page instead of JSON. `_subject` carries the enquirer's name and `_template: "table"` formats the email. The status block is a live region.
+- **Consent line updated** to say enquiries are delivered by email through FormSubmit, because the details now go to a third party.
+
+**Files affected**
+
+`config/env.ts`, `components/forms/EnquiryForm.tsx`, `data/contact.ts`, `.env.example`, `CLAUDE.md`
+
+**Decisions**
+
+- **The token is preferred over the address.** The value is `NEXT_PUBLIC_`, so it is inlined into the browser bundle: an address there is published for scrapers, while the token reaches the same inbox without naming it. Both are accepted and `.env.example` explains why.
+- **Field labels, not field names, are sent.** The payload keys are "Your name", "Phone" and so on, so the email reads as a form rather than as a variable dump.
+- **A failure keeps the visitor's typing.** Only a confirmed send resets the form.
+
+**Verification**
+
+- `npm run check` and `npm run build` pass; 45 static routes.
+- Unset variable, on the dev server: submitting shows "not connected" with the mail and WhatsApp actions.
+- Configured, on a production build served locally with a dummy token and `fetch` stubbed in the browser, so nothing reached FormSubmit:
+  - success: posts to `https://formsubmit.co/ajax/<token>` with the labelled payload, `_subject`, `_template`, `_captcha` and `_honey`, shows "Enquiry sent" and clears the fields;
+  - HTTP 422 and a thrown network error: both show the failure notice, keep the typed values and offer the prefilled mailto and WhatsApp links.
+- The build was repeated without the dummy token afterwards, so nothing carries it.
+
+**Pending follow-up**
+
+- Set `NEXT_PUBLIC_FORMSUBMIT_EMAIL` on the deployment and complete FormSubmit's one-time activation: it emails the address a confirmation link, and submissions are held until somebody clicks it. Then swap the address for the token from the FormSubmit dashboard.
+- Send one real enquiry after activation to confirm the email arrives and reads well.
+- Consider whether the privacy wording needs to name FormSubmit's own data handling when a privacy policy page is written.
+
+### 20:40 IST: Duplicate React key on the Clients section
+
+`Encountered two children with the same key, hand-tools` on Home, from the industry chips.
+
+**Cause.** When the range was restructured, several old slugs collapsed onto `hand-tools`: digging tools, tillers and garden utility all moved inside it. The Nurseries & Growers chip list had been `["hand-tools", "irrigation", "sprayers", "garden-utility"]`, and after the remap both ends of it pointed at the same product. The components key those rows on the slug, so a list naming one product twice became a key collision.
+
+**Fixed in the data.** Nurseries now reads hand tools, planters and stands, sprinklers, spray pumps. Planters and stands is what a nursery actually buys alongside the rest, and its own applications already say so.
+
+**Fixed so it cannot happen again.** `resolveCategories()` in `lib/catalogue.ts` resolves any curated slug list to products, in order, dropping repeats. `getCategoryLinks()` (the footer), `IndustryCard` and `VariantClients` all go through it and key on the resolved product rather than the raw slug. A future rename that collapses two slugs will render one chip instead of breaking the console.
+
+**Swept the rest.** Checked every list in the catalogue that a component uses as a key: the 27 product slugs, and the `items`, `features` and `applications` of each. No other duplicates. The remaining string-keyed renders (paragraphs, features, points) are all within a single product or copy block, where a repeat would be a copy error rather than a structural one.
+
+**Files:** `data/clients.ts`, `lib/catalogue.ts`, `components/cards/IndustryCard.tsx`, `components/variants/shared/VariantClients.tsx`.
+
+**Verified:** `npm run check` and `npm run build` pass. Home, variant 2, Clients and a product page all load with no key warning, six chip lists on Home and none with a duplicate href. The one console line left is a Next.js CSS preload warning, which is framework-level and unrelated.

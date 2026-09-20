@@ -8,7 +8,7 @@ import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Reveal } from "@/components/ui/Reveal";
 import { catalogueRange } from "@/data/variants/catalogue";
-import { formatToolName, getGroupedCategories } from "@/lib/catalogue";
+import { formatProductName, getGroupedCategories } from "@/lib/catalogue";
 import { routes } from "@/lib/routes";
 
 /** How many tool names the "What is inside" column shows before it summarises. */
@@ -73,13 +73,14 @@ export function CatalogueRange() {
 
                 <ul>
                   {group.categories.map((category, index) => {
-                    const preview = category.tools.slice(0, CONTENTS_PREVIEW).map(formatToolName);
-                    const remaining = category.tools.length - preview.length;
+                    const items = category.items ?? [];
+                    const preview = items.slice(0, CONTENTS_PREVIEW).map(formatProductName);
+                    const remaining = items.length - preview.length;
 
                     return (
                       <li key={category.slug} className="border-b border-hairline">
                         <Link
-                          href={routes.toolCategory(category.slug)}
+                          href={routes.productCategory(category.slug)}
                           className={`group relative block py-5 pr-10 transition-colors duration-200 hover:bg-surface-soft md:py-4 md:pr-0 ${gridColumns}`}
                           {...cursorIntent("view")}
                         >
@@ -98,7 +99,7 @@ export function CatalogueRange() {
 
                           <span className="mt-2 block font-body text-caption text-muted md:mt-0 md:text-right md:text-body-sm md:tabular-nums md:text-ink">
                             <span className="md:hidden">{`${columns.count}: `}</span>
-                            {category.tools.length}
+                            {items.length}
                           </span>
 
                           <span className="absolute right-0 top-5 flex items-center justify-end gap-3 md:static">

@@ -2,7 +2,7 @@
 
 import { AnimatePresence } from "motion/react";
 import * as m from "motion/react-m";
-import { Menu, Phone, X } from "lucide-react";
+import { ChevronDown, Menu, Phone, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -11,6 +11,9 @@ import { Button } from "@/components/ui/Button";
 import { primaryNav } from "@/data/navigation";
 import { site } from "@/config/site";
 import { cn } from "@/lib/cn";
+import { routes } from "@/lib/routes";
+import { visibleLinks } from "@/lib/visibility";
+import type { ProductMenuLink } from "@/types/content";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -20,10 +23,24 @@ const EASE = [0.22, 1, 0.36, 1] as const;
  * Handles the three things a dialog has to get right: focus moves into the
  * sheet on open and back to the trigger on close, Tab is trapped inside it, and
  * Escape closes it. Background scroll is locked while it is open.
+ *
+ * Products expands in place rather than reusing the desktop dropdown. A hover
+ * menu is the wrong shape on a touch screen, and the sheet is already the
+ * navigation surface, so the client's second level is simply indented another
+ * step rather than flying out. `productMenu` arrives from the header, which
+ * got it from the server, so the catalogue never reaches the browser.
  */
-export function MobileMenu({ tone = "ink" }: { tone?: "ink" | "on-band" }) {
+export function MobileMenu({
+  tone = "ink",
+  productMenu,
+}: {
+  tone?: "ink" | "on-band";
+  productMenu: readonly ProductMenuLink[];
+}) {
   const [open, setOpen] = useState(false);
+  const [productsOpen, setProductsOpen] = useState(false);
   const pathname = usePathname();
+  const navItems = visibleLinks(primaryNav);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -36,6 +53,7 @@ export function MobileMenu({ tone = "ink" }: { tone?: "ink" | "on-band" }) {
   if (lastPath !== pathname) {
     setLastPath(pathname);
     setOpen(false);
+    setProductsOpen(false);
   }
 
   useEffect(() => {
@@ -145,8 +163,88 @@ export function MobileMenu({ tone = "ink" }: { tone?: "ink" | "on-band" }) {
 
               <nav aria-label="Primary" className="flex-1 overflow-y-auto px-5 py-6">
                 <ul className="flex flex-col">
-                  {primaryNav.map((item) => {
+                  {navItems.map((item) => {
                     const active = pathname === item.href;
+
+                    // Products expands a nested list in place. Tapping the row
+                    // never navigates; "All Products" inside it does.
+                    if (item.href === routes.products) {
+                      const inProducts = pathname.startsWith(routes.products);
+                      return (
+                        <li key={item.href}>
+                          <button
+                            type="button"
+                            aria-expanded={productsOpen}
+                            aria-controls="mobile-products"
+                            aria-current={inProducts ? "page" : undefined}
+                            onClick={() => setProductsOpen((value) => !value)}
+                            className={cn(
+                              "flex min-h-12 w-full items-center justify-between gap-3 border-b border-hairline-soft font-body text-[1.0625rem] font-semibold transition-colors duration-200",
+                              inProducts ? "text-brand" : "text-ink hover:text-brand",
+                            )}
+                          >
+                            {item.label}
+                            <ChevronDown
+                              aria-hidden="true"
+                              className={cn(
+                                "h-4 w-4 shrink-0 transition-transform duration-300 ease-[var(--ease-organic)]",
+                                productsOpen && "rotate-180",
+                              )}
+                              strokeWidth={2}
+                            />
+                          </button>
+
+                          <AnimatePresence initial={false}>
+                            {productsOpen ? (
+                              <m.div
+                                id="mobile-products"
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.24, ease: EASE }}
+                                className="overflow-hidden"
+                              >
+                                <ul className="flex flex-col border-b border-hairline-soft py-1 pl-4">
+                                  <li>
+                                    <Link
+                                      href={routes.products}
+                                      className="flex min-h-11 items-center font-body text-[0.9375rem] font-semibold text-ink transition-colors duration-200 hover:text-brand"
+                                    >
+                                      All Products
+                                    </Link>
+                                  </li>
+                                  {productMenu.map((product) => (
+                                    <li key={product.label}>
+                                      <Link
+                                        href={product.href}
+                                        className="flex min-h-11 items-center font-body text-[0.9375rem] text-body transition-colors duration-200 hover:text-brand"
+                                      >
+                                        {product.label}
+                                      </Link>
+                                      {product.children ? (
+                                        <ul className="flex flex-col pl-4">
+                                          {product.children.map((child) => (
+                                            <li key={child.label}>
+                                              <Link
+                                                href={child.href}
+                                                className="flex min-h-10 items-center font-body text-[0.875rem] text-muted transition-colors duration-200 hover:text-brand"
+                                              >
+                                                {child.label}
+                                              </Link>
+                                            </li>
+                                          ))}
+                                        </ul>
+                                      ) : null}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </m.div>
+                            ) : null}
+                          </AnimatePresence>
+                        </li>
+                      );
+                    }
+
                     return (
                       <li key={item.href}>
                         <Link
@@ -166,7 +264,7 @@ export function MobileMenu({ tone = "ink" }: { tone?: "ink" | "on-band" }) {
               </nav>
 
               <div className="border-t border-hairline-soft px-5 py-5">
-                <Button href="/contact" size="lg" className="w-full">
+                <Button href={routes.contact} size="lg" className="w-full">
                   Get in Touch
                 </Button>
                 <a

@@ -7,7 +7,7 @@ import { Eyebrow } from "@/components/ui/Eyebrow";
 import { ImagePlate } from "@/components/ui/ImagePlate";
 import { Reveal } from "@/components/ui/Reveal";
 import { artGallery } from "@/data/variants/artDirected";
-import { featuredTools } from "@/data/tools";
+import { featuredProducts } from "@/data/products";
 import { cn } from "@/lib/cn";
 import { routes } from "@/lib/routes";
 
@@ -75,7 +75,7 @@ export function ArtGallery() {
           stagger={0.1}
           distance={26}
         >
-          {featuredTools.map((tool, index) => {
+          {featuredProducts.map((tool, index) => {
             const slot = SLOTS[index];
             const treatment = treatments[tool.slug];
             if (!slot) return null;
@@ -101,7 +101,7 @@ export function ArtGallery() {
             return (
               <li key={tool.slug} className={cn("group", slot.className)}>
                 <Link
-                  href={routes.tool(tool.categorySlug, tool.slug)}
+                  href={routes.productCategory(tool.categorySlug)}
                   className={cn(
                     "block",
                     // Two equal columns: an `auto` text column takes its full
@@ -151,7 +151,7 @@ export function ArtGallery() {
         </Reveal>
 
         <Reveal className="mt-16 flex justify-end border-t border-hairline pt-8">
-          <ArrowLink href={routes.tools}>Browse the range</ArrowLink>
+          <ArrowLink href={routes.products}>Browse the range</ArrowLink>
         </Reveal>
       </Container>
     </section>

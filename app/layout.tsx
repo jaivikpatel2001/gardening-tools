@@ -6,9 +6,11 @@ import { FloatingActions } from "@/components/floating-actions/FloatingActions";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { MotionProvider } from "@/components/motion/MotionProvider";
+import { Preloader } from "@/components/preloader/Preloader";
 import { SmoothScrollProvider } from "@/components/motion/SmoothScrollProvider";
 import { BRAND_COLORS } from "@/config/brand";
 import { site } from "@/config/site";
+import { getProductMenu } from "@/lib/catalogue";
 import { DEFAULT_TITLE, buildMetadata, organizationJsonLd } from "@/lib/seo";
 
 import "./globals.css";
@@ -90,6 +92,16 @@ export const viewport: Viewport = {
  * It also adds `js-motion`, which is the single gate for every CSS-defined
  * hidden state. With JavaScript off, or with reduced motion requested, the class
  * never lands and all content renders visible.
+ *
+ * Finally it arms the preloader, by the same rule and for the same reason: the
+ * overlay has to be decided before the first frame or the visitor sees the page
+ * and then has it covered up.
+ *
+ * It runs on every document load, which is what the client asked for: every
+ * browser reload plays it, and only a reload does. Client-side navigation
+ * between pages never re-runs this script, so moving around the site stays
+ * instant. It is still skipped entirely for reduced motion, for reduced data
+ * and with JavaScript off, and the page behind it renders normally either way.
  */
 const themeScript = `(function(){
   var RESPECT_SYSTEM = false;
@@ -100,8 +112,14 @@ const themeScript = `(function(){
       ? stored
       : (RESPECT_SYSTEM && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
     root.dataset.theme = theme;
-    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    var motionOk = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (motionOk) {
       root.classList.add('js-motion');
+    }
+
+    var saveData = navigator.connection && navigator.connection.saveData;
+    if (motionOk && !saveData) {
+      root.dataset.preloader = 'active';
     }
   } catch (e) {
     root.dataset.theme = 'light';
@@ -132,7 +150,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
 
         <MotionProvider>
           <SmoothScrollProvider>
-            <Header />
+            {/* Product links are resolved here, on the server. The header and
+                the mobile sheet are client components and must never import the
+                catalogue themselves. */}
+            <Header productMenu={getProductMenu()} />
             {/* tabIndex lets the skip link actually move focus here, not just scroll. */}
             <main id="main" tabIndex={-1} className="outline-none">
               {children}
@@ -142,6 +163,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </SmoothScrollProvider>
         </MotionProvider>
 
+        <Preloader />
         <CustomCursor />
       </body>
     </html>

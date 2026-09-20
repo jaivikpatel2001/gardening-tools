@@ -15,7 +15,7 @@ export function BotanicalCategories() {
     slug: category.slug,
     label: category.shortTitle,
     description: category.description,
-    href: routes.toolCategory(category.slug),
+    href: routes.productCategory(category.slug),
     image: category.image,
   }));
 

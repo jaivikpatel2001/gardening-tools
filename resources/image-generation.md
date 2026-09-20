@@ -12,7 +12,8 @@ gardening images/<source>.png   ->   npm run images   ->   public/images/<slot>.
 
 1. Drop generated source artwork into `gardening images/` at the highest resolution you can produce, using the **source filename** listed for the slot.
 2. Run `npm run images`. Slots whose source has not arrived yet are listed and skipped, so images can be delivered a few at a time.
-3. For a new tool category image, add `image` (with alt text describing the actual photograph) to that category in `data/toolCategories.ts`. Until then the category still appears in the complete range index, just not as a photo card.
+3. For a new product category image, add `image` (with alt text describing the actual photograph) to that category in `data/productCategories.ts`. Until then the category still appears in the complete range index and on the Products page, just not as a photo card.
+4. Extra photographs for a category page gallery go on the same category as `gallery` entries. The gallery falls back to the single `image` when there are none, and never pads itself with pictures of something else.
 
 The script enforces each slot's aspect ratio by cover-cropping with sharp's attention strategy, never upscales, and encodes to WebP. The Open Graph card stays JPEG, because several social crawlers and messaging previews still handle WebP unreliably.
 
@@ -43,12 +44,13 @@ This is an **Indian gardening brand** serving homeowners, terrace and balcony ga
 | Status | Slots | Issue |
 |---|---|---|
 | **Ship as is** | `hero-main`, `hero-detail`, `og-home` | Clean, no text. `og-home` has the right negative space in its left third. |
-| **Regenerate (September 2026 audit)** | all 4 featured tools, `why-choose`, `resource-choosing-tools`, `resource-essential-tools`, `resource-clean-maintain` | Rendered at full size in the homepage variants, these carry **legible baked-in lettering**: slogans on crates, on the watering can body and on the spade blade, printed labels under the tools in `resource-choosing-tools`, a leaf mark engraved on handles. Use the section 6 prompts, which now name each product exactly. |
-| **Needed (new products)** | `tool-khurpi`, `tool-hedge-shears`, `tool-lawn-mower`, `tool-brush-cutter` | Four tools added to `data/tools.ts` after the product review. They stay off every photo grid until these arrive. |
-| **Live, regeneration optional** | the 5 photographed tool categories | Good images, but they show Western tools (spade and fork, not phawda and gaiti) and do not form one series with the 9 new category shots below. Regenerate them with the series prompts if the grid should read as one shoot. |
-| **Needed** | the 9 unphotographed tool categories | No image yet. Listed in the range index; will appear as photo cards once delivered. |
+| **Regenerate (September 2026 audit)** | all 4 featured products, `why-choose`, `products-overview` | Rendered at full size in the homepage variants and in the Products hero, these carry **legible baked-in lettering**: slogans on crates, on the watering can body and on the spade blade, printed labels under the tools in `products-overview`, a leaf mark engraved on handles. Use the section 6 prompts, which now name each product exactly. |
+| **Supplied, never generated** | the five brand marks | Delivered 20 September 2026 and live. See section 8b. They are trademarks: copied byte for byte, never drawn, traced, recoloured or re-encoded. |
+| **Needed (new products)** | `tool-khurpi`, `tool-hedge-shears`, `tool-lawn-mower`, `tool-brush-cutter` | Four products added to `data/products.ts` after the product review. They stay off every photo grid until these arrive. |
+| **Live, regeneration optional** | the 5 photographed hand-tool products | Good images, but they show Western tools (spade and fork, not phawda and gaiti) and do not form one series with the 9 new category shots below. Regenerate them with the series prompts if the grid should read as one shoot. |
+| **Needed** | 15 of the 27 products | No image yet. Listed everywhere and shown as typographic cards; they become photo cards once delivered. The full pending list is in section 4. |
 | **Acceptable, low priority** | `testimonial-01`, `testimonial-02`, `testimonial-03` | Subjects read as South Asian, which is right. Each carries small baked-in lettering on an apron or sign, illegible at the 44px display size. |
-| **Regenerate** | `community-story`, the 4 service images, `about-preview` | Western or Mediterranean settings, and the scene shots carry **large, legible baked-in signage**. `community-story` is the worst: it sits full bleed behind the "Growing Better Gardens Together" heading and its signs read through the scrim. |
+| **Regenerate** | `community-story`, the 4 solution images, `about-preview` | Western or Mediterranean settings, and the scene shots carry **large, legible baked-in signage**. `community-story` is the worst: it sits full bleed behind the "Growing Better Gardens Together" heading and its signs read through the scrim. |
 
 `hero-main` is a Mediterranean garden (cypress, dry-stone wall, rolling hills). It is a beautiful frame that satisfies every composition rule, but it is not India. Regenerating it is a judgement call rather than a defect.
 
@@ -100,25 +102,49 @@ This is an **Indian gardening brand** serving homeowners, terrace and balcony ga
 
 ---
 
-### 4. Tool category series (14 slots)
+### 4. Product series (27 slots, one per product)
 
-All tool category images share one ratio, one light and one camera language, so the category grid reads as a single commissioned shoot.
+Every product in the range has its own page at `/products/<slug>` and its own photograph. The slot is named after the route: `product-<slug>`, generated from `gardening images/product-<slug>.png`.
 
 | | |
 |---|---|
 | **Ratio** | 4:3 |
 | **Target** | 1200 x 900 (generate 2400 x 1800 where possible) |
-| **Output** | `public/images/<slot>.webp` |
+| **Output** | `public/images/product-<slug>.webp` |
 
-#### Series rules (apply to every category prompt)
+#### Pending: 15 of 27 still to generate
 
-- **Light:** late-afternoon sun from camera left, warm and low. Soft shadows fall to the right. Gentle backlight on foliage.
+These are the ones `npm run images` reports as waiting. Generate each from its prompt below, save it into `gardening images/` under the source name, run `npm run images`, then add `image` to that product in [data/productCategories.ts](../data/productCategories.ts) with alt text describing the photograph you actually got.
+
+| Product | Source file to create |
+|---|---|
+| Wheel Type Manual Lawn Mower | `product-wheel-type-manual-lawn-mower.png` |
+| Roller Type Electric Lawn Mower | `product-roller-type-electric-lawn-mower.png` |
+| Roller Type Petrol Lawn Mower | `product-roller-type-petrol-lawn-mower.png` |
+| Zero Cut Lawn Mower | `product-zero-cut-lawn-mower.png` |
+| Other Lawn Mowers | `product-other-lawn-mowers.png` |
+| Branch Cutters | `product-branch-cutters.png` |
+| Mist Blowers & Sprayers | `product-mist-blowers-and-sprayers.png` |
+| Sprinklers | `product-sprinklers.png` |
+| Plastic Planters & Stands | `product-plastic-planters-and-stands.png` |
+| Garden Pipes | `product-garden-pipes.png` |
+| Hose Reels | `product-hose-reels.png` |
+| Self Coiling Hose | `product-self-coiling-hose.png` |
+| Pesticides & Fertilisers | `product-pesticides-and-fertilisers.png` |
+| Fountain Nozzles | `product-fountain-nozzles.png` |
+| Garden Solar Lights | `product-garden-solar-lights.png` |
+
+The other 12 are live and need nothing.
+
+#### Series rules (apply to every prompt below)
+
+- **Light:** late-afternoon sun from camera left, warm and low. Soft shadows fall to the right. Gentle backlight on foliage. The solar lights slot is the one exception and is shot at dusk.
 - **Camera:** three-quarter view from slightly above the product's height, 50mm full-frame equivalent, f/2.8 to f/4. Background genuinely blurred.
-- **Composition:** the hero product fills about 55 to 65 percent of the frame width, sits slightly left of centre, and is shown **whole and uncropped**. Keep calm, uncluttered negative space in the upper right third.
+- **Composition:** the product fills about 55 to 65 percent of the frame width, sits slightly left of centre, and is shown **whole and uncropped**. Keep calm, uncluttered negative space in the upper right third.
 - **Products:** realistic, unbranded and free of printed text. Hand tools have seasoned hardwood handles and forged or polished steel heads with honest wear. Machinery uses one consistent house colourway: **deep botanical green housing with charcoal grey and brushed steel details, matte finish.**
 - **People:** none, or hands and forearms only, partly in frame. No faces.
-- **Grade:** natural greens, warm highlights, moderate saturation, identical across all 14.
-- **Negative:** the base negatives above, plus: logos, model numbers, warning stickers, orange, yellow or red manufacturer colourways, showroom floors, white studio sweeps.
+- **Grade:** natural greens, warm highlights, moderate saturation, identical across all 27.
+- **Negative:** the base negatives at the top of this file, plus: logos, model numbers, warning stickers, orange, yellow or red manufacturer colourways, showroom floors, white studio sweeps.
 
 #### Series prompt template
 
@@ -126,26 +152,41 @@ All tool category images share one ratio, one light and one camera language, so 
 
 Fill `[SUBJECT]` and `[SETTING]` from the table below.
 
-#### Category prompts
+#### Prompts
 
-| # | Slot and source | Status | [SUBJECT] | [SETTING] | Draft alt text |
-|---|---|---|---|---|---|
-| 4a | `category-hand-tools` <br> source: `hand-tools.png` (current) or `category-hand-tools.png` (new) | Live, regeneration optional | A khurpi with a worn hardwood handle and a triangular forged blade, a hand trowel, a three-prong hand cultivator and a narrow hand weeder, laid side by side with handles aligned on a weathered teak potting bench, a little dark soil scattered around them | A Mumbai apartment terrace garden, terracotta pots of tulsi and chilli plants blurred behind | A khurpi, hand trowel, hand cultivator and hand weeder laid side by side on a weathered potting bench on a terrace garden |
-| 4b | `category-digging-tools` <br> source: `digging-tools.png` (current) or `category-digging-tools.png` (new) | Live, regeneration optional | A traditional phawda with a broad forged blade set at an angle to its long wooden handle, a kudali and a gaiti (pickaxe), the phawda upright in freshly turned soil and the other two resting against it | A kitchen garden plot of black cotton soil on the edge of a village near Nashik, young vegetable beds blurred behind | A phawda standing in freshly turned black soil with a kudali and a gaiti resting beside it |
-| 4c | `category-pruning-tools` <br> source: `pruning-tools.png` (current) or `category-pruning-tools.png` (new) | Live, regeneration optional | Bypass secateurs, a long-handled branch cutter (lopper) with bypass jaws, a pair of drop-forged hedge shears with wavy-edged blades and a traditional curved daranti (sickle), resting at the base of a freshly pruned hibiscus hedge, fresh clippings and a few red hibiscus flowers on the ground | A Bengaluru bungalow garden with a trimmed hedge line blurred behind | Secateurs, a branch cutter, hedge shears and a curved daranti resting beside a freshly pruned hibiscus hedge |
-| 4d | `category-watering-tools` <br> source: `-watering-tools.png` (current) or `category-watering-tools.png` (new) | Live, regeneration optional | A galvanised watering can with a brass rose, a green garden pipe wound on a wall-mounted hose reel ending in a multi-pattern spray nozzle, and a four-arm rotating sprinkler on the bed, beside freshly watered seedlings, droplets catching the light | A Chennai terrace garden with potted plants and a whitewashed parapet blurred behind | A galvanised watering can, a garden pipe on a hose reel with a spray nozzle and a four-arm sprinkler beside freshly watered seedlings |
-| 4e | `category-garden-utility` <br> source: `category-garden-utility.png` | **Needed** | A traditional round iron tasla filled with dark potting soil in front of a single-wheel wheelbarrow, with a long-handled fruit picker and its cloth catch-basket leaning against the barrow | A Gujarat farmhouse garden under a mango tree, a whitewashed compound wall blurred behind | An iron tasla of potting soil beside a wheelbarrow and a long-handled fruit picker under a mango tree |
-| 4f | `category-garden-accessories` <br> source: `garden-accessories.png` (current) or `category-garden-accessories.png` (new) | Live, regeneration optional | Leather-palmed gardening gloves, a ball of jute twine, blank wooden plant labels, a stack of folded jute grow bags and a pair of clear safety goggles arranged on a potting bench, a two-tier metal planter stand holding terracotta pots beside it | A Pune nursery shade-net house, rows of potted saplings blurred behind | Gardening gloves, jute twine, plant labels, folded grow bags and safety goggles on a nursery potting bench beside a planter stand |
-| 4g | `category-lawn-mowers` <br> source: `category-lawn-mowers.png` | **Needed** | An unbranded electric rotary lawn mower with its grass box attached, standing at the edge of a half-mown lawn, a crisp line between mown and unmown grass leading in from the lower left | A green lawn in an Indian housing society garden, low hedges and palms blurred behind | An electric rotary lawn mower standing at the edge of a half-mown lawn in a housing society garden |
-| 4h | `category-brush-cutters` <br> source: `category-brush-cutters.png` | **Needed** | An unbranded petrol brush cutter with a straight shaft, bike-style handlebar and a three-tooth metal blade, lying across its harness at the boundary between tall uncut grass and a freshly cleared strip | The bund of a farm field in rural Maharashtra, crops and a neem tree blurred behind | A petrol brush cutter resting where tall grass meets a freshly cleared strip on a farm bund |
-| 4i | `category-hedge-trimmers` <br> source: `category-hedge-trimmers.png` | **Needed** | An unbranded cordless battery hedge trimmer with a long double-sided steel blade and its battery attached, resting on top of a neatly squared boundary hedge, trimmed leaves scattered on the hedge | The compound wall hedge of a Hyderabad bungalow, the house softly blurred behind | A cordless hedge trimmer resting on top of a neatly trimmed boundary hedge |
-| 4j | `category-chainsaws` <br> source: `category-chainsaws.png` | **Needed** | An unbranded petrol chainsaw with a 16-inch guide bar resting on a freshly cut section of a fallen neem branch, sawdust on the bark, a telescopic pole saw leaning against the trunk beside it | A monsoon-green garden in Kerala, wet foliage blurred behind | A petrol chainsaw resting on a freshly cut neem branch with a pole saw leaning beside it |
-| 4k | `category-tillers` <br> source: `category-tillers.png` | **Needed** | An unbranded petrol mini tiller (power weeder) with its tines set into freshly tilled red laterite soil at the start of a vegetable plot, neat furrows stretching behind it | A Karnataka farm plot, coconut palms blurred on the horizon | A petrol mini tiller in freshly tilled red soil with neat furrows behind it |
-| 4l | `category-sprayers` <br> source: `category-sprayers.png` | **Needed** | An unbranded 16-litre knapsack spray pump with a translucent tank, a side pumping lever, padded straps, a brass lance and an adjustable nozzle, standing upright between rows of chilli and brinjal plants, a faint mist visible in the backlight | An Indian kitchen garden with drip lines between the rows, blurred behind | A 16-litre knapsack spray pump standing between rows of chilli and brinjal plants |
-| 4m | `category-blowers` <br> source: `category-blowers.png` | **Needed** | An unbranded cordless leaf blower resting on a stone-paved garden path that is half covered with fallen dry leaves and gulmohar petals and half blown clean | A shaded garden walkway under a gulmohar tree, blurred behind | A cordless leaf blower on a garden path half covered in fallen leaves and half blown clean |
-| 4n | `category-irrigation` <br> source: `category-irrigation.png` | **Needed** | A drip irrigation lateral with inline emitters running along young vegetable beds in the foreground, a compact electric monoblock water pump beside a coiled lay-flat hose at the head of the line | A Rajasthan nursery under shade net, a water tank blurred behind | Drip irrigation lines along young vegetable beds with a compact water pump and coiled hose |
+| Product and page | Status | Source | [SUBJECT] | [SETTING] |
+|---|---|---|---|---|
+| **Lawn Mowers** <br> `/products/lawn-mowers` | Live | `product-lawn-mowers.png` | An unbranded electric rotary lawn mower in the house colourway with its grass box attached, standing at the edge of a half-mown lawn, a crisp line between mown and unmown grass leading in from the lower left | A green lawn in an Indian housing society garden, low hedges and palms blurred behind |
+| **Wheel Type Manual Lawn Mower** <br> `/products/wheel-type-manual-lawn-mower` | **Pending** | `product-wheel-type-manual-lawn-mower.png` | An unbranded wheel-type manual push mower: a cylinder reel of five helical blades between two large side wheels, a bent tubular handle with a wooden grip bar, no engine and no cable anywhere on it, standing at the edge of a small neatly cut lawn with a light scatter of clippings in front of the reel | A small bungalow lawn in Pune, a bougainvillea on a compound wall blurred behind |
+| **Rotary Type Electric Lawn Mower** <br> `/products/rotary-type-electric-lawn-mower` | Live | `product-rotary-type-electric-lawn-mower.png` | An unbranded rotary electric lawn mower: a low deck in deep botanical green with a charcoal rear grass-collection box, four wheels with a single-lever height adjuster, a folding tubular handle with a trigger switch bar and a neatly coiled grey power cable | The edge of a half-mown society lawn, low hedges and palms blurred behind |
+| **Roller Type Electric Lawn Mower** <br> `/products/roller-type-electric-lawn-mower` | **Pending** | `product-roller-type-electric-lawn-mower.png` | An unbranded roller-type electric lawn mower: a green deck with a full-width ribbed rear roller instead of rear wheels, a grass box, a folding handle and a grey cable. Standing on a formal lawn that shows two clean light-and-dark mown stripes running away from the machine, the stripe the roller has just laid clearly visible behind it | A club or institutional lawn with a clipped hedge line blurred behind |
+| **Roller Type Petrol Lawn Mower** <br> `/products/roller-type-petrol-lawn-mower` | **Pending** | `product-roller-type-petrol-lawn-mower.png` | An unbranded roller-type petrol lawn mower: a green deck with a full-width rear roller, a small four-stroke engine on top with a recoil starter and a fuel cap, a grass box and a folding handle. No cable anywhere. Standing on a large striped lawn with the stripe it has laid running back behind it | A resort or school playing field at the edge of a treeline, blurred behind |
+| **Zero Cut Lawn Mower** <br> `/products/zero-cut-lawn-mower` | **Pending** | `product-zero-cut-lawn-mower.png` | An unbranded zero-cut mower: a narrow cylinder reel set very low between two small wheels, a fine height-adjustment screw visible at the side, a long handle. Standing on a very short, dense, level lawn that reads as a prepared surface rather than a garden lawn | A fine display lawn or prepared play surface, a low boundary blurred behind |
+| **Other Lawn Mowers** <br> `/products/other-lawn-mowers` | **Pending** | `product-other-lawn-mowers.png` | An unbranded cordless battery lawn mower: a green deck, a grass box, a folding handle and a visible slide-in battery pack on top with no cable and no fuel cap. Standing on a small lawn with the battery charger nowhere in frame | A compact apartment or villa garden, potted plants blurred behind |
+| **Brush Cutters** <br> `/products/brush-cutters` | Live | `product-brush-cutters.png` | An unbranded petrol brush cutter with a straight shaft, bike-style handlebar and a three-tooth metal blade, lying across its harness at the boundary between tall uncut grass and a freshly cleared strip | The bund of a farm field in rural Maharashtra, crops and a neem tree blurred behind |
+| **Branch Cutters** <br> `/products/branch-cutters` | **Pending** | `product-branch-cutters.png` | An unbranded pair of long-handled bypass branch cutters (loppers): two curved hardened steel jaws at the head, a bolt pivot, and two long tubular handles about 70 cm with moulded grips. Held open across a freshly cut mango branch on the ground, a clean pale cut face showing on the wood and a few leaves scattered around | Under a mango tree in a Gujarat farmhouse garden, a whitewashed compound wall blurred behind |
+| **Chain Saws** <br> `/products/chain-saws` | Live | `product-chain-saws.png` | An unbranded petrol chainsaw with a 16-inch guide bar resting on a freshly cut section of a fallen neem branch, sawdust on the bark, a telescopic pole saw leaning against the trunk beside it | A monsoon-green garden in Kerala, wet foliage blurred behind |
+| **Hedge Trimmers** <br> `/products/hedge-trimmers` | Live | `product-hedge-trimmers.png` | An unbranded cordless battery hedge trimmer with a long double-sided steel blade and its battery attached, resting on top of a neatly squared boundary hedge, trimmed leaves scattered on the hedge | The compound wall hedge of a Hyderabad bungalow, the house softly blurred behind |
+| **Hedge Shears** <br> `/products/hedge-shears` | Live | `product-hedge-shears.png` | Unbranded drop-forged hedge shears: two long straight blades of about 25 cm with a finely wavy cutting edge, a central bolt with a tension nut, a notch near the pivot and two long ash handles with rubber shock buffers. Blades slightly open, lying diagonally across the flat top of a clipped ixora hedge, fresh clippings on the leaves | A bungalow garden with a trimmed hedge line blurred behind |
+| **Mist Blowers & Sprayers** <br> `/products/mist-blowers-and-sprayers` | **Pending** | `product-mist-blowers-and-sprayers.png` | An unbranded petrol backpack mist blower: a green and charcoal engine unit on a padded harness frame with a translucent chemical tank, and a wide corrugated blower tube ending in a flared nozzle held out to one side. Standing upright on the ground at the end of an orchard row, a faint mist hanging in the backlight down the row. No person in frame | An orchard row in Maharashtra at first light, fruit trees receding behind |
+| **Blowers** <br> `/products/blowers` | Live | `product-blowers.png` | An unbranded cordless leaf blower resting on a stone-paved garden path that is half covered with fallen dry leaves and gulmohar petals and half blown clean | A shaded garden walkway under a gulmohar tree, blurred behind |
+| **Sprinklers** <br> `/products/sprinklers` | **Pending** | `product-sprinklers.png` | An unbranded brass four-arm rotating sprinkler on a spike, pushed into a lawn and running, throwing four fine arcs of water that catch the low sun, with a second brass impact sprinkler on a sled base standing on the grass beside it and a green garden pipe leading away out of frame | A bungalow lawn in the late afternoon, wet grass and a border of flowering shrubs blurred behind |
+| **Spray Pumps** <br> `/products/spray-pumps` | Live | `product-spray-pumps.png` | An unbranded 16-litre knapsack spray pump with a translucent tank, a side pumping lever, padded straps, a brass lance and an adjustable nozzle, standing upright between rows of chilli and brinjal plants, with one plain amber glass bottle of neem oil on the soil beside it and no label or printing on it | An Indian kitchen garden with drip lines between the rows, blurred behind |
+| **Plastic Planters & Stands** <br> `/products/plastic-planters-and-stands` | **Pending** | `product-plastic-planters-and-stands.png` | A group of unbranded moulded plastic garden planters in terracotta and deep green: two large round tubs, a long rectangular railing trough and a small pot, arranged beside a black powder-coated two-tier metal planter stand holding three more planted pots. Healthy green foliage in the planted ones, drainage saucers visible under two | An open apartment terrace in Ahmedabad, a whitewashed parapet and rooftops blurred behind |
+| **Cutting Tools** <br> `/products/cutting-tools` | Live | `product-cutting-tools.png` | Bypass secateurs, a folding pruning saw, a pair of garden scissors and a traditional curved daranti (sickle), resting at the base of a freshly pruned hibiscus hedge, fresh clippings and a few red hibiscus flowers on the ground | A Bengaluru bungalow garden with a trimmed hedge line blurred behind |
+| **Hand Tools** <br> `/products/hand-tools` | Live | `product-hand-tools.png` | A khurpi with a worn hardwood handle and a triangular forged blade, a hand trowel, a three-prong hand cultivator and a narrow hand weeder, laid side by side with handles aligned on a weathered teak potting bench, a little dark soil scattered around them | A Mumbai apartment terrace garden, terracotta pots of tulsi and chilli plants blurred behind |
+| **Watering Solutions** <br> `/products/watering-solutions` | Live | `product-watering-solutions.png` | A galvanised watering can with a brass rose, a green garden pipe wound on a wall-mounted hose reel ending in a multi-pattern spray nozzle, and a four-arm rotating sprinkler on the ground, beside freshly watered seedlings, droplets catching the light | A Chennai terrace garden with potted plants and a whitewashed parapet blurred behind |
+| **Garden Pipes** <br> `/products/garden-pipes` | **Pending** | `product-garden-pipes.png` | A coil of unbranded green braided garden hose lying on a terrace floor, the reinforcing weave visible through the outer wall at the cut end, one end fitted with a brass threaded connector and the other running away toward a tap out of frame. A second, smaller coil in a lighter green stacked beside it. No printing or lettering along the hose | A wet terrace floor beside a garden tap, potted plants blurred behind |
+| **Watering Cans** <br> `/products/watering-cans` | Live | `product-watering-cans.png` | An unbranded galvanised steel watering can of about 9 litres: a round body with a soldered seam, a top carrying handle and a rear handle, and a long spout ending in a round brass rose with fine holes. Standing side-on beside two small terracotta pots of chilli seedlings, a few water droplets on the metal | A weathered teak potting bench on an Indian terrace |
+| **Hose Reels** <br> `/products/hose-reels` | **Pending** | `product-hose-reels.png` | An unbranded wall-mounted garden hose reel: a green drum on a bracket with a folding crank handle and a guide arm, about half wound with green hose, mounted on a whitewashed garden wall with the free end of the hose hanging down to a brass nozzle resting on the floor. A trolley-type reel with two wheels standing on the ground beside the wall | A whitewashed compound wall beside a garden tap, foliage blurred to one side |
+| **Self Coiling Hose** <br> `/products/self-coiling-hose` | **Pending** | `product-self-coiling-hose.png` | An unbranded self-coiling spring garden hose in translucent green, its tight even coils clearly visible, hanging from a hook on a balcony railing with one end fitted to a small tap and the other to a trigger spray gun resting on the floor. The coil relaxed rather than stretched | A small apartment balcony garden in Mumbai, potted plants and a railing planter blurred behind |
+| **Pesticides & Fertilisers** <br> `/products/pesticides-and-fertilisers` | **Pending** | `product-pesticides-and-fertilisers.png` | Plain unlabelled containers of garden plant care arranged on a weathered wooden bench: one amber glass bottle of neem oil, one clear measuring cup with a little amber liquid in it, an open hessian sack of dark granular organic manure with a wooden scoop in it, and a small heap of pale granular fertiliser on a square of brown paper. **Every container completely plain, with no label, no printing, no branding and no warning symbols anywhere** | A potting bench in a Pune nursery shade-net house, rows of potted saplings blurred behind |
+| **Fountain Nozzles** <br> `/products/fountain-nozzles` | **Pending** | `product-fountain-nozzles.png` | Four unbranded brass fountain nozzles laid out in a row on wet dark stone: a bell nozzle, a tall column jet, a multi-tier spray head and a ring nozzle, each showing its threaded base. One of them fitted and running in a shallow stone water bowl behind, throwing a low clear bell of water | A shaded courtyard water feature, wet stone and a fern blurred behind |
+| **Garden Solar Lights** <br> `/products/garden-solar-lights` | **Pending** | `product-garden-solar-lights.png` | Three unbranded solar garden spike lights pushed into the earth along the edge of a stone-paved garden path at dusk, each a small round solar panel on a short stem above a warm glowing lamp head, lit and casting soft pools of light onto the path. A fourth wall-mounted solar light glowing on a low boundary wall behind | An Indian garden path at blue hour, marigold and foliage softly lit at the edges |
 
-**Note on 4a to 4d and 4f:** these slots already have live images. If you regenerate them, save the new file as the new source name shown and tell Claude, so the pipeline mapping can be switched to it.
+#### Retired slots
+
+The fourteen-category structure these replaced had five images with no product left to sit on: `category-digging-tools`, `category-garden-accessories`, `category-garden-utility`, `category-irrigation` and `category-tillers`. The outputs are deleted. Their sources are still in `gardening images/` in case the client adds those lines, and digging tools in particular now live inside **Hand Tools**, whose photograph already shows them.
 
 ---
 
@@ -163,9 +204,9 @@ Fill `[SUBJECT]` and `[SETTING]` from the table below.
 
 ---
 
-### 6. Featured tool showcase
+### 6. Featured product showcase
 
-Eight slots: the four live tools (regenerate, their current files carry lettering) and the four added after the September 2026 product review. Each prompt names the exact product, because the image has to show **that** tool: a khurpi, not "a gardening tool"; a rotary lawn mower, not "a garden machine".
+Eight slots: the four live products (regenerate, their current files carry lettering) and the four added after the September 2026 product review. Each prompt names the exact product, because the image has to show **that** tool: a khurpi, not "a gardening tool"; a rotary lawn mower, not "a garden machine".
 
 | | |
 |---|---|
@@ -196,13 +237,15 @@ Eight slots: the four live tools (regenerate, their current files carry letterin
 | `tool-lawn-mower` <br> source: `lawn-mower.png` | Rotary Electric Lawn Mower | Photorealistic 1:1 product photograph of a **rotary electric lawn mower**: a low deck in deep botanical green with a charcoal grey rear grass-collection box, four wheels with a single-lever height adjuster, a folding tubular steel handle with a trigger switch bar and a neatly coiled grey power cable. Standing three-quarter on at the edge of a half-mown lawn in an Indian housing society garden, a crisp line between mown and unmown grass leading in from the lower left, low hedges and palms blurred behind. Same warm light, 35mm at knee height, f/4. Mower fills 60 percent of the frame, top third calm. Unbranded, no stickers. | A green rotary electric lawn mower at the edge of a half-mown society lawn |
 | `tool-brush-cutter` <br> source: `brush-cutter.png` | Petrol Brush Cutter | Photorealistic 1:1 product photograph of a **petrol brush cutter**: a compact two-stroke engine in deep botanical green and charcoal with a recoil starter and fuel tank, a long straight aluminium shaft, a bike-style handlebar with a throttle grip, a padded shoulder harness and, at the far end, a gear head with a three-tooth steel blade under a charcoal guard. Lying diagonally across the boundary between tall uncut grass and a freshly cleared strip on a farm bund in Maharashtra, a neem tree blurred behind. Same warm light, 35mm at knee height. The whole machine in frame, filling 60 percent of it. Unbranded, no stickers, no orange. | A petrol brush cutter lying where tall grass meets a freshly cleared strip on a farm bund |
 
-After a new tool image arrives, add `image` (the src and the alt text above) to that tool in `data/tools.ts`. Nothing else changes: the tool then appears on every photo grid that shows featured tools.
+After a new product image arrives, add `image` (the src and the alt text above) to that product in `data/products.ts`. Nothing else changes: it then appears on every photo grid that shows featured products.
 
 ---
 
-### 7. Services (regenerate)
+### 7. Solutions (regenerate)
 
-All four: **16:10**, **1600 x 1000**. More human than the tool shots: people, hands, conversation, activity. One consistent grade across the set. **All clothing and signage plain, no printed slogans, no lettering anywhere in frame.**
+These four illustrate the gardening solutions shown on Home, on About and across the variants. There is no Services page, so they never appear on their own: each is always beside the copy that explains it.
+
+All four: **16:10**, **1600 x 1000**. More human than the product shots: people, hands, conversation, activity. One consistent grade across the set. **All clothing and signage plain, no printed slogans, no lettering anywhere in frame.**
 
 | Output | Source | Alt | Subject |
 |---|---|---|---|
@@ -213,15 +256,42 @@ All four: **16:10**, **1600 x 1000**. More human than the tool shots: people, ha
 
 ---
 
-### 8. Resources
+### 8. Products page and client logos
 
-All three: **4:3**, **1200 x 900**. Editorial and slightly quieter than the service shots; these illustrate articles.
+#### 8a. Products page overview (regenerate)
 
-| Output | Source | Alt | Subject |
-|---|---|---|---|
-| `resource-choosing-tools.webp` | `choosing-tools.png` | Several gardening tools laid out side by side on a bench for comparison | Several tools laid out for comparison, subtly different handle types and blade shapes, viewed from above at a slight angle. |
-| `resource-essential-tools.webp` | `ssential-tools.png` | A compact starter set of gardening tools grouped beside a canvas tote | A starter set of trowel, hand fork, secateurs and gloves grouped in or beside a canvas or jute tote on a doorstep or bench. |
-| `resource-clean-maintain.webp` | `clean-maintain.png` | A muddy garden tool being cleaned with a brush and cloth after use | A muddy tool mid-clean with brush, cloth and bucket of water, one half of the blade already bright. The before and after is the story. |
+Replaces the three Resources slots, retired when Resources was replaced by Clients. `resource-essential-tools` and `resource-clean-maintain` are gone; `resource-choosing-tools` was kept and renamed `products-overview`, because a bench of tools laid out for comparison is exactly what the Products page opens with.
+
+| | |
+|---|---|
+| **Source** | `gardening images/choosing-tools.png` |
+| **Output** | `public/images/products-overview.webp` |
+| **Ratio** | 4:3 |
+| **Target** | 1200 x 900 |
+| **Alt** | Several gardening tools laid out side by side on a bench for comparison |
+
+**Subject:** Several Indian gardening tools laid out for comparison on a weathered teak bench, viewed from above at a slight angle: a khurpi, a hand trowel, bypass secateurs, a hand cultivator and a pair of gloves, with visibly different handle types and blade shapes. Late-afternoon light from camera left.
+
+**Critical:** the current asset carries **printed labels under the tools**. It sits beside the Products page heading, so that lettering has to go.
+
+#### 8b. Brand wall (supplied, never generated)
+
+The Clients page carries a wall of the manufacturer brands the business stocks. Five marks were supplied on 20 September 2026 and are live: STIHL, Falcon Garden Tools, Concorde, Milan and Kamlesh Lawn Mowers.
+
+**These are brands, not customers.** The client's old site files them under `images/clients/`, but the marks are unmistakably manufacturers. They are presented on the site as the brands stocked, which is both true and the stronger claim. Customer logos, if any are ever supplied and approved, belong in a separate list rather than mixed into this one.
+
+**Never generate, draw, trace or recolour one of these.** They are trademarks belonging to other companies. `npm run images` copies everything in `gardening images/clients/` into `public/images/clients/` **byte for byte**: no resize, no re-encode, no crop, no trim. The wall then places each mark on a white cell, contains it inside that cell, and serves it `unoptimized` so the exact supplied file reaches the browser.
+
+| | |
+|---|---|
+| **Source** | `gardening images/clients/<brand-slug>.<ext>` |
+| **Output** | `public/images/clients/<brand-slug>.<ext>`, copied unaltered |
+| **Format** | Whatever the brand supplies. Transparent PNG or SVG is best; the five current marks are 160 x 85 JPEGs on white, which is why the cells are white in both themes |
+| **Alt** | The company name, for example: Logo of STIHL |
+
+The wall contains each mark inside its own cell and never crops or stretches it, so a wide lockup and a square badge can sit side by side, and it caps the rendered width at 130px so the small originals are never scaled up into softness. Marks are shown in their own colours: no greyscale filter, because a trademark is placed, not treated.
+
+**Adding a brand** is one file in `gardening images/clients/` and one entry in `brandMarks` in [data/clients.ts](../data/clients.ts).
 
 ---
 
@@ -297,11 +367,12 @@ The 404 page already ships with an animated SVG scene drawn in code: a garden pa
 - [ ] Source files are in `gardening images/` under the exact source names above
 - [ ] Sources are at or above the target size, so nothing ships capped
 - [ ] No text, signage, logos, watermarks or printed slogans anywhere in any frame
-- [ ] The tool category series (section 4) reads as one consistent shoot, with machinery in the green and charcoal house colourway
-- [ ] The featured tool set (section 6) reads as one consistent shoot
-- [ ] The service set (section 7) reads as one consistent shoot
+- [ ] The product category series (section 4) reads as one consistent shoot, with machinery in the green and charcoal house colourway
+- [ ] The featured product set (section 6) reads as one consistent shoot
+- [ ] The solutions set (section 7) reads as one consistent shoot
+- [ ] No client logo has been generated, traced or recoloured (section 8b)
 - [ ] Settings, people and vegetation read as Indian
 - [ ] `hero-main` keeps its subject left of centre
 - [ ] `community-story` has an even, uncluttered centre third
 - [ ] Nothing in any frame suggests retail, packaging or pricing
-- [ ] After running: new category images have `image` added in `data/toolCategories.ts`, `npm run check` passes and the page shows no broken images
+- [ ] After running: new category images have `image` added in `data/productCategories.ts`, `npm run check` passes and the page shows no broken images

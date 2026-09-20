@@ -16,7 +16,7 @@ export function ArtCategories() {
     index: String(index + 1).padStart(2, "0"),
     label: category.shortTitle,
     description: category.description,
-    href: routes.toolCategory(category.slug),
+    href: routes.productCategory(category.slug),
     image: category.image,
   }));
 

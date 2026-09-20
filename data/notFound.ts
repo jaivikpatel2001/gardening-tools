@@ -15,10 +15,10 @@ export const notFoundContent = {
   heading: "This page wandered off the garden path",
   body: "The page you were looking for has moved, been renamed or never quite took root. Let's get you back on familiar ground.",
   primaryCta: { label: "Back to Home", href: routes.home },
-  secondaryCta: { label: "Explore Gardening Tools", href: routes.homeSection("categories") },
+  secondaryCta: { label: "Explore Our Products", href: routes.homeSection("categories") },
   trailLabel: "Or pick up the trail",
   links: [
-    { label: "Complete tool range", href: routes.homeSection("complete-range") },
+    { label: "Complete product range", href: routes.homeSection("complete-range") },
     { label: "Services", href: routes.homeSection("services") },
     { label: "Resources", href: routes.homeSection("resources") },
   ],

@@ -21,7 +21,7 @@ export const catalogueHero = {
   eyebrow: "Tools for better gardens",
   headingLines: ["The Complete", "Garden Tool", "Catalogue"] as const,
   body: "Traditional Indian hand tools and modern garden machinery, set out the way a trade catalogue sets them out: everything listed, explained honestly and supplied by enquiry.",
-  primaryCta: { label: "Explore Our Tools", href: routes.tools },
+  primaryCta: { label: "Explore Our Products", href: routes.products },
   secondaryCta: { label: "Get in Touch", href: routes.contact },
   /** The masthead strip. Counts are filled in from the catalogue at render. */
   meta: [
@@ -34,11 +34,11 @@ export const catalogueHero = {
     { number: "02", title: "Selected tools", href: "#catalogue-specimens" },
     { number: "03", title: "Services", href: "#catalogue-services" },
     { number: "04", title: "About us", href: "#catalogue-about" },
-    { number: "05", title: "Reading", href: "#catalogue-reading" },
+    { number: "05", title: "Clientele", href: "#variant5-clients" },
     { number: "06", title: "Enquire", href: "#catalogue-enquire" },
   ] as const,
   image: {
-    src: "/images/resource-choosing-tools.webp",
+    src: "/images/products-overview.webp",
     alt: "Several gardening tools laid out side by side on a bench for comparison",
   } satisfies ImageAsset,
   caption: "Plate 01. Hand tools laid out for comparison.",
@@ -49,7 +49,7 @@ export const catalogueRange = {
   heading: "The complete range, listed",
   body: "Every category we stock, both halves of the range, with what sits inside each one. Photographed categories carry a plate; the rest are listed exactly the same way.",
   columns: { category: "Category", contents: "What is inside", count: "Types" },
-  cta: { label: "View all tools", href: routes.tools },
+  cta: { label: "View all products", href: routes.products },
 };
 
 export const catalogueSpecimens = {
@@ -116,18 +116,11 @@ export const catalogueAbout = {
   caption: "Plate 06. Forged head, seasoned handle.",
 };
 
-export const catalogueReading = {
-  eyebrow: "Section 05",
-  heading: "Reading",
-  body: "Practical guidance for Indian gardens, written by people who dig.",
-  cta: { label: "View all resources", href: routes.resources },
-};
-
 export const catalogueClosing = {
   eyebrow: "Section 06",
   heading: "Tell us what you are growing",
   body: "Send us your soil, your season and your space, and we will tell you what you need and what you can skip.",
   primaryCta: { label: "Get in Touch", href: routes.contact },
-  secondaryCta: { label: "Explore Tools", href: routes.tools },
+  secondaryCta: { label: "Explore Products", href: routes.products },
   colophonNote: "Every tool in this catalogue is supplied by enquiry. No prices are published.",
 };

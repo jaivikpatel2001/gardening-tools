@@ -18,7 +18,7 @@ export const artHero = {
   eyebrow: "Jiva Greens",
   words: ["Grow", "Better"] as const,
   body: "Gardening tools built for Indian soil, Indian seasons and the way Indian gardens are actually worked.",
-  cta: { label: "Explore the range", href: routes.tools },
+  cta: { label: "Explore the range", href: routes.products },
   meta: [
     { value: "14", label: "Categories" },
     { value: site.founded, label: "Since" },
@@ -34,7 +34,7 @@ export const artWall = {
   eyebrow: "The range",
   heading: "Pick a direction",
   body: "Five photographed categories. The rest of the range, machinery included, sits behind the index.",
-  cta: { label: "View the complete range", href: routes.tools },
+  cta: { label: "View the complete range", href: routes.products },
 };
 
 export const artGallery = {
@@ -91,17 +91,10 @@ export const artTechnical = {
   ] as const,
 };
 
-export const artJournal = {
-  eyebrow: "Learn and grow",
-  heading: "Field notes",
-  body: "Practical guidance for Indian gardens, written by people who dig.",
-  cta: { label: "View all resources", href: routes.resources },
-};
-
 export const artClosing = {
   eyebrow: "Start here",
   words: ["Make Your", "Garden", "Better."] as const,
   body: "Tell us what you are growing. We will tell you what you need.",
   primaryCta: { label: "Get in Touch", href: routes.contact },
-  secondaryCta: { label: "Explore Tools", href: routes.tools },
+  secondaryCta: { label: "Explore Products", href: routes.products },
 };

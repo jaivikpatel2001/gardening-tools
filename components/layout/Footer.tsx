@@ -7,16 +7,25 @@ import { Container } from "@/components/ui/Container";
 import { NewsletterForm } from "@/components/ui/NewsletterForm";
 import { site } from "@/config/site";
 import {
-  footerResourceLinks,
-  footerServiceLinks,
-  footerToolCategorySlugs,
-  legalLinks,
+  footerCompanyLinks,
+  footerHandCategorySlugs,
+  footerMachineryCategorySlugs,
   primaryNav,
 } from "@/data/navigation";
 import { getCategoryLinks } from "@/lib/catalogue";
+import { visibleLinks } from "@/lib/visibility";
 import type { NavItem } from "@/types/content";
 
+/**
+ * A column of footer links.
+ *
+ * Renders nothing at all when every link in it has been filtered out by the
+ * page switchboard. A heading above an empty list would advertise a section
+ * that has not been released.
+ */
 function LinkColumn({ title, items }: { title: string; items: readonly NavItem[] }) {
+  if (items.length === 0) return null;
+
   return (
     <div>
       <h3 className="text-title-sm text-on-band">{title}</h3>
@@ -37,15 +46,23 @@ function LinkColumn({ title, items }: { title: string; items: readonly NavItem[]
 }
 
 /**
- * Global footer. Built once here and reused by every future page; nothing in it
- * is Home-specific. A server component, which is what lets the tool column read
- * the catalogue without that data reaching the browser.
+ * Global footer. Built once here and reused by every page; nothing in it is
+ * Home-specific. A server component, which is what lets the product columns
+ * read the catalogue without that data reaching the browser.
  *
- * No Blog or Journal link exists in any column, by design.
+ * Every column of site links is passed through `visibleLinks`, so a page that
+ * has not been released in production disappears from the footer at the same
+ * moment it disappears from the header and the sitemap. Product category links
+ * are covered by the Products flag, which `visibleLinks` resolves from the URL.
+ *
+ * No Blog, Journal, Services or Resources link exists in any column, by design.
  */
 export function Footer() {
   const { contact } = site;
-  const toolLinks = getCategoryLinks(footerToolCategorySlugs);
+  const handLinks = visibleLinks(getCategoryLinks(footerHandCategorySlugs));
+  const machineryLinks = visibleLinks(getCategoryLinks(footerMachineryCategorySlugs));
+  const quickLinks = visibleLinks(primaryNav);
+  const companyLinks = visibleLinks(footerCompanyLinks);
 
   return (
     <footer className="bg-band text-on-band-muted">
@@ -81,10 +98,10 @@ export function Footer() {
           </div>
 
           <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-4 lg:col-span-4 lg:grid-cols-4">
-            <LinkColumn title="Quick Links" items={primaryNav} />
-            <LinkColumn title="Tools" items={toolLinks} />
-            <LinkColumn title="Services" items={footerServiceLinks} />
-            <LinkColumn title="Resources" items={footerResourceLinks} />
+            <LinkColumn title="Quick Links" items={quickLinks} />
+            <LinkColumn title="Hand Tools" items={handLinks} />
+            <LinkColumn title="Machinery" items={machineryLinks} />
+            <LinkColumn title="Company" items={companyLinks} />
           </div>
         </div>
 
@@ -139,17 +156,15 @@ export function Footer() {
           </div>
         </div>
 
+        {/* No privacy or terms links: those pages do not exist yet, and a link
+            to a page that is not there is worse than no link at all. */}
         <div className="mt-12 flex flex-col gap-4 border-t border-white/12 pt-7 text-caption-sm text-on-band-muted sm:flex-row sm:items-center sm:justify-between">
-          <p>&copy; 2026 {site.name}. All Rights Reserved.</p>
-          <ul className="flex items-center gap-6">
-            {legalLinks.map((item) => (
-              <li key={item.href}>
-                <Link href={item.href} className="transition-colors duration-200 hover:text-on-band">
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <p>
+            &copy; {new Date().getFullYear()} {site.name}. All Rights Reserved.
+          </p>
+          <p>
+            {site.legalName}, {site.contact.address.locality}
+          </p>
         </div>
       </Container>
     </footer>

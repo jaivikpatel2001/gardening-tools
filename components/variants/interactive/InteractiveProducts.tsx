@@ -3,7 +3,7 @@ import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Reveal } from "@/components/ui/Reveal";
 import { ProductRail, type RailItem } from "@/components/variants/interactive/ProductRail";
 import { interactiveRail } from "@/data/variants/interactive";
-import { featuredTools } from "@/data/tools";
+import { featuredProducts } from "@/data/products";
 import { routes } from "@/lib/routes";
 
 /**
@@ -14,12 +14,12 @@ import { routes } from "@/lib/routes";
 export function InteractiveProducts() {
   const { eyebrow, heading, body, dragHint, specs } = interactiveRail;
 
-  const items: RailItem[] = featuredTools.map((tool) => ({
+  const items: RailItem[] = featuredProducts.map((tool) => ({
     slug: tool.slug,
     name: tool.name,
     category: tool.category,
     description: tool.description,
-    href: routes.tool(tool.categorySlug, tool.slug),
+    href: routes.productCategory(tool.categorySlug),
     image: tool.image,
     specs: specs[tool.slug] ?? [],
   }));

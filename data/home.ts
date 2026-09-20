@@ -19,7 +19,7 @@ export const heroContent = {
    */
   headingLines: ["Everything You", "Need to Grow a", "Better Garden"] as const,
   body: "Reliable gardening tools, practical guidance and garden solutions built for Indian soil, Indian seasons and the way Indian gardens are actually worked.",
-  primaryCta: { label: "Explore Our Tools", href: routes.tools },
+  primaryCta: { label: "Explore Our Products", href: routes.products },
   secondaryCta: { label: "Get in Touch", href: routes.contact },
   trustLine: "Built for gardeners. Designed for lasting performance.",
   card: {
@@ -51,7 +51,7 @@ export const aboutContent = {
   cta: { label: "Discover Our Story", href: routes.about },
   image: {
     src: "/images/about-preview.webp",
-    alt: "A gardener in an apron kneeling to plant seedlings in a raised timber bed on a bright afternoon",
+    alt: "A gardener in an apron kneeling to plant seedlings in a raised timber bed on a terrace, with potted plants and rooftops behind",
   } satisfies ImageAsset,
 };
 
@@ -80,7 +80,7 @@ export const finalCtaContent = {
   heading: "Ready to Make Gardening Easier?",
   body: "Tell us what you are growing and we will help you find the right tools and solutions.",
   primaryCta: { label: "Get in Touch", href: routes.contact },
-  secondaryCta: { label: "Explore Tools", href: routes.tools },
+  secondaryCta: { label: "Explore Products", href: routes.products },
 };
 
 export const newsletterContent = {
@@ -88,12 +88,34 @@ export const newsletterContent = {
   body: "Practical gardening tips, useful guides and season-by-season advice for Indian gardens.",
 };
 
+/**
+ * Figures for the highlights band.
+ *
+ * Only the labels live here. Every value is counted from the catalogue or
+ * derived from the founding year at render time (see `lib/catalogue.ts`), so
+ * nothing on the page is a number somebody typed and nobody checked. No
+ * customer count, order volume or turnover appears, because none has been
+ * supplied.
+ */
+export const highlightsContent = {
+  eyebrow: "At a glance",
+  heading: "The Range, in Numbers We Can Stand Behind",
+  body: "Counted from the catalogue itself rather than rounded up for a website.",
+  labels: {
+    years: { label: "Years supplying Indian gardens", description: `Trading from Ahmedabad since ${site.founded}.` },
+    categories: { label: "Product categories", description: "Across traditional hand tools and power machinery." },
+    productTypes: { label: "Product types listed", description: "Every one of them stocked, not drop-shipped." },
+    reach: { label: "Advice, spares and servicing", description: "Supplied across India, handled from one counter." },
+  },
+  reachValue: "All India",
+};
+
 export const sectionCopy = {
-  toolCategories: {
-    eyebrow: "Explore our tools",
-    heading: "Tools for Every Garden Task",
+  productCategories: {
+    eyebrow: "Explore our products",
+    heading: "Products for Every Garden Task",
     body: "Traditional Indian hand tools and modern garden machinery for balconies, kitchen gardens, farms, nurseries and estate grounds.",
-    cta: { label: "View All Tools", href: routes.tools },
+    cta: { label: "View All Products", href: routes.products },
     teaser: {
       eyebrow: "Power & garden machinery",
       title: "Mowers, brush cutters, sprayers and more",
@@ -106,22 +128,22 @@ export const sectionCopy = {
         "From the khurpi in your hand to the brush cutter on your shoulder. Every category comes with the same honest advice on choosing, using and caring for it.",
     },
   },
-  featuredTools: {
-    eyebrow: "Our tool range",
+  featuredProducts: {
+    eyebrow: "Our product range",
     heading: "Built for Every Gardening Need",
-    body: "A few of the tools we reach for most often, and why they keep earning their place.",
-    cta: { label: "Browse the Range", href: routes.tools },
+    body: "A few of the products we reach for most often, and why they keep earning their place.",
+    cta: { label: "Browse the Range", href: routes.products },
   },
-  services: {
+  solutions: {
     eyebrow: "What we offer",
-    heading: "More Than Just Gardening Tools",
+    heading: "More Than Just Gardening Products",
     body: "Practical support, guidance and garden solutions from people who understand the work.",
   },
-  resources: {
-    eyebrow: "Learn & grow",
-    heading: "Helpful Knowledge for Better Gardens",
-    body: "Simple guides, practical tips and useful information to help you get more from your garden and your tools.",
-    cta: { label: "View All Resources", href: routes.resources },
+  clients: {
+    eyebrow: "Who we supply",
+    heading: "Trusted Where Gardens Are Work",
+    body: "Landscapers, institutes, corporates, nurseries and home gardeners buy from the same counter, and the range is specified for the ones who use it every day.",
+    cta: { label: "See Our Clients", href: routes.clients },
   },
   testimonials: {
     eyebrow: "What our customers say",
