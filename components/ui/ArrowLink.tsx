@@ -4,8 +4,8 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
 /**
- * The tertiary text action used throughout the page — "Explore", "View Tool",
- * "Read Guide", "View All Resources". The arrow travels 4px on hover, exactly
+ * The tertiary text action used throughout the page — "View Products",
+ * "View Range", "See Our Clients". The arrow travels 4px on hover, exactly
  * as the design system specifies, and the underline is drawn with a scaling
  * pseudo-element so nothing lays out on hover.
  */

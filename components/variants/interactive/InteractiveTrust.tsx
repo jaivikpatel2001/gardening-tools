@@ -22,7 +22,7 @@ export function InteractiveTrust() {
 
   const groups = getGroupedCategories();
   const categories = groups.flatMap((group) => group.categories);
-  const toolTypes = categories.reduce((total, category) => total + category.tools.length, 0);
+  const toolTypes = categories.reduce((total, category) => total + (category.items?.length ?? 0), 0);
   const years = new Date().getFullYear() - Number(site.founded);
 
   const stats: CounterStat[] = [

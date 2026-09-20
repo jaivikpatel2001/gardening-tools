@@ -1,7 +1,7 @@
-# GreenTools — Project Plan
+# Jiva Greens — Project Plan
 
-**Status:** Phase 1 — Home page in progress
-**Scope of this phase:** Home / landing page only
+**Status:** Phase 2 — full information architecture built, pages released one at a time
+**Scope of this phase:** Home, About, Products, Product Detail, Clients, Contact
 **Design system:** [gardening-tools-design.md](./gardening-tools-design.md)
 **Image manifest:** [image-generation.md](./image-generation.md)
 
@@ -31,20 +31,24 @@ The Home page is the flagship. It establishes the complete visual language for e
 
 ```
 COMMON HEADER
-├── HOME          ← this phase
+├── HOME
 ├── ABOUT
-├── TOOLS
-│   └── TOOL DETAIL
-├── SERVICES
-├── RESOURCES
-├── CONTACT
-└── FAQ (optional)
+├── PRODUCTS
+│   └── PRODUCT CATEGORY DETAIL  /products/[slug]
+├── CLIENTS
+└── CONTACT
 COMMON FOOTER
 ```
 
 **Blog and Journal are permanently excluded** — no page, no route, no navigation item, no footer link, no sitemap entry.
 
-**Resources stays.** It covers Gardening Guides, Tool Guides, How-To Articles, Seasonal Tips and FAQ. If editorial content is ever needed, it goes under Resources — not into a separate Blog.
+**Tools is now Products.** The range is called Products everywhere a visitor sees it: navigation, headings, buttons, breadcrumbs, URLs, metadata and every call to action. "Hand tools" and "cutting tools" remain as product-type names, because that is what the trade calls them.
+
+**Services was removed.** The client's own services page is placeholder Latin, and four service cards did not justify a route. The same content is now carried contextually as *gardening solutions*, on Home, on About and on Contact, and each one converts to an enquiry.
+
+**Resources was replaced by Clients.** Editorial guides are gone; credibility is not. `/clients` carries the logo wall, the industries served, the partnership approach and testimonials.
+
+**Release is controlled centrally.** `config/pageVisibility.ts` decides which pages exist in production. See §16.
 
 ---
 
@@ -79,19 +83,31 @@ app/
 
 components/
   layout/    Header  MobileMenu  Footer  ThemeToggle  Logo
-  home/      Hero  TrustBar  AboutPreview  ToolCategories  WhyChooseUs
-             FeaturedTools  ServicesPreview  ResourcesPreview
-             CommunityStory  Testimonials  FinalCTA  Newsletter
+  home/      Hero  TrustBar  AboutPreview  ProductCategories  WhyChooseUs
+             FeaturedProducts  SolutionsPreview  Highlights
+             ClientsPreview  CommunityStory  Testimonials
+             FinalCTA  Newsletter
+  about/     sections.tsx (introduction, story, mission, values,
+             philosophy, capability, Indian focus, solutions)
+  clients/   sections.tsx (logo wall, industries, approach, voices)
+  products/  ProductCatalogue  ProductListCard  ProductGallery
+             ProductCategoryDetail
+  forms/     EnquiryForm
+  preloader/ Preloader
   ui/        Button  Container  Section  SectionHeading  Eyebrow
              ArrowLink  ImagePlate  Reveal  MagneticButton  StarRating
-  cards/     ToolCategoryCard  ToolShowcaseCard  ServiceCard
-             ResourceCard  TestimonialCard
+  cards/     ProductCategoryCard  ProductShowcaseCard  SolutionCard
+             IndustryCard  RangeTeaserCard  TestimonialCard
   motion/    SmoothScrollProvider  gsap.ts  useReveal.ts
   seo/       JsonLd
   decor/     LeafLineArt  BotanicalCorner
 
-data/        site  navigation  trust  toolCategories  tools
-             benefits  services  resources  testimonials
+sections/    CollectionSection  CategoryIndex  PageHero  Breadcrumbs
+             CtaBand  HighlightsBand
+
+data/        navigation  trust  productCategories  products
+             benefits  solutions  clients  testimonials
+             about  contact  products-page
 lib/         cn  seo
 public/images/
 resources/   plan.md  image-generation.md  gardening-tools-design.md
@@ -99,9 +115,11 @@ resources/   plan.md  image-generation.md  gardening-tools-design.md
 
 ### Reuse contract for future pages
 
-Every future page (About, Tools, Tool Detail, Services, Resources, Contact, FAQ) reuses `layout/*`, `ui/*`, `cards/*`, `motion/*`, `data/*` and `lib/seo.ts` **without modification**. Adding a page should mean writing a route and composing existing primitives — never redesigning the foundation.
+Every page (About, Products, Product Detail, Clients, Contact) reuses `layout/*`, `ui/*`, `cards/*`, `sections/*`, `motion/*`, `data/*` and `lib/seo.ts` **without modification**. Adding a page means writing a route and composing existing primitives — never redesigning the foundation. This held: the five pages built in phase 2 added `PageHero`, `Breadcrumbs`, `CtaBand` and `HighlightsBand` to the shared set and changed nothing underneath them.
 
-All copy lives in typed arrays under `data/`. The Tools page will render the same `tools` array the Home page samples from; the Services page the same `services` array; and so on. Nothing is hard-coded into a section component.
+All copy lives in typed arrays under `data/`. The Products page renders the same catalogue the Home page samples from; About and Contact render the same `solutions` array Home does. Nothing is hard-coded into a section component.
+
+**One product detail component, not one per product.** `/products/[slug]` is a single route over `ProductCategoryDetail`, driven entirely by `data/productCategories.ts`. Adding a category publishes its page.
 
 ### Server vs client boundary
 
@@ -184,8 +202,9 @@ Background rhythm is deliberate: no two adjacent sections share a surface, and d
 | 4 | Tool categories | canvas | 6 cards, 3 → 2 → 1 |
 | 5 | Why choose us | botanical tint | numbered 01–04 list + sticky image |
 | 6 | Featured tools | white | 4 square-image cards |
-| 7 | Services | cream light | 4 cards with icon badges |
-| 8 | Resources | botanical tint | 3 editorial cards |
+| 7 | Gardening solutions | cream light | 4 cards with icon badges |
+| 8 | Highlights | warm | 4 figures counted from the catalogue |
+| 8a | Clients | botanical tint | 6 industry cards with category chips |
 | 9 | Community story | full-bleed photo + scrim | centred white text |
 | 10 | Testimonials | canvas | 3 quiet cards |
 | 11 | Final CTA | deep green | centred, leaf line-art |
@@ -199,7 +218,7 @@ The strongest section on the site.
 
 **Desktop:** left text column at ~45% on the warm canvas; right image plate at ~55% bleeding off the right edge of the viewport with a large organic radius on its left and bottom edges. A smaller 4:5 detail plate overlaps its lower-left with a soft card shadow. A white floating card sits at the seam reading `QUALITY TOOLS / Practical · Reliable · Built to Last`. Fine leaf line-art at 10% opacity occupies the upper-left negative space.
 
-**Copy:** eyebrow `TOOLS FOR BETTER GARDENS`; h1 `Everything You Need to Grow a Better Garden`; supporting paragraph; primary `Explore Our Tools →`; secondary `Get in Touch`; trust line `Built for gardeners. Designed for lasting performance.`
+**Copy:** eyebrow `TOOLS FOR BETTER GARDENS`; h1 `Everything You Need to Grow a Better Garden`; supporting paragraph; primary `Explore Our Products →`; secondary `Get in Touch`; trust line `Built for gardeners. Designed for lasting performance.`
 
 **Mobile (<744px):** text → CTAs → image, in that order. The image becomes a full-width 4:3 plate with an 18px radius. No bleed, no second plate, no parallax.
 
@@ -294,14 +313,13 @@ The authoritative reference for this version is `node_modules/next/dist/docs/`, 
 |---|---|---|
 | 1 | Home page, design tokens, theme system, header, footer, motion primitives, SEO foundation | **built — awaiting review** |
 | 1.1 | Complete tool range, 404 page, custom cursor, floating actions, environment configuration, brand icons | **built, awaiting review** |
-| 2 | About | not started |
-| 3 | Tools listing + Tool Detail template | not started |
-| 4 | Services | not started |
-| 5 | Resources | not started |
-| 6 | Contact + enquiry form | not started |
-| 7 | FAQ (optional) | not started |
+| 2 | About, Products listing, Product Detail template, Clients, Contact, preloader, page visibility system | **built, awaiting review** |
+| 3 | Enquiry form backend and email delivery | not started |
+| 4 | Legal pages (privacy, terms) | not started |
 
-Each phase is reviewed and approved before the next begins. No page is built ahead of its turn.
+Phase 2 built the whole information architecture at once because the pages share one component set and one catalogue. Release is now controlled per page in production through `config/pageVisibility.ts`, so the client still sees them one at a time (§16).
+
+There is no Services phase and no Resources phase. Services was removed and Resources became Clients.
 
 ---
 
@@ -320,7 +338,7 @@ Each of these departs from `gardening-tools-design.md` deliberately. They are li
 | Hero sits inside `container-page` instead of bleeding off the right edge | Requested in review, so the hero shares its edges with the header and every section below. The photograph keeps its organic shape, now rounded on all four corners. |
 | Botanical line-art removed from the hero, the final CTA and the range teaser card | Rejected in review as unconvincing. Organic detail comes from photography; any future botanical accent must look real. |
 | Custom cursor: the leaf tracks the pointer exactly and the dot trails it | Requested in review, so the leaf is the cursor itself. Aim stays precise because the element on the hotspot never eases. |
-| `--muted` darkened from `#69736A` to `#5A645B` | The specified value measures **4.36:1** on the botanical tint used by the Resources and Why-Choose-Us bands — below the 4.5:1 AA floor the same document requires for body text. Now ≥4.85:1 on every light surface. |
+| `--muted` darkened from `#69736A` to `#5A645B` | The specified value measures **4.36:1** on the botanical tint used by the soft and Why-Choose-Us bands — below the 4.5:1 AA floor the same document requires for body text. Now ≥4.85:1 on every light surface. |
 | `--brand-soft` darkened from `#3F7F35` to `#38712C` | Leaf Green measures **4.31:1** on the cream band and carries 12px eyebrow labels, which count as normal-size text. Now ≥4.64:1 everywhere. Visually identical at label size. |
 | Dark theme brand button uses near-black-green text | White on `#7FB56F` measures **2.4:1** and fails AA. `#08150C` on it measures 7.78:1. |
 | Star rating keeps `#D8A92E` despite 2.18:1 on white | Kept as specified. The rating is exposed to assistive technology as text ("Rated 5 out of 5"), so the stars reinforce rather than carry the information. |
@@ -328,6 +346,13 @@ Each of these departs from `gardening-tools-design.md` deliberately. They are li
 | `@gsap/react` added as a dependency | The official GSAP React guidance is to use `useGSAP()`, and its `contextSafe` wrapper is what makes the magnetic-button pointer handlers clean up correctly. ~3KB. |
 | Motion loaded via `LazyMotion` + `m` rather than `motion` | Measured: 258KB vs 267KB gzipped for the page. `strict` mode makes the saving permanent by throwing if anyone imports `motion.*` again. |
 | Tailwind's default breakpoints replaced with 744 / 900 / 1128 / 1440 / 1680 | So `sm:` and `lg:` mean the design system's tablet and desktop. Without it the hero's `lg:` styles fired at 1024px while its grid waited for 1128px. |
+| Tools renamed Products everywhere a visitor sees it, including the routes | Requested in review, and it matches the client's own navigation. The domain types, data files and card components were renamed with it rather than left saying Tool, so the code and the site use one vocabulary. |
+| Services page removed, its content kept as *gardening solutions* | The client's own services page is placeholder Latin, and four cards do not justify a route. Keeping a page whose only job is to list four things the enquiry form already covers would have been a dead end for visitors. |
+| Resources replaced by Clients | Editorial guides were never written and the client has no article to publish. A credibility page is what a twenty-eight-year supplier actually needs, and it replaces Resources across Home, all five variants, the footer and the sitemap. |
+| Product detail pages are per **category**, not per product | The client publishes product categories, not model sheets. A page per named product would have to invent specifications, model numbers and photographs, which the brief forbids. Each category page lists the real product types inside it. |
+| Privacy and terms links removed from the footer | Those pages do not exist. A link to a page that is not there is worse than no link. |
+| Enquiry form composes a message for the visitor's own mail client | Email delivery is not built, and a success message for something that never left the browser would be a lie. The form states this and hands over the phone, email and WhatsApp routes that do work. |
+| The preloader runs once per session, never on reduced motion or reduced data | A branded animation on every navigation is a tax, not a brand. |
 
 ### Two Tailwind traps this codebase has already hit
 
@@ -371,3 +396,32 @@ Rules these follow:
 - Same header, navigation and footer. `config/variants.ts` records only which routes need the white header treatment over their hero (variant 1 alone).
 - Client components receive plain props from server bindings, so the catalogue never crosses the client boundary.
 - Every variant route is `noindex` and none is in the sitemap. The floating switcher (Home, 01 to 05) is mounted on the five variant routes only; the live Home page has nothing added to it.
+
+---
+
+## 16. Page visibility (production release switchboard)
+
+Pages are developed normally and released to the client one at a time. One file decides what exists in production.
+
+```ts
+// config/pageVisibility.ts
+export const pageVisibility: Record<PageKey, boolean> = {
+  home: true,
+  about: true,
+  products: true,
+  clients: true,
+  contact: true,
+  variants: false,
+};
+```
+
+**Environment rule.** Development and staging serve every implemented page regardless of the flags, so unreleased work stays reviewable. Only `NEXT_PUBLIC_APP_ENV=production` enforces them.
+
+**Enforcement is at the route, not in the markup.** Two layers, both server side:
+
+1. `proxy.ts` (Next 16's replacement for `middleware.ts`) rewrites a withdrawn path so it never reaches the page.
+2. Every gated route calls `enforcePageVisibility(key)`, which calls `notFound()`. The response is a real 404 with the site's not-found page, exactly as an unknown URL is.
+
+**Everything else follows automatically.** `visibleLinks()` filters the header, the mobile sheet and all four footer columns; a footer column with nothing left in it renders nothing rather than an empty heading; `app/sitemap.ts` filters the same way. Releasing a page is one boolean.
+
+**What it is not.** No database, no admin panel, no feature-flag service, no authentication and no API. Two constants and a path test.

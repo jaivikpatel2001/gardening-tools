@@ -26,7 +26,7 @@ export const interactiveHero = {
   product: "Bypass Pruning Secateurs",
   headingLines: ["Precision for", "Every Cut"] as const,
   body: "Four things separate a pair of secateurs you keep for a decade from a pair you replace next season. Take a closer look at each of them.",
-  cta: { label: "Explore the range", href: routes.tools },
+  cta: { label: "Explore the range", href: routes.products },
   scrollCue: "Scroll to explore",
   hint: "Select a point on the tool",
   image: {
@@ -79,7 +79,7 @@ export const interactiveSelector = {
   eyebrow: "Explore our tools",
   heading: "Choose where to begin",
   body: "Five entry points into the range. Move through them and the garden behind changes with you.",
-  cta: { label: "See the complete range", href: routes.tools },
+  cta: { label: "See the complete range", href: routes.products },
 };
 
 export const interactiveRail = {
@@ -114,7 +114,7 @@ export const interactiveFinder = {
       question: "Need clean cuts that heal instead of dying back?",
       answer:
         "Bypass secateurs for green stems, a branch cutter past 20 mm, a pruning saw beyond that. A daranti still beats all three for long grass.",
-      categorySlug: "pruning-tools",
+      categorySlug: "cutting-tools",
       tools: ["Secateurs", "Branch cutters", "Pruning saw", "Daranti (sickle)"],
     },
     {
@@ -122,7 +122,7 @@ export const interactiveFinder = {
       question: "Need watering that survives a pre-monsoon April?",
       answer:
         "A fine rose for seedlings, a hose reel for a garden you walk around, drip lines for anything you leave for a week.",
-      categorySlug: "irrigation",
+      categorySlug: "sprinklers",
       tools: ["Watering cans", "Hose reels", "Drip irrigation kits", "Timers"],
     },
     {
@@ -130,7 +130,7 @@ export const interactiveFinder = {
       question: "Need to break soil that has set hard?",
       answer:
         "A phawda and a kudali for beds you can reach across, a mini tiller once the plot is bigger than your patience.",
-      categorySlug: "digging-tools",
+      categorySlug: "hand-tools",
       tools: ["Phawda (digging spade)", "Kudali (hoe)", "Gaiti (pickaxe)", "Mini tillers"],
     },
     {
@@ -171,5 +171,5 @@ export const interactiveClosing = {
   headingLines: ["Tell us what", "you are growing."] as const,
   body: "We will help you find the tools that suit your soil, your season and the hours you actually have.",
   primaryCta: { label: "Get in Touch", href: routes.contact },
-  secondaryCta: { label: "Explore Tools", href: routes.tools },
+  secondaryCta: { label: "Explore Products", href: routes.products },
 };

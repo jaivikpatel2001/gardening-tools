@@ -1,16 +1,16 @@
+import { IndustryCard } from "@/components/cards/IndustryCard";
+import { ProductCategoryCard } from "@/components/cards/ProductCategoryCard";
+import { ProductShowcaseCard } from "@/components/cards/ProductShowcaseCard";
 import { RangeTeaserCard } from "@/components/cards/RangeTeaserCard";
-import { ResourceCard } from "@/components/cards/ResourceCard";
-import { ServiceCard } from "@/components/cards/ServiceCard";
+import { SolutionCard } from "@/components/cards/SolutionCard";
 import { TestimonialCard } from "@/components/cards/TestimonialCard";
-import { ToolCategoryCard } from "@/components/cards/ToolCategoryCard";
-import { ToolShowcaseCard } from "@/components/cards/ToolShowcaseCard";
 import { CategoryIndex } from "@/components/sections/CategoryIndex";
 import { CollectionSection } from "@/components/sections/CollectionSection";
+import { industries } from "@/data/clients";
 import { sectionCopy } from "@/data/home";
-import { resources } from "@/data/resources";
-import { services } from "@/data/services";
+import { featuredProducts } from "@/data/products";
+import { solutions } from "@/data/solutions";
 import { testimonials } from "@/data/testimonials";
-import { featuredTools } from "@/data/tools";
 import { getCategoriesInGroup, getGroupedCategories, getHomeCategoryCards } from "@/lib/catalogue";
 
 /**
@@ -19,17 +19,18 @@ import { getCategoriesInGroup, getGroupedCategories, getHomeCategoryCards } from
  * Each is a thin binding of copy, data and card to the shared
  * `CollectionSection`. They live together in one file because that is all they
  * are: five configurations, not five components. Any of them can be dropped
- * onto a future page unchanged.
+ * onto an interior page unchanged, and the Products, Clients and About pages
+ * do exactly that.
  */
 
 /**
- * Tool categories carry the whole range story: photographed hand-tool
+ * Product categories carry the whole range story: photographed hand-tool
  * categories as cards, a teaser card that turns the reader toward the
  * machinery half, and the complete typographic index beneath, which lists
  * every category whether or not it has been photographed yet.
  */
-export function ToolCategories() {
-  const copy = sectionCopy.toolCategories;
+export function ProductCategories() {
+  const copy = sectionCopy.productCategories;
   const machineryTitles = getCategoriesInGroup("machinery").map((category) => category.shortTitle);
 
   return (
@@ -42,7 +43,7 @@ export function ToolCategories() {
       cta={copy.cta}
       items={getHomeCategoryCards()}
       getKey={(category) => category.slug}
-      renderItem={(category) => <ToolCategoryCard category={category} />}
+      renderItem={(category) => <ProductCategoryCard category={category} />}
       trailing={
         <RangeTeaserCard
           eyebrow={copy.teaser.eyebrow}
@@ -67,8 +68,8 @@ export function ToolCategories() {
   );
 }
 
-export function FeaturedTools() {
-  const copy = sectionCopy.featuredTools;
+export function FeaturedProducts() {
+  const copy = sectionCopy.featuredProducts;
   return (
     <CollectionSection
       id="featured"
@@ -77,48 +78,52 @@ export function FeaturedTools() {
       heading={copy.heading}
       description={copy.body}
       cta={copy.cta}
-      items={featuredTools}
-      getKey={(tool) => tool.slug}
-      renderItem={(tool) => <ToolShowcaseCard tool={tool} />}
+      items={featuredProducts}
+      getKey={(product) => product.slug}
+      renderItem={(product) => <ProductShowcaseCard product={product} />}
       columns={4}
     />
   );
 }
 
-export function ServicesPreview() {
-  const copy = sectionCopy.services;
+export function SolutionsPreview() {
+  const copy = sectionCopy.solutions;
   return (
     <CollectionSection
-      id="services"
+      id="solutions"
       tone="elevated"
       eyebrow={copy.eyebrow}
       heading={copy.heading}
       description={copy.body}
       align="center"
-      items={services}
-      getKey={(service) => service.slug}
-      renderItem={(service) => <ServiceCard service={service} />}
+      items={solutions}
+      getKey={(solution) => solution.slug}
+      renderItem={(solution) => <SolutionCard solution={solution} />}
       columns={4}
       stagger={0.07}
     />
   );
 }
 
-export function ResourcesPreview() {
-  const copy = sectionCopy.resources;
+/**
+ * Clients replaced the Resources preview. Six kinds of customer rather than
+ * three guides, which is what a supplier with a twenty-eight year clientele
+ * should be leading with.
+ */
+export function ClientsPreview() {
+  const copy = sectionCopy.clients;
   return (
     <CollectionSection
-      id="resources"
+      id="clients"
       tone="soft"
       eyebrow={copy.eyebrow}
       heading={copy.heading}
       description={copy.body}
       cta={copy.cta}
-      items={resources}
-      getKey={(resource) => resource.slug}
-      renderItem={(resource) => <ResourceCard resource={resource} />}
+      items={industries}
+      getKey={(industry) => industry.title}
+      renderItem={(industry) => <IndustryCard industry={industry} />}
       columns={3}
-      gap="editorial"
       stagger={0.07}
     />
   );

@@ -4,21 +4,20 @@
  * Cards, navigation, the range index and the 404 page all build links through
  * here, so renaming a route is one edit and a link can never be assembled with
  * a stray or missing slash.
+ *
+ * The public vocabulary is "products", matching the client's own catalogue and
+ * navigation. There is no Tools route, no Services route and no Resources
+ * route: the range is Products, service content is carried contextually on
+ * About and Contact, and credibility content lives under Clients.
  */
 export const routes = {
   home: "/",
   about: "/about",
-  tools: "/tools",
-  toolCategory: (slug: string) => `/tools/${slug}`,
-  tool: (categorySlug: string, slug: string) => `/tools/${categorySlug}/${slug}`,
-  services: "/services",
-  service: (slug: string) => `/services/${slug}`,
-  resources: "/resources",
-  resource: (slug: string) => `/resources/${slug}`,
+  products: "/products",
+  /** A product category detail page, for example `productCategory("lawn-mowers")`. */
+  productCategory: (slug: string) => `/products/${slug}`,
+  clients: "/clients",
   contact: "/contact",
-  faq: "/faq",
-  privacy: "/privacy",
-  terms: "/terms",
   /** A section anchor on the Home page, for example `homeSection("complete-range")`. */
   homeSection: (id: string) => `/#${id}`,
   /**

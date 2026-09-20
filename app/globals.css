@@ -102,6 +102,12 @@
   --ring-halo: rgba(63, 127, 53, 0.16);
   --scrim: rgba(18, 59, 28, 0.52);
 
+  /* The ground the preloader overlay paints before its scene mounts and
+     underneath it as it fades. The scene's own palette lives in
+     `components/preloader/lawn-scene.ts`; this is only the colour either side
+     of it, so it is the dawn sky. */
+  --preloader-ground: #efe7c8;
+
   --shadow-card: 0 0 0 1px rgba(18, 59, 28, 0.03), 0 4px 14px rgba(18, 59, 28, 0.06);
   --shadow-hover: 0 0 0 1px rgba(18, 59, 28, 0.05), 0 10px 26px rgba(18, 59, 28, 0.12);
   --shadow-float: 0 0 0 1px rgba(18, 59, 28, 0.04), 0 18px 44px rgba(18, 59, 28, 0.14);
@@ -148,6 +154,10 @@
   --ring: var(--leaf-400);
   --ring-halo: rgba(127, 181, 111, 0.22);
   --scrim: rgba(3, 9, 5, 0.7);
+
+  /* The same ground after sundown, matching the dusk sky the scene switches
+     to in the dark theme. */
+  --preloader-ground: #0a1a11;
 
   --shadow-card: 0 0 0 1px rgba(220, 233, 201, 0.06), 0 4px 14px rgba(0, 0, 0, 0.45);
   --shadow-hover: 0 0 0 1px rgba(220, 233, 201, 0.1), 0 10px 26px rgba(0, 0, 0, 0.55);

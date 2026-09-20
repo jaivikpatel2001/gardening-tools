@@ -7,7 +7,7 @@ import { Eyebrow } from "@/components/ui/Eyebrow";
 import { ImagePlate } from "@/components/ui/ImagePlate";
 import { Reveal } from "@/components/ui/Reveal";
 import { catalogueSpecimens } from "@/data/variants/catalogue";
-import { featuredTools } from "@/data/tools";
+import { featuredProducts } from "@/data/products";
 import { routes } from "@/lib/routes";
 
 /**
@@ -43,10 +43,10 @@ export function SpecimenBoard() {
           className="mt-14 grid gap-px border border-hairline bg-hairline lg:mt-16 lg:grid-cols-2"
           stagger={0.08}
         >
-          {featuredTools.map((tool, index) => (
+          {featuredProducts.map((tool, index) => (
             <li key={tool.slug} className="bg-surface-warm">
               <Link
-                href={routes.tool(tool.categorySlug, tool.slug)}
+                href={routes.productCategory(tool.categorySlug)}
                 className="group grid h-full gap-6 p-5 transition-colors duration-300 hover:bg-surface-elevated sm:grid-cols-[minmax(0,15rem)_minmax(0,1fr)] sm:p-6 lg:p-8"
                 {...cursorIntent("view")}
               >

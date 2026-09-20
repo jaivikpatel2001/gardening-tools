@@ -4,7 +4,7 @@ import { Eyebrow } from "@/components/ui/Eyebrow";
 import { ImagePlate } from "@/components/ui/ImagePlate";
 import { Reveal } from "@/components/ui/Reveal";
 import { cinematicProducts } from "@/data/variants/cinematic";
-import { featuredTools } from "@/data/tools";
+import { featuredProducts } from "@/data/products";
 import { cn } from "@/lib/cn";
 import { routes } from "@/lib/routes";
 
@@ -33,7 +33,7 @@ export function ProductStories() {
 
       <div className="mt-14 flex flex-col gap-20 lg:mt-20 lg:gap-28">
         {stories.map((story, index) => {
-          const tool = featuredTools.find((entry) => entry.slug === story.slug);
+          const tool = featuredProducts.find((entry) => entry.slug === story.slug);
           if (!tool) return null;
 
           const imageRight = index % 2 === 1;
@@ -91,7 +91,7 @@ export function ProductStories() {
                     ))}
                   </ul>
 
-                  <ArrowLink href={routes.tool(tool.categorySlug, tool.slug)} className="mt-7">
+                  <ArrowLink href={routes.productCategory(tool.categorySlug)} className="mt-7">
                     View this tool
                   </ArrowLink>
                 </div>

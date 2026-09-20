@@ -6,9 +6,19 @@ A premium, photography-led **static brand website** for **Jiva Greens** (JIVA, "
 
 **Brand facts are real, never placeholder.** Name, legal name, address, phones, email and founding year live in `config/site.ts` and come from the client's own site. Copy reads years and names from `site`, never retyped. Anything the old site does not state (postcode, opening hours, social profiles, customer counts) is left out until the client supplies it, never invented. "GreenTools" was a working placeholder name and must not reappear.
 
-It is **not** e-commerce. No cart, checkout, payment, pricing, wishlist, stock levels, discount badges, commerce filters or shopping accounts, anywhere, ever. Tools are presented editorially, and every conversion path leads to an **enquiry**.
+It is **not** e-commerce. No cart, checkout, payment, pricing, wishlist, stock levels, discount badges, commerce filters or shopping accounts, anywhere, ever. Products are presented editorially, and every conversion path leads to an **enquiry**.
 
-There is **no Blog and no Journal**: no page, no route, no navigation item, no footer link, no sitemap entry. Editorial content lives under **Resources**.
+## Pages, and what they are called
+
+The site is **Home, About, Products, Product Detail, Clients, Contact**. Nothing else.
+
+- There is **no Blog and no Journal**: no page, no route, no navigation item, no footer link, no sitemap entry.
+- There is **no Services page**. Service content is carried contextually as *gardening solutions*, on Home, About and Contact, from `data/solutions.ts`. The solution cards deliberately do not link anywhere.
+- There is **no Resources page**. Resources was replaced by **Clients**, the credibility page. Do not reintroduce guides, articles, reading time or a FAQ route.
+- The range is called **Products**, never Tools, in navigation, headings, buttons, breadcrumbs, URLs, metadata, page titles and every call to action. "Hand tools" and "cutting tools" stay as product-type names, because that is what the trade calls them.
+- **Every product has its own page** at `/products/[slug]`, rendered by one reusable component from `data/productCategories.ts`. Never add a page component for an individual product. Two products are ranges the client nests a level deeper (lawn mowers by type, watering by what is on the end of the hose); those children carry `parent` and have pages of their own. Someone who picks Garden Solar Lights lands on garden solar lights, never on a bucket that contains them.
+- **The range is the client's, entry for entry.** `data/productCategories.ts` follows the Products menu on jivagreens.com: their products, their names, their order. Never fold their products into a heading of our own invention, and never add one they do not sell. A fourteen-category structure that read well but was ours was removed in review for exactly that reason.
+- **Products in the header opens a dropdown, it does not navigate.** `All Products` inside it goes to `/products`. Everything else is generated from the catalogue by `getProductMenu()`, so the menu cannot drift from the range: adding a product puts it in the menu. It is a plain one-column disclosure with a flyout on the two nested ranges, never a mega menu.
 
 ## Project Work History
 
@@ -51,9 +61,11 @@ Before finishing any content change, scan the visitor-facing strings in `app/`, 
 | File | What it holds |
 |---|---|
 | `done.md` | Chronological work log |
-| `resources/plan.md` | Project plan, architecture, roadmap and the deviations table |
+| `resources/plan.md` | Project plan, architecture, roadmap, deviations, page visibility |
+| `resources/section-parity.md` | The thirteen homepage sections, and where each one lives in each variant |
 | `resources/gardening-tools-design.md` | The design system: colours, type, spacing, components |
-| `resources/image-generation.md` | Image manifest: slots, dimensions, ratios, alt text, prompts |
+| `resources/image-generation.md` | Image manifest: a slot and a prompt per product, plus the pending list |
+| `resources/reference/jivagreens-products.json` | The client's own product pages, captured: copy, spec tables and image paths |
 | `.env.example` | Every environment variable, documented |
 
 ## Architecture
@@ -62,11 +74,18 @@ Before finishing any content change, scan the visitor-facing strings in `app/`, 
 app/            routes, layout, not-found, manifest, robots, sitemap, globals.css,
                 icon.svg, favicon.ico, apple-icon.png (the icons are generated)
 components/
-  layout/       Header, Footer, MobileMenu, ThemeToggle, Logo
-  sections/     reusable section shells: CollectionSection, CategoryIndex
+  layout/       Header, Footer, MobileMenu, ProductsMenu, ThemeToggle, Logo
+  sections/     reusable section shells: CollectionSection, CategoryIndex,
+                PageHero, Breadcrumbs, CtaBand, HighlightsBand
   home/         Home page section bindings
-  cards/        ToolCategoryCard, ToolShowcaseCard, ServiceCard, ResourceCard,
-                TestimonialCard, RangeTeaserCard
+  about/        About page sections (one file)
+  clients/      Clients page sections (one file)
+  products/     ProductCatalogue, ProductListCard, ProductGallery,
+                ProductCategoryDetail
+  forms/        EnquiryForm
+  preloader/    Preloader
+  cards/        ProductCategoryCard, ProductShowcaseCard, SolutionCard,
+                IndustryCard, TestimonialCard, RangeTeaserCard
   ui/           Button, Container, Section, SectionHeading, Eyebrow, ArrowLink,
                 ArrowIcon, ImagePlate, Reveal, MagneticButton, StarRating, NewsletterForm
   motion/       gsap.ts, SmoothScrollProvider, MotionProvider, ParallaxLayer, scroll-controller
@@ -75,10 +94,13 @@ components/
   not-found/    NotFoundView, GardenPathScene, SceneParallax
   decor/        SocialIcons
 config/         site.ts (facts about the business), env.ts (validated environment),
-                brand.ts (mark geometry and brand colours)
+                brand.ts (mark geometry and brand colours),
+                pageVisibility.ts (the production release switchboard)
 data/           content collections and page copy
 hooks/          useMediaQuery, useScrollThreshold
-lib/            cn, seo, routes, catalogue, media, whatsapp
+lib/            cn, seo, routes, catalogue, highlights, media, whatsapp,
+                visibility (page flags), page-guard (route enforcement)
+proxy.ts        edge-level enforcement of page visibility
 types/          shared content domain types
 scripts/        process-images.mjs, generate-icons.mjs
 public/images/  generated output, never hand-edited
@@ -90,14 +112,16 @@ public/icons/   generated output, never hand-edited
 - Build every internal URL through `lib/routes.ts`.
 - Every section's content sits in `container-page` (the `Container` component): a 1400px content cap with 16, 24 and 32px gutters. Backgrounds and full-bleed photographic bands may run edge to edge; the hero's photograph stays inside the container.
 - Before writing a new component, check `components/ui/`, `components/cards/` and `components/sections/`. The odds are it exists.
+- Interior pages open with `PageHero` and close with `CtaBand`. Neither gets a second version.
 
 ## Engineering standards
 
 - **SOLID and DRY.** One well-designed component with props, never `CardNew.tsx` beside `Card.tsx`. Similar sections are configurations of one section, not separate components. Extend through composition (`trailing`, `footer`, injected props) before adding variants.
 - **Strong TypeScript.** No `any`. Type props, config and content. Reuse the shared types.
 - **Data-driven UI.** Repeated structure renders from an array through one component. Copy lives in `data/`, not inside components.
-- **Server Components by default.** `"use client"` only where interaction genuinely requires it. Currently: `Header`, `MobileMenu`, `ThemeToggle`, `SmoothScrollProvider`, `MotionProvider`, `Reveal`, `ParallaxLayer`, `MagneticButton`, `NewsletterForm`, `HeroMotion`, `CustomCursor`, `ScrollToTop`, `SceneParallax`. Client components take server-rendered content through `children`, so the bundle carries behaviour, not copy.
-- **Keep heavy data off the client.** Anything imported under a `"use client"` boundary ships to the browser. `lib/catalogue.ts` and `data/toolCategories.ts` must never be imported there; `data/navigation.ts` stays light for that reason.
+- **Server Components by default.** `"use client"` only where interaction genuinely requires it. Currently: `Header`, `MobileMenu`, `ThemeToggle`, `SmoothScrollProvider`, `MotionProvider`, `Reveal`, `ParallaxLayer`, `MagneticButton`, `NewsletterForm`, `EnquiryForm`, `ProductCatalogue`, `ProductGallery`, `Preloader`, `HeroMotion`, `CustomCursor`, `ScrollToTop`, `SceneParallax`. Client components take server-rendered content through `children`, so the bundle carries behaviour, not copy.
+- **Keep heavy data off the client.** Anything imported under a `"use client"` boundary ships to the browser. `lib/catalogue.ts` and `data/productCategories.ts` must never be imported there; `data/navigation.ts` stays light for that reason.
+- **The Products menu is the worked example of that rule.** `app/layout.tsx` is a server component, so it calls `getProductNavLinks()` and passes the result into `Header`, which passes it on to `ProductsMenu` and `MobileMenu`. Those three are client components and must keep taking the links as a prop. Never solve a future version of this by copying category names into `data/navigation.ts`: that would drift the moment a category is renamed.
 - **Accessibility during construction, not after.** Semantic HTML, keyboard operability, visible focus, labelled inputs, meaningful alt text, AA contrast in both themes, `prefers-reduced-motion` honoured in CSS *and* JS.
 - **No debug leftovers.** No stray `console.log`, unused imports, dead code or duplicate logic. CLI scripts in `scripts/` may log their own report.
 
@@ -109,14 +133,25 @@ public/icons/   generated output, never hand-edited
 - **Never** add a Google Fonts `@import` or `<link>`. It would download every face a second time and add a render-blocking third-party request.
 - Inter italic is a separate instance with `preload: false`, mapped onto `em`, `i`, `cite`, `dfn` and `q` in `globals.css`. Do not merge it back into the main Inter call; that preloads 77 KB on every page for a style the site barely uses.
 
-## Tool range
+## Product range
 
 The site presents one complete range in two groups: **traditional and hand tools** (khurpi, phawda, kudali, gaiti, belcha, sabbal, daranti, kulhadi, tasla and the rest) and **power and garden machinery** (mowers, brush cutters, hedge trimmers, chainsaws, tillers, sprayers, blowers and shredders, irrigation and pumps).
 
-- The range lives in `data/toolCategories.ts`; derived views live in `lib/catalogue.ts`. Components never filter the catalogue themselves.
-- Every category must have a genuine gardening or landscaping use. Never add categories to pad the count.
+- The range lives in `data/productCategories.ts`; derived views live in `lib/catalogue.ts`. Components never filter the catalogue themselves. The Products page computes its rows on the server and hands the client browser plain values, so the catalogue never crosses a `"use client"` boundary.
+- Every category must have a genuine gardening or landscaping use, and must be something the client actually sells. Never add categories to pad the count.
+- **Never invent a product.** No product name, model, model number, SKU, variant, measurement, capacity or specification that the client has not supplied. A category's `features` and `applications` describe the category; they are not a data sheet. Where a real number is needed, derive it from the catalogue (`getRangeCounts`), never type it.
 - An Indian tool carries a `localName` alongside its English `name`, rendered as "Khurpi (hand hoe and weeder)".
-- A category gets `image` only once it has been photographed, with alt text describing that photograph. Home shows `featured` photographed categories as cards; the complete range index lists every category regardless.
+- A category gets `image` only once it has been photographed, with alt text describing that photograph. Home shows `featured` photographed categories as cards; the complete range index and the Products page list every category regardless, and an unphotographed category renders a typographic card rather than a placeholder image.
+
+## Page visibility (production release switchboard)
+
+Pages are developed normally and released to the client one at a time. **`config/pageVisibility.ts` is the only file to change to release or withdraw a page.**
+
+- Development and staging serve every implemented page regardless of the flags. Only `NEXT_PUBLIC_APP_ENV=production` enforces them.
+- Enforcement is at the route, never in the markup. `proxy.ts` (Next 16's replacement for `middleware.ts`) blocks a withdrawn path at the edge, and every gated route calls `enforcePageVisibility(key)` from `lib/page-guard.ts`, which calls `notFound()` and returns a real 404. Never gate a page with `if (!visible) return null`.
+- Nothing else reads `pageVisibility` directly. `lib/visibility.ts` answers the question; `visibleLinks()` filters the header, the mobile sheet and the footer; `app/sitemap.ts` filters the same way; a footer column with nothing left in it renders nothing rather than an empty heading.
+- Adding a page means adding a key to `PAGE_KEYS`, a branch to `pageKeyForPath`, a `enforcePageVisibility` call in the route and an entry in `app/sitemap.ts`. Nothing else.
+- **Do not overengineer this.** No database, no admin panel, no feature-flag service, no authentication, no API.
 
 ## Indian market
 
@@ -130,12 +165,14 @@ jivagreens.com is the **client's own site**: its facts, product names and termin
 
 ## Environment and configuration
 
-- Every variable is documented in `.env.example`. Only that template is committed; every other `.env*` file is gitignored.
+- `.env.example` documents **only the variables the code actually reads**. There are four, all `NEXT_PUBLIC_`. Never add a variable for a feature that has not been built: no SMTP, no CMS, no analytics, no captcha, no API keys. They go in when the feature does.
+- Only `.env.example` is committed; every other `.env*` file is gitignored.
 - Code reads environment variables only through `config/env.ts`. Never read `process.env` directly anywhere else.
+- `NEXT_PUBLIC_APP_ENV` does two jobs: indexing, and the page visibility switchboard above.
 - **Never commit** API keys, passwords, SMTP credentials, private tokens or production secrets, and never put a secret in a `NEXT_PUBLIC_` variable.
 - `NEXT_PUBLIC_APP_ENV` must be `production` on the live deployment. Any other value, including unset, makes every page `noindex` and robots.txt disallow-all. This is deliberate, so staging can never be indexed.
 - The WhatsApp number comes only from `NEXT_PUBLIC_WHATSAPP_NUMBER`. The floating button renders nothing until it is set.
-- The contact form and email delivery are future scope: their variables are documented, not implemented. Do not build them without being asked.
+- The enquiry form delivers through **FormSubmit** (`https://formsubmit.co/ajax/<target>`), addressed by `NEXT_PUBLIC_FORMSUBMIT_EMAIL`, which holds either the recipient address or, preferably, the FormSubmit token: the value is inlined into the bundle, and the token keeps the address off the page. There is no route, no server action and no SMTP credential. **Never show a success message for a submission that did not leave the browser:** the form says "sent" only when the service accepted it, offers the mail, phone and WhatsApp routes when it refuses, and says delivery is not connected when the variable is unset. Fields are declared in `data/contact.ts` so a future backend can validate against the same list; if delivery moves, only `onSubmit` changes.
 
 ## Visual system rules
 
@@ -143,7 +180,7 @@ jivagreens.com is the **client's own site**: its facts, product names and termin
 - **Background rhythm.** A page body has at most one deep band, used where it carries hierarchy. The section directly above the footer is never a deep band. Neighbouring sections never share a surface.
 - **Type on photographs** sits on `scrim-caption` (caption blocks) or `photo-chip` (short corner labels), never as bare white text on an unscrimmed image. Keep photographs out from under the transparent header.
 - **Colour on bands.** Green on a deep band uses `on-band-accent`, never `brand-soft`. `muted-soft` is for rules, icons and disabled states, never text.
-- **Tools follow the category photo rule.** A tool gets `image` only once it has been photographed. `featuredTools` returns photographed tools only.
+- **Featured products follow the category photo rule.** A product gets `image` only once it has been photographed. `featuredProducts` returns photographed products only.
 
 ## Images
 
@@ -162,12 +199,20 @@ Follow `resources/image-generation.md` exactly. Slots, filenames, dimensions, ra
 - `npm run icons` regenerates `app/icon.svg`, `app/favicon.ico`, `app/apple-icon.png` and `public/icons/*`. Never hand-edit those outputs.
 - Next.js emits the icon `<link>` tags from the `app/` files. Never add `metadata.icons` as well; it would duplicate them.
 - The share image is `public/images/og-home.jpg`, JPEG on purpose, referenced once through `lib/seo.ts`.
+- **Third-party brand marks** (the manufacturers on the Clients page) live in `gardening images/clients/` and are copied **byte for byte** into `public/images/clients/` by `npm run images`: no resize, no re-encode, no crop, no trim. The wall serves them `unoptimized` on a white cell, contained and in their own colours. Never recolour, greyscale, redraw or crop somebody else's trademark. They are brands the business **stocks**, never described as customers.
 
 ## Interaction layer
 
 - **Custom cursor** (`components/cursor/`): the leaf is the cursor. It tracks the pointer exactly with its tip on the hotspot; only the trailing dot, which opens into the labelled ring, eases. Never put easing on the element at the hotspot. Mounted only for a fine pointer without reduced motion. Purely visual, `pointer-events: none` and `aria-hidden`. Label an interactive element with `{...cursorIntent("view")}`, never a raw `data-cursor` string. `Button` already sets `click`.
 - **Floating actions** (`components/floating-actions/`): scroll-to-top and WhatsApp, bottom right. Move the page through `components/motion/scroll-controller.ts`, never `window.scrollTo`, so Lenis is not fought.
+- **Products dropdown** (`components/layout/ProductsMenu.tsx`): the panel is **portalled to the body and positioned in document coordinates**, so it scrolls with the page instead of being pinned to the fixed header. That is what makes a menu taller than the viewport reachable, and it is the behaviour the client's own site has. Do not re-anchor it to the header. **Never give the panel a max height or an inner scrollbar.** It was tried and rejected twice over: a scrollbar down a premium menu, and Lenis swallowing the wheel so the page moved behind the panel instead of the list moving inside it. The panel is exactly as tall as its contents and closes on page scroll instead. A disclosure (button with `aria-expanded` over a list of links), never `role="menu"`. The menu role would hide the links from the document, take Tab away and make arrow keys the only route through; arrow keys are added here on top, not instead. Hover opens it only behind `MEDIA.finePointer`, and a click straight after a hover-open keeps it open rather than toggling it shut. Focus moves into the panel from an effect after the mounting commit, never from `requestAnimationFrame`, which a throttled tab can skip. One header serves every page and every variant, so this is defined once and never duplicated per variant.
 - **404** (`app/not-found.tsx`): an animated SVG garden-path scene using CSS-only ambient motion, with no GSAP. Its recovery links point at Home sections until interior pages exist.
+- **Preloader** (`components/preloader/`): a lawn grows, a mower crosses and cuts it, the trimmed lawn hands over to the site. **No logo plate over the scene.** One was tried and removed in review: it covered the frame the composition was built to deliver, and the header shows the mark a moment later anyway. The composition is the **client's own**, authored in Claude Design (`Lawn Preloader.dc.html`) and ported in `LawnScene.tsx`; the geometry, choreography and material colours are theirs and should not be redesigned here. None of the design tool's runtime ships: the clock is one request-animation-frame loop in `Preloader.tsx`, the easing and tween helpers are four functions in `lawn-scene.ts`, and the editor panel is replaced by the `TWEAKS` constants holding the values the design was saved with.
+- **The scene is a pure function of authored time `t`.** Nothing in `LawnScene.tsx` may read the clock, hold state or use an effect. That is what makes the sequence reproducible and lets it be stepped through frame by frame in review.
+- **The field is seeded, never random.** `lawn-scene.ts` builds its blades from a seeded generator so the server and the client agree exactly. Never introduce `Math.random()` there.
+- **Preloader timing:** armed before first paint by the script in `app/layout.tsx`, on **every document load**. Every browser reload plays it, and only a reload does, because client-side navigation never re-runs that script. Never make it run on client-side navigation. The authored five second timeline plays once in 3200ms, paced by the `TIMELINE` warp in `lawn-scene.ts` rather than scaled uniformly: the mower keeps close to its authored speed while the beats either side stay brisk. Uniform compression made it read as a machine being yanked across the frame. To re-time, change that table, not the scene. Skipped entirely on reduced motion, on reduced data and without JavaScript.
+- **Preloader colour follows the theme.** `lawn-scene.ts` holds two environment palettes, `DAWN` and `DUSK`, chosen from `data-theme` through `useSyncExternalStore` with a `null` server snapshot, so the scene is absent from the server HTML rather than painted in the wrong palette and corrected a frame later. The mower is deliberately **not** themed: it is the same machine at dawn or dusk, and the light on it comes from the wash and the vignette. `--preloader-ground` in `globals.css` is only the colour either side of the scene.
+- **Depth of field is the expensive part.** The three band blurs are turned down below 744px or on four cores or fewer. Never remove that fallback.
 
 ## Next.js 16 traps
 

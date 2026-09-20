@@ -4,9 +4,9 @@ import { cursorIntent } from "@/components/cursor/cursor-intent";
 import { ArrowIcon } from "@/components/ui/ArrowIcon";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Reveal } from "@/components/ui/Reveal";
-import { formatPowerSource, formatToolName } from "@/lib/catalogue";
+import { formatPowerSource, formatProductName } from "@/lib/catalogue";
 import { routes } from "@/lib/routes";
-import type { ToolCategoryGroup } from "@/types/content";
+import type { ProductCategoryGroup } from "@/types/content";
 
 interface CategoryIndexProps {
   /** Anchor target, for example "complete-range". */
@@ -14,7 +14,7 @@ interface CategoryIndexProps {
   eyebrow: string;
   heading: string;
   description: string;
-  groups: readonly ToolCategoryGroup[];
+  groups: readonly ProductCategoryGroup[];
 }
 
 /**
@@ -59,7 +59,7 @@ export function CategoryIndex({ id, eyebrow, heading, description, groups }: Cat
                     <div className="flex items-start justify-between gap-6">
                       <div className="min-w-0">
                         <Link
-                          href={routes.toolCategory(category.slug)}
+                          href={routes.productCategory(category.slug)}
                           {...cursorIntent("explore")}
                           className="font-heading text-title-sm text-ink transition-colors duration-200 after:absolute after:inset-0 group-hover/row:text-brand"
                         >
@@ -67,7 +67,7 @@ export function CategoryIndex({ id, eyebrow, heading, description, groups }: Cat
                         </Link>
 
                         <p className="mt-1.5 text-body-sm text-muted">
-                          {category.tools.map(formatToolName).join(" · ")}
+                          {(category.items ?? []).map(formatProductName).join(" · ")}
                         </p>
 
                         {category.powerSources && category.powerSources.length > 0 ? (

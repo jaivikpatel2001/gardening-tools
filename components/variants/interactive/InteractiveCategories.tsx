@@ -13,7 +13,7 @@ import { routes } from "@/lib/routes";
 /**
  * Server binding for the category selector. The catalogue is read here and
  * reduced to the five plain fields the interactive list needs, so
- * `lib/catalogue` and `data/toolCategories` never cross the client boundary.
+ * `lib/catalogue` and `data/productCategories` never cross the client boundary.
  */
 export function InteractiveCategories() {
   const { eyebrow, heading, body, cta } = interactiveSelector;
@@ -22,7 +22,7 @@ export function InteractiveCategories() {
     slug: category.slug,
     label: category.shortTitle,
     description: category.description,
-    href: routes.toolCategory(category.slug),
+    href: routes.productCategory(category.slug),
     image: category.image,
   }));
 

@@ -1,0 +1,58 @@
+/*
+  The lawn preloader overlay.
+
+  The scene itself is drawn by `LawnScene.tsx`, ported from the client's Claude
+  Design composition. This file owns only what the scene should not know about:
+  whether the overlay is on screen at all, how it leaves, and the brand plate
+  that sits over it.
+
+  Visibility is decided before first paint by the inline script in
+  `app/layout.tsx`, which sets `data-preloader="active"` on the document on
+  every document load. That is the same technique the theme and `js-motion`
+  use, so there is no flash of the page followed by an overlay, and with
+  JavaScript off the overlay never shows at all.
+*/
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: none;
+  place-items: center;
+  overflow: hidden;
+  /* The scene covers this, but it is what the first frame and the tail of the
+     fade are painted on, so it has to be a ground the scene can sit on in
+     either theme rather than the page canvas. */
+  background-color: var(--preloader-ground);
+  opacity: 1;
+  transition: opacity 460ms var(--ease-soft);
+}
+
+:root[data-preloader="active"] .overlay,
+:root[data-preloader="done"] .overlay {
+  display: grid;
+}
+
+:root[data-preloader="done"] .overlay {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.scene {
+  position: absolute;
+  inset: 0;
+}
+
+/* ----------------------------------------------------------------------- */
+/* Reduced motion                                                           */
+/*                                                                          */
+/* The script already refuses to arm the overlay, so this is the second      */
+/* guard: if the preference changes mid-session, nothing animates and the    */
+/* overlay is not shown.                                                     */
+/* ----------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay {
+    display: none !important;
+  }
+}

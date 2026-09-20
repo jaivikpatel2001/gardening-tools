@@ -21,7 +21,7 @@ export function InteractiveSolutions() {
       question: item.question,
       answer: item.answer,
       categoryTitle: category.title,
-      href: routes.toolCategory(category.slug),
+      href: routes.productCategory(category.slug),
       tools: item.tools,
     };
   });
