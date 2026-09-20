@@ -71,7 +71,8 @@ Before finishing any content change, scan the visitor-facing strings in `app/`, 
 ## Architecture
 
 ```text
-app/            routes, layout, not-found, manifest, robots, sitemap, globals.css,
+app/            routes, layout, not-found, error, global-error, manifest, robots,
+                sitemap, globals.css,
                 icon.svg, favicon.ico, apple-icon.png (the icons are generated)
 components/
   layout/       Header, Footer, MobileMenu, ProductsMenu, ThemeToggle, Logo
@@ -119,7 +120,7 @@ public/icons/   generated output, never hand-edited
 - **SOLID and DRY.** One well-designed component with props, never `CardNew.tsx` beside `Card.tsx`. Similar sections are configurations of one section, not separate components. Extend through composition (`trailing`, `footer`, injected props) before adding variants.
 - **Strong TypeScript.** No `any`. Type props, config and content. Reuse the shared types.
 - **Data-driven UI.** Repeated structure renders from an array through one component. Copy lives in `data/`, not inside components.
-- **Server Components by default.** `"use client"` only where interaction genuinely requires it. Currently: `Header`, `MobileMenu`, `ThemeToggle`, `SmoothScrollProvider`, `MotionProvider`, `Reveal`, `ParallaxLayer`, `MagneticButton`, `NewsletterForm`, `EnquiryForm`, `ProductCatalogue`, `ProductGallery`, `Preloader`, `HeroMotion`, `CustomCursor`, `ScrollToTop`, `SceneParallax`. Client components take server-rendered content through `children`, so the bundle carries behaviour, not copy.
+- **Server Components by default.** `"use client"` only where interaction genuinely requires it. Currently: `Header`, `MobileMenu`, `ThemeToggle`, `SmoothScrollProvider`, `MotionProvider`, `Reveal`, `ParallaxLayer`, `MagneticButton`, `NewsletterForm`, `EnquiryForm`, `ProductCatalogue`, `ProductGallery`, `Preloader`, `HeroMotion`, `CustomCursor`, `CursorLayer`, `LazyGardenPathScene`, `RouteError`, `GlobalError`, `ScrollToTop`, `SceneParallax`. Client components take server-rendered content through `children`, so the bundle carries behaviour, not copy.
 - **Keep heavy data off the client.** Anything imported under a `"use client"` boundary ships to the browser. `lib/catalogue.ts` and `data/productCategories.ts` must never be imported there; `data/navigation.ts` stays light for that reason.
 - **The Products menu is the worked example of that rule.** `app/layout.tsx` is a server component, so it calls `getProductNavLinks()` and passes the result into `Header`, which passes it on to `ProductsMenu` and `MobileMenu`. Those three are client components and must keep taking the links as a prop. Never solve a future version of this by copying category names into `data/navigation.ts`: that would drift the moment a category is renamed.
 - **Accessibility during construction, not after.** Semantic HTML, keyboard operability, visible focus, labelled inputs, meaningful alt text, AA contrast in both themes, `prefers-reduced-motion` honoured in CSS *and* JS.
@@ -214,6 +215,17 @@ Follow `resources/image-generation.md` exactly. Slots, filenames, dimensions, ra
 - **Preloader colour follows the theme.** `lawn-scene.ts` holds two environment palettes, `DAWN` and `DUSK`, chosen from `data-theme` through `useSyncExternalStore` with a `null` server snapshot, so the scene is absent from the server HTML rather than painted in the wrong palette and corrected a frame later. The mower is deliberately **not** themed: it is the same machine at dawn or dusk, and the light on it comes from the wash and the vignette. `--preloader-ground` in `globals.css` is only the colour either side of the scene.
 - **Depth of field is the expensive part.** The three band blurs are turned down below 744px or on four cores or fewer. Never remove that fallback.
 
+## Follow the installed Next.js documentation
+
+**This is not the Next.js in your training data.** Before writing or changing anything that touches a framework API, read the relevant guide in `node_modules/next/dist/docs/`. That copy is the version this project actually builds against, so it is the only authority. `AGENTS.md` says the same thing and is re-added by `next dev`; this section is the standing project rule behind it.
+
+- The guides live under `node_modules/next/dist/docs/01-app/`: `01-getting-started/` for the concepts, `03-api-reference/` for components, functions, file conventions and `next.config.ts` options.
+- Read it **before** the first line of code, not as a check afterwards. Signatures have changed in ways that still compile: `error.tsx` takes `{ error, retry }` in Next 16, not the `{ error, reset }` most examples show, and a wrong name is a silently dead button rather than a type error.
+- The same applies to advice from anywhere else, including previous work in this repository. If a pattern here contradicts the installed docs, the docs win and the pattern is a bug to be fixed.
+- Prefer the framework's own answer to a hand-rolled one: a file convention over a custom boundary, `next/image` over `<img>`, `next/font` over an `@import`, `next/dynamic` over a bespoke lazy loader.
+- Changes to framework behaviour are measured, not assumed. Build before and after and compare the real numbers, then write what changed and by how much. Several "obvious" optimisations on this project turned out to cost more than they saved.
+- The **Next.js 16 traps** below are the ones this project has already been bitten by. Add to that list whenever a new one is found, with the behaviour and the fix.
+
 ## Next.js 16 traps
 
 1. `<Image priority>` is deprecated. Use `preload`.
@@ -226,6 +238,12 @@ Follow `resources/image-generation.md` exactly. Slots, filenames, dimensions, ra
 8. Never set CSS `scroll-behavior: smooth`. Lenis owns scrolling.
 9. `params` and `searchParams` are Promises with no synchronous fallback.
 10. Spreading a metadata object that contains `title: undefined` wipes the layout's title template. Only include keys that have values.
+11. **`not-found.tsx` and `error.tsx` are serialised into the payload of every route**, so a client-side navigation can render them without a round trip. Everything they draw, and everything they import, is weight on every page of the site. Keep both boundaries cheap, and load anything decorative inside them through `next/dynamic`.
+12. `error.tsx` and `global-error.tsx` receive `{ error, retry }`. The `reset` in older examples type-checks as an unused prop and leaves a dead button.
+13. **A folder whose name starts with `_` is private and is not routed.** `app/__boom/page.tsx` builds cleanly and 404s.
+14. `ssr: false` on `next/dynamic` is only legal inside a client component. In a server component it is a build error, so a deferred client component needs a small client wrapper.
+15. `sizes` on a **fixed-size** image makes Next treat it as responsive and emit the whole width ladder, up to `w=3840`, in the `srcset` and in the preload tag. Give `width` and `height` and leave `sizes` off; the `sizes` rule in item 3 is about `fill` and genuinely fluid images.
+16. The image optimiser never upscales past the source, so a `w=` larger than the artwork simply returns the artwork.
 
 ## Tailwind v4 traps
 

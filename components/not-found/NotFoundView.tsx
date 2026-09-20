@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 
-import { GardenPathScene } from "@/components/not-found/GardenPathScene";
+import { LazyGardenPathScene } from "@/components/not-found/LazyGardenPathScene";
 import { SceneParallax } from "@/components/not-found/SceneParallax";
 import { ArrowIcon } from "@/components/ui/ArrowIcon";
 import { ArrowLink } from "@/components/ui/ArrowLink";
@@ -9,20 +9,28 @@ import { Eyebrow } from "@/components/ui/Eyebrow";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { notFoundContent } from "@/data/notFound";
 import { cn } from "@/lib/cn";
+import { visibleLinks } from "@/lib/visibility";
 
 import styles from "./NotFound.module.css";
 
 const delay = (milliseconds: number) => ({ "--delay": `${milliseconds}ms` }) as CSSProperties;
 
 /**
- * The 404 page body. A server component: the only client code is the pointer
- * parallax on the illustration and the magnetic primary button.
+ * The 404 page body. A server component: the client code is the pointer parallax
+ * on the illustration, the magnetic primary button, and the illustration itself,
+ * which loads in the browser so it stays out of every other page payload.
  *
  * Copy first, illustration second in source order, so on a phone the way home
  * is the first thing a lost visitor sees.
  */
 export function NotFoundView() {
   const { eyebrow, heading, body, primaryCta, secondaryCta, trailLabel, links } = notFoundContent;
+
+  // The recovery links point at interior pages, and those are released one at a
+  // time. A link to a page that is still withdrawn would land straight back on
+  // this one, so the same filter the header and the footer use applies here.
+  const trail = visibleLinks(links);
+  const [secondary] = visibleLinks([secondaryCta]);
 
   return (
     <section aria-labelledby="not-found-heading" className="relative isolate overflow-hidden bg-canvas">
@@ -52,32 +60,36 @@ export function NotFoundView() {
               </Button>
             </MagneticButton>
 
-            <Button href={secondaryCta.href} variant="secondary" size="lg">
-              {secondaryCta.label}
-            </Button>
+            {secondary ? (
+              <Button href={secondary.href} variant="secondary" size="lg">
+                {secondary.label}
+              </Button>
+            ) : null}
           </div>
 
-          <nav
-            aria-label="Helpful links"
-            className={cn("mt-12 border-t border-hairline pt-6", styles.enter)}
-            style={delay(440)}
-          >
-            <p className="text-eyebrow uppercase text-muted">{trailLabel}</p>
-            <ul className="mt-4 flex flex-wrap gap-x-7 gap-y-3">
-              {links.map((link) => (
-                <li key={link.href}>
-                  <ArrowLink href={link.href}>{link.label}</ArrowLink>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          {trail.length > 0 ? (
+            <nav
+              aria-label="Helpful links"
+              className={cn("mt-12 border-t border-hairline pt-6", styles.enter)}
+              style={delay(440)}
+            >
+              <p className="text-eyebrow uppercase text-muted">{trailLabel}</p>
+              <ul className="mt-4 flex flex-wrap gap-x-7 gap-y-3">
+                {trail.map((link) => (
+                  <li key={link.href}>
+                    <ArrowLink href={link.href}>{link.label}</ArrowLink>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ) : null}
         </div>
 
         <SceneParallax
           className={cn("relative mx-auto w-full max-w-[440px] sm:max-w-[560px] lg:max-w-[600px]", styles.enter)}
           style={delay(200)}
         >
-          <GardenPathScene />
+          <LazyGardenPathScene />
         </SceneParallax>
       </div>
     </section>
