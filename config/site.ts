@@ -1,4 +1,5 @@
 import { env } from "@/config/env";
+import type { SocialProfile } from "@/types/content";
 
 /**
  * Brand-level configuration: the single source of truth for anything that
@@ -51,8 +52,29 @@ export const site = {
     /** Pre-filled opening message for the floating WhatsApp button. */
     defaultMessage: "Hello Jiva Greens, I would like some help choosing the right gardening tools.",
   },
-  /** No social profiles are listed on the old site. Add real ones here when supplied. */
-  social: [] as readonly { label: string; href: string }[],
+  /**
+   * Official social profiles.
+   *
+   * **Empty on purpose, and verified empty.** jivagreens.com was checked in
+   * full on 20 September 2026: the home page carries 87 links and the contact
+   * page carries its own set, and not one of them points at Facebook,
+   * Instagram, LinkedIn, YouTube, X or Pinterest. The old footer offers an
+   * address, two phone numbers and an email address, and nothing else.
+   *
+   * A guessed handle is worse than no icon: it sends customers to somebody
+   * else. So the row renders only what is listed here, and renders nothing at
+   * all while this array is empty.
+   *
+   * To publish one, add an entry with a `platform` that `socialIcons` knows
+   * and the full profile URL. Footer, Contact page, mobile menu and the
+   * `sameAs` array in the organisation JSON-LD all pick it up from here, with
+   * no other edit anywhere.
+   *
+   * WhatsApp is deliberately not listed: it is deployment configuration, read
+   * from NEXT_PUBLIC_WHATSAPP_NUMBER, and `lib/social.ts` adds it to the row
+   * when it is set.
+   */
+  social: [] as readonly SocialProfile[],
 } as const;
 
 export type Site = typeof site;

@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 
+import { SocialLinks } from "@/components/decor/SocialLinks";
+import { SolutionCard } from "@/components/cards/SolutionCard";
 import { EnquiryForm } from "@/components/forms/EnquiryForm";
+import { CollectionSection } from "@/components/sections/CollectionSection";
 import { CtaBand } from "@/components/sections/CtaBand";
 import { PageHero } from "@/components/sections/PageHero";
 import { Container } from "@/components/ui/Container";
@@ -11,8 +14,18 @@ import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { env } from "@/config/env";
 import { site } from "@/config/site";
-import { contactCta, contactHero, enquiryForm, enquiryReasons, locationSection } from "@/data/contact";
+import {
+  contactCta,
+  contactHero,
+  contactSocial,
+  contactSolutions,
+  enquiryForm,
+  enquiryReasons,
+  locationSection,
+} from "@/data/contact";
+import { solutions } from "@/data/solutions";
 import { enforcePageVisibility } from "@/lib/page-guard";
+import { hasSocialChannels } from "@/lib/social";
 import { routes } from "@/lib/routes";
 import { breadcrumbJsonLd, buildMetadata } from "@/lib/seo";
 import { buildWhatsAppHref } from "@/lib/whatsapp";
@@ -187,6 +200,17 @@ export default function ContactPage() {
                 <MapPin className="h-4 w-4" strokeWidth={1.7} />
                 {locationSection.mapLinkLabel}
               </a>
+
+              {/* Renders nothing at all while there is no profile to link and
+                  no WhatsApp number configured, heading included, rather than
+                  leaving a labelled empty row. */}
+              {hasSocialChannels() ? (
+                <div className="mt-10 border-t border-hairline pt-7">
+                  <h3 className="text-title-sm text-ink">{contactSocial.title}</h3>
+                  <p className="mt-2 text-body-sm text-muted">{contactSocial.body}</p>
+                  <SocialLinks className="mt-5" />
+                </div>
+              ) : null}
             </Reveal>
 
             <Reveal className="lg:col-span-6">
@@ -206,6 +230,24 @@ export default function ContactPage() {
           </div>
         </Container>
       </Section>
+
+      {/* Gardening solutions. The site has no Services page by design, so this
+          content is carried contextually on Home, About and Contact. It sits
+          here, after the form, because it answers the question somebody has
+          just before they write to us: what can I actually ask you for. */}
+      <CollectionSection
+        id="how-we-help"
+        tone="surface"
+        eyebrow={contactSolutions.eyebrow}
+        heading={contactSolutions.heading}
+        description={contactSolutions.body}
+        align="center"
+        items={solutions}
+        getKey={(solution) => solution.slug}
+        renderItem={(solution) => <SolutionCard solution={solution} />}
+        columns={4}
+        stagger={0.07}
+      />
 
       <CtaBand
         eyebrow={contactCta.eyebrow}

@@ -33,7 +33,6 @@ export interface VariantSectionCopy {
   clients: SectionCopy;
   community: SectionCopy;
   testimonials: SectionCopy;
-  newsletter: SectionCopy;
 }
 
 /** The supporting lines, identical everywhere because the facts are identical. */
@@ -49,7 +48,6 @@ export const variantSectionBody = {
   community:
     "Better products make better gardens. The rest of it is time, water and somebody willing to kneel down.",
   testimonials: "What people say once the second monsoon has been and gone.",
-  newsletter: "Seasonal advice and product guides, a few times a year. No noise.",
 } as const;
 
 export const variantSectionCopy: Record<VariantId, VariantSectionCopy> = {
@@ -62,7 +60,6 @@ export const variantSectionCopy: Record<VariantId, VariantSectionCopy> = {
     clients: { eyebrow: "Who we supply", heading: "Six kinds of garden" },
     community: { eyebrow: "Grow together", heading: "Growing better gardens together" },
     testimonials: { eyebrow: "In their words", heading: "Trusted by gardeners" },
-    newsletter: { eyebrow: "Stay in touch", heading: "Seasonal notes, a few times a year" },
   },
   2: {
     trust: { eyebrow: "Every order", heading: "What comes with it" },
@@ -73,7 +70,6 @@ export const variantSectionCopy: Record<VariantId, VariantSectionCopy> = {
     clients: { eyebrow: "Who buys here", heading: "Six kinds of customer" },
     community: { eyebrow: "Grow together", heading: "Better gardens, not bigger bills" },
     testimonials: { eyebrow: "What people say", heading: "Trusted by gardeners" },
-    newsletter: { eyebrow: "Keep in touch", heading: "A few notes a year" },
   },
   3: {
     trust: { eyebrow: "What you get", heading: "Four promises that travel with the order" },
@@ -84,7 +80,6 @@ export const variantSectionCopy: Record<VariantId, VariantSectionCopy> = {
     clients: { eyebrow: "Who we grow with", heading: "The gardens behind the range" },
     community: { eyebrow: "Grow together", heading: "Growing better gardens together" },
     testimonials: { eyebrow: "What our customers say", heading: "Gardeners who stayed" },
-    newsletter: { eyebrow: "Stay connected", heading: "Season by season, in your inbox" },
   },
   4: {
     trust: { eyebrow: "Standard", heading: "Every order" },
@@ -95,7 +90,6 @@ export const variantSectionCopy: Record<VariantId, VariantSectionCopy> = {
     clients: { eyebrow: "Clients", heading: "Who this is for" },
     community: { eyebrow: "Together", heading: "Better gardens" },
     testimonials: { eyebrow: "Voices", heading: "Trusted by gardeners" },
-    newsletter: { eyebrow: "Notes", heading: "Seasonal advice" },
   },
   5: {
     trust: { eyebrow: "Terms of supply", heading: "What every order includes" },
@@ -106,7 +100,6 @@ export const variantSectionCopy: Record<VariantId, VariantSectionCopy> = {
     clients: { eyebrow: "Section 05", heading: "Clientele" },
     community: { eyebrow: "Section 09", heading: "Growing better gardens together" },
     testimonials: { eyebrow: "Section 10", heading: "Testimonials" },
-    newsletter: { eyebrow: "Section 11", heading: "Seasonal notes" },
   },
 };
 

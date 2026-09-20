@@ -63,3 +63,17 @@ export const productDetail = {
     body: "Send us the garden, the site or the crew and we will specify the right product from this category.",
   },
 };
+
+/**
+ * The gardening solutions band on the Products page.
+ *
+ * The reference structure asks for a selection guide and a care and maintenance
+ * section here. Both already exist as solutions, so they are rendered from
+ * `data/solutions.ts` rather than written a second time: one of them is
+ * literally called Care & Maintenance, and another is Product Selection.
+ */
+export const productsSolutions = {
+  eyebrow: "Choosing and caring",
+  heading: "Help Before and After You Buy",
+  body: "Picking the right thing off this page is half of it. Keeping it working through a monsoon is the other half, and we do both.",
+} as const;

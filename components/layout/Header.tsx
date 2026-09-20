@@ -14,7 +14,7 @@ import { useScrollThreshold } from "@/hooks/useScrollThreshold";
 import { cn } from "@/lib/cn";
 import { routes } from "@/lib/routes";
 import { visibleLinks } from "@/lib/visibility";
-import type { ProductMenuLink } from "@/types/content";
+import type { ProductMenuLink, SocialChannel } from "@/types/content";
 
 const SCROLL_THRESHOLD = 24;
 
@@ -39,7 +39,13 @@ const SCROLL_THRESHOLD = 24;
  * every page and every Home variant, so the Products menu is defined once here
  * and nowhere else.
  */
-export function Header({ productMenu }: { productMenu: readonly ProductMenuLink[] }) {
+export function Header({
+  productMenu,
+  socialChannels,
+}: {
+  productMenu: readonly ProductMenuLink[];
+  socialChannels: readonly SocialChannel[];
+}) {
   const scrolled = useScrollThreshold(SCROLL_THRESHOLD);
   const pathname = usePathname();
   // Unreleased pages never reach the menu. The flags are inlined at build time,
@@ -138,7 +144,11 @@ export function Header({ productMenu }: { productMenu: readonly ProductMenuLink[
           >
             Get in Touch
           </Button>
-          <MobileMenu tone={overHero ? "on-band" : "ink"} productMenu={productItems} />
+          <MobileMenu
+            tone={overHero ? "on-band" : "ink"}
+            productMenu={productItems}
+            socialChannels={socialChannels}
+          />
         </div>
       </div>
     </header>

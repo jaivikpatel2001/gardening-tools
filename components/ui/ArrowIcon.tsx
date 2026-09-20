@@ -4,7 +4,7 @@ import { cn } from "@/lib/cn";
  * The single arrow glyph used by every CTA on the site.
  *
  * It exists as a component because the same inline SVG was previously pasted
- * into four call sites — hero, final CTA, newsletter, arrow links — and one of
+ * into three call sites (hero, final CTA and arrow links) and one of
  * those copies had already drifted in stroke weight.
  *
  * Always decorative: the surrounding button or link carries the label.

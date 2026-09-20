@@ -197,6 +197,40 @@ export interface BrandMark {
   href?: string;
 }
 
+/**
+ * The social platforms the site can draw a mark for.
+ *
+ * Deliberately a closed union rather than a string. A platform that is not on
+ * this list has no icon, and a typo would otherwise render an empty circle in
+ * the footer of every page. Adding a platform means drawing its mark in
+ * `components/decor/SocialIcons.tsx` and adding it here, in that order.
+ */
+export type SocialPlatform = "Facebook" | "Instagram" | "LinkedIn" | "YouTube";
+
+/**
+ * One official profile, as published by the business.
+ *
+ * `href` is the full public profile URL. Never a guess: see the note on
+ * `site.social` in `config/site.ts` for why an unverified handle is left out
+ * rather than approximated.
+ */
+export interface SocialProfile {
+  platform: SocialPlatform;
+  href: string;
+}
+
+/**
+ * A social profile resolved for rendering, including the contact channels that
+ * are not profiles at all. WhatsApp arrives this way: it is a phone number from
+ * the environment rather than an entry in `site.social`.
+ */
+export interface SocialChannel {
+  label: string;
+  href: string;
+  /** WhatsApp opens a chat with us rather than a profile page, so it stays in-tab. */
+  external: boolean;
+}
+
 /** A kind of customer the business serves, and the work that comes with it. */
 export interface Industry {
   icon: LucideIcon;

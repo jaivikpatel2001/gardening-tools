@@ -151,3 +151,29 @@ export const contactCta = {
   primaryCta: { label: "Explore Our Products", href: routes.products },
   secondaryCta: { label: "About Jiva Greens", href: routes.about },
 };
+
+/**
+ * The gardening solutions band on this page.
+ *
+ * There is no Services page on this site. Service content is carried where it
+ * is relevant, and the most relevant place is directly beside the enquiry form:
+ * it tells somebody what they are allowed to ask for before they ask.
+ */
+export const contactSolutions = {
+  eyebrow: "How we can help",
+  heading: "What You Can Ask Us For",
+  body: "Four kinds of help, from choosing a first khurpi to specifying a season of machinery for a crew. Every one of them starts with the same conversation.",
+} as const;
+
+/**
+ * The social row's heading on this page.
+ *
+ * Whether anything renders underneath it is decided by `getSocialChannels()`:
+ * the client publishes no social profile, so today this appears only when a
+ * WhatsApp number is configured, and the whole block is hidden otherwise. See
+ * the note on `site.social` in `config/site.ts`.
+ */
+export const contactSocial = {
+  title: "Message us",
+  body: "The quickest answer is usually a message. We reply during business hours.",
+} as const;

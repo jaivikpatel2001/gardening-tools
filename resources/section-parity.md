@@ -1,12 +1,12 @@
 # Homepage section parity
 
-The live Home page at `/` is the reference for **content coverage**. Every alternative Home design under `/variant1` to `/variant5` must carry all thirteen sections below. A variant may reorder them, restyle them and give them a different voice. A variant may not drop one.
+The live Home page at `/` is the reference for **content coverage**. On 20 September 2026 the newsletter section was removed from the site on the client's instruction, taking the list from thirteen to twelve. Every alternative Home design under `/variant1` to `/variant5` must carry all twelve sections below. A variant may reorder them, restyle them and give them a different voice. A variant may not drop one.
 
 Checked 20 September 2026, against the rendered HTML of all six pages, not by eye.
 
 ---
 
-## The thirteen canonical sections
+## The twelve canonical sections
 
 | # | Section | What it has to carry |
 |---|---|---|
@@ -22,7 +22,6 @@ Checked 20 September 2026, against the rendered HTML of all six pages, not by ey
 | 10 | Community | The brand statement over photography |
 | 11 | Testimonials | The customer quotes |
 | 12 | Final CTA | The closing enquiry action |
-| 13 | Newsletter | The seasonal signup |
 
 The header and the footer are global and appear on every page by definition.
 
@@ -44,7 +43,6 @@ The header and the footer are global and appear on every page by definition.
 | Community | `CommunityStory` | `VariantCommunity` plate | `VariantCommunity` plate | `VariantCommunity` photo | `VariantCommunity` plate | `VariantCommunity` plate |
 | Testimonials | `Testimonials` | `EditorialVoices` | `VariantTestimonials` plates | `BotanicalVoices` | `VariantTestimonials` columns | `VariantTestimonials` rows |
 | Final CTA | `FinalCTA` | `CinematicClosing` | `InteractiveClosing` | `BotanicalClosing` | `ArtClosing` | `CatalogueClosing` |
-| Newsletter | `Newsletter` | `VariantNewsletter` inline | `VariantNewsletter` panel | `VariantNewsletter` inline | `VariantNewsletter` ruled | `VariantNewsletter` panel |
 
 Every cell is filled. No variant is missing a section.
 
@@ -70,7 +68,7 @@ The check is on rendered HTML, not on the source, so a section that fails to ren
 npm run dev
 ```
 
-Then fetch each page and look for a marker from each section. Markers that proved reliable: `Quality Tools` (trust), `Hand Tools & Planting` (categories), `Durable Construction` (benefits), `Hardwood Hand Trowel` (featured), `Garden Setup Assistance` (solutions), `Product types listed` (highlights), `Landscapers & Contractors` (clients), `Meera Nair` (testimonials), `Seasonal advice and product guides` (newsletter).
+Then fetch each page and look for a marker from each section. Markers that proved reliable: `Quality Tools` (trust), `Hand Tools & Planting` (categories), `Durable Construction` (benefits), `Hardwood Hand Trowel` (featured), `Garden Setup Assistance` (solutions), `Product types listed` (highlights), `Landscapers & Contractors` (clients), `Meera Nair` (testimonials).
 
 Some sections are named differently per variant and need a per-variant marker: variant 1's about is `StoryBand` (`have trusted us with their tools`), variant 3's featured products are marked inside a garden photograph (`Bypass Secateurs`), and variant 2 and variant 4 render their category walls through client components (`Lawn Mowers`).
 

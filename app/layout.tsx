@@ -1,3 +1,4 @@
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata, Viewport } from "next";
 import { Inter, Manrope } from "next/font/google";
 
@@ -11,6 +12,7 @@ import { SmoothScrollProvider } from "@/components/motion/SmoothScrollProvider";
 import { BRAND_COLORS } from "@/config/brand";
 import { site } from "@/config/site";
 import { getProductMenu } from "@/lib/catalogue";
+import { getSocialChannels } from "@/lib/social";
 import { DEFAULT_TITLE, buildMetadata, organizationJsonLd } from "@/lib/seo";
 
 import "./globals.css";
@@ -153,7 +155,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             {/* Product links are resolved here, on the server. The header and
                 the mobile sheet are client components and must never import the
                 catalogue themselves. */}
-            <Header productMenu={getProductMenu()} />
+            <Header productMenu={getProductMenu()} socialChannels={getSocialChannels()} />
             {/* tabIndex lets the skip link actually move focus here, not just scroll. */}
             <main id="main" tabIndex={-1} className="outline-none">
               {children}
@@ -165,6 +167,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
 
         <Preloader />
         <CustomCursor />
+
+        {/* Vercel Speed Insights: real Core Web Vitals from real visits,
+            reported from the deployment itself. It needs no environment
+            variable and no key, and it only collects on Vercel, so local and
+            self-hosted runs stay silent. Deliberately last in the body: the
+            script is deferred and must never compete with the hero image. */}
+        <SpeedInsights />
       </body>
     </html>
   );

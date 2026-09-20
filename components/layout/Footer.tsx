@@ -1,18 +1,22 @@
 import { Mail, MapPin, Phone } from "lucide-react";
 import Link from "next/link";
 
-import { socialIcons, type SocialLabel } from "@/components/decor/SocialIcons";
+import { SocialLinks } from "@/components/decor/SocialLinks";
+import { WhatsAppIcon } from "@/components/decor/SocialIcons";
 import { Logo } from "@/components/layout/Logo";
+import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
-import { NewsletterForm } from "@/components/ui/NewsletterForm";
 import { site } from "@/config/site";
 import {
   footerCompanyLinks,
+  footerEnquiry,
   footerHandCategorySlugs,
   footerMachineryCategorySlugs,
   primaryNav,
 } from "@/data/navigation";
 import { getCategoryLinks } from "@/lib/catalogue";
+import { getSocialChannels } from "@/lib/social";
+import { routes } from "@/lib/routes";
 import { visibleLinks } from "@/lib/visibility";
 import type { NavItem } from "@/types/content";
 
@@ -63,6 +67,7 @@ export function Footer() {
   const machineryLinks = visibleLinks(getCategoryLinks(footerMachineryCategorySlugs));
   const quickLinks = visibleLinks(primaryNav);
   const companyLinks = visibleLinks(footerCompanyLinks);
+  const whatsappChannel = getSocialChannels().find((channel) => channel.label === "WhatsApp");
 
   return (
     <footer className="bg-band text-on-band-muted">
@@ -75,26 +80,7 @@ export function Footer() {
               protection equipment, hand tools and watering products.
             </p>
 
-            {site.social.length > 0 ? (
-              <ul className="mt-6 flex items-center gap-2.5">
-                {site.social.map((channel) => {
-                  const Icon = socialIcons[channel.label as SocialLabel];
-                  return (
-                    <li key={channel.label}>
-                      <a
-                        href={channel.href}
-                        target="_blank"
-                        rel="noreferrer noopener"
-                        aria-label={`${site.name} on ${channel.label}`}
-                        className="grid h-11 w-11 place-items-center rounded-full border border-white/18 text-on-band-muted transition-colors duration-200 hover:border-white/50 hover:text-on-band"
-                      >
-                        <Icon className="h-[17px] w-[17px]" />
-                      </a>
-                    </li>
-                  );
-                })}
-              </ul>
-            ) : null}
+            <SocialLinks tone="on-band" className="mt-6" />
           </div>
 
           <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-4 lg:col-span-4 lg:grid-cols-4">
@@ -147,12 +133,34 @@ export function Footer() {
             </ul>
           </div>
 
+          {/* The newsletter panel stood here and was removed on the client's
+              instruction. It is replaced by the enquiry routes rather than by
+              another large block: every conversion path on this site ends in an
+              enquiry, so that is what the space should carry. */}
           <div>
-            <h3 className="text-title-sm text-on-band">Newsletter</h3>
-            <p className="mt-4 text-body-sm text-on-band-muted">
-              Seasonal advice and tool guides, a few times a year. No noise.
-            </p>
-            <NewsletterForm tone="on-band" className="mt-5" />
+            <h3 className="text-title-sm text-on-band">Get in Touch</h3>
+            <p className="mt-4 text-body-sm text-on-band-muted">{footerEnquiry.body}</p>
+
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <Button href={routes.contact} variant="inverse">
+                {footerEnquiry.ctaLabel}
+              </Button>
+
+              {whatsappChannel ? (
+                <a
+                  href={whatsappChannel.href}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="inline-flex min-h-11 items-center gap-2 rounded-sm border border-white/30 px-4 font-body text-[0.875rem] font-semibold text-on-band transition-colors duration-200 hover:border-white/70"
+                >
+                  <WhatsAppIcon className="h-[17px] w-[17px]" />
+                  {footerEnquiry.whatsappLabel}
+                </a>
+              ) : null}
+            </div>
+
+            {/* The same row as the brand column above it would be a duplicate,
+                so the profiles are drawn once, at the top. */}
           </div>
         </div>
 

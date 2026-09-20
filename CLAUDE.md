@@ -13,7 +13,7 @@ It is **not** e-commerce. No cart, checkout, payment, pricing, wishlist, stock l
 The site is **Home, About, Products, Product Detail, Clients, Contact**. Nothing else.
 
 - There is **no Blog and no Journal**: no page, no route, no navigation item, no footer link, no sitemap entry.
-- There is **no Services page**. Service content is carried contextually as *gardening solutions*, on Home, About and Contact, from `data/solutions.ts`. The solution cards deliberately do not link anywhere.
+- There is **no Services page**. Service content is carried contextually as *gardening solutions*, on Home, About, Products and Contact, from `data/solutions.ts`. The solution cards deliberately do not link anywhere.
 - There is **no Resources page**. Resources was replaced by **Clients**, the credibility page. Do not reintroduce guides, articles, reading time or a FAQ route.
 - The range is called **Products**, never Tools, in navigation, headings, buttons, breadcrumbs, URLs, metadata, page titles and every call to action. "Hand tools" and "cutting tools" stay as product-type names, because that is what the trade calls them.
 - **Every product has its own page** at `/products/[slug]`, rendered by one reusable component from `data/productCategories.ts`. Never add a page component for an individual product. Two products are ranges the client nests a level deeper (lawn mowers by type, watering by what is on the end of the hose); those children carry `parent` and have pages of their own. Someone who picks Garden Solar Lights lands on garden solar lights, never on a bucket that contains them.
@@ -62,7 +62,7 @@ Before finishing any content change, scan the visitor-facing strings in `app/`, 
 |---|---|
 | `done.md` | Chronological work log |
 | `resources/plan.md` | Project plan, architecture, roadmap, deviations, page visibility |
-| `resources/section-parity.md` | The thirteen homepage sections, and where each one lives in each variant |
+| `resources/section-parity.md` | The twelve homepage sections, and where each one lives in each variant |
 | `resources/gardening-tools-design.md` | The design system: colours, type, spacing, components |
 | `resources/image-generation.md` | Image manifest: a slot and a prompt per product, plus the pending list |
 | `resources/reference/jivagreens-products.json` | The client's own product pages, captured: copy, spec tables and image paths |
@@ -88,18 +88,18 @@ components/
   cards/        ProductCategoryCard, ProductShowcaseCard, SolutionCard,
                 IndustryCard, TestimonialCard, RangeTeaserCard
   ui/           Button, Container, Section, SectionHeading, Eyebrow, ArrowLink,
-                ArrowIcon, ImagePlate, Reveal, MagneticButton, StarRating, NewsletterForm
+                ArrowIcon, ImagePlate, Reveal, MagneticButton, StarRating
   motion/       gsap.ts, SmoothScrollProvider, MotionProvider, ParallaxLayer, scroll-controller
   cursor/       CustomCursor, cursor-intent
   floating-actions/  FloatingActions, ScrollToTop, WhatsAppButton
   not-found/    NotFoundView, GardenPathScene, SceneParallax
-  decor/        SocialIcons
+  decor/        SocialIcons, SocialLinks
 config/         site.ts (facts about the business), env.ts (validated environment),
                 brand.ts (mark geometry and brand colours),
                 pageVisibility.ts (the production release switchboard)
 data/           content collections and page copy
 hooks/          useMediaQuery, useScrollThreshold
-lib/            cn, seo, routes, catalogue, highlights, media, whatsapp,
+lib/            cn, seo, routes, catalogue, highlights, media, whatsapp, social,
                 visibility (page flags), page-guard (route enforcement)
 proxy.ts        edge-level enforcement of page visibility
 types/          shared content domain types
@@ -120,7 +120,7 @@ public/icons/   generated output, never hand-edited
 - **SOLID and DRY.** One well-designed component with props, never `CardNew.tsx` beside `Card.tsx`. Similar sections are configurations of one section, not separate components. Extend through composition (`trailing`, `footer`, injected props) before adding variants.
 - **Strong TypeScript.** No `any`. Type props, config and content. Reuse the shared types.
 - **Data-driven UI.** Repeated structure renders from an array through one component. Copy lives in `data/`, not inside components.
-- **Server Components by default.** `"use client"` only where interaction genuinely requires it. Currently: `Header`, `MobileMenu`, `ThemeToggle`, `SmoothScrollProvider`, `MotionProvider`, `Reveal`, `ParallaxLayer`, `MagneticButton`, `NewsletterForm`, `EnquiryForm`, `ProductCatalogue`, `ProductGallery`, `Preloader`, `HeroMotion`, `CustomCursor`, `CursorLayer`, `LazyGardenPathScene`, `RouteError`, `GlobalError`, `ScrollToTop`, `SceneParallax`. Client components take server-rendered content through `children`, so the bundle carries behaviour, not copy.
+- **Server Components by default.** `"use client"` only where interaction genuinely requires it. Currently: `Header`, `MobileMenu`, `ThemeToggle`, `SmoothScrollProvider`, `MotionProvider`, `Reveal`, `ParallaxLayer`, `MagneticButton`, `EnquiryForm`, `ProductCatalogue`, `ProductGallery`, `Preloader`, `HeroMotion`, `CustomCursor`, `CursorLayer`, `LazyGardenPathScene`, `RouteError`, `GlobalError`, `ScrollToTop`, `SceneParallax`. Client components take server-rendered content through `children`, so the bundle carries behaviour, not copy.
 - **Keep heavy data off the client.** Anything imported under a `"use client"` boundary ships to the browser. `lib/catalogue.ts` and `data/productCategories.ts` must never be imported there; `data/navigation.ts` stays light for that reason.
 - **The Products menu is the worked example of that rule.** `app/layout.tsx` is a server component, so it calls `getProductNavLinks()` and passes the result into `Header`, which passes it on to `ProductsMenu` and `MobileMenu`. Those three are client components and must keep taking the links as a prop. Never solve a future version of this by copying category names into `data/navigation.ts`: that would drift the moment a category is renamed.
 - **Accessibility during construction, not after.** Semantic HTML, keyboard operability, visible focus, labelled inputs, meaningful alt text, AA contrast in both themes, `prefers-reduced-motion` honoured in CSS *and* JS.
@@ -153,6 +153,19 @@ Pages are developed normally and released to the client one at a time. **`config
 - Nothing else reads `pageVisibility` directly. `lib/visibility.ts` answers the question; `visibleLinks()` filters the header, the mobile sheet and the footer; `app/sitemap.ts` filters the same way; a footer column with nothing left in it renders nothing rather than an empty heading.
 - Adding a page means adding a key to `PAGE_KEYS`, a branch to `pageKeyForPath`, a `enforcePageVisibility` call in the route and an entry in `app/sitemap.ts`. Nothing else.
 - **Do not overengineer this.** No database, no admin panel, no feature-flag service, no authentication, no API.
+
+## No newsletter, and no invented social profiles
+
+**There is no newsletter.** It was removed from the whole site on the client's instruction: no form, no heading, no email input, no footer panel, no component and no copy. Do not reintroduce a mailing list, a subscribe box or an "updates" signup in any form. The site collects an address in exactly one place, the enquiry form, and only because somebody is asking us a question.
+
+**Social profiles are real or absent.** `site.social` in `config/site.ts` is the only list, and it is empty because jivagreens.com was checked end to end on 20 September 2026 and publishes no social profile at all: the home page's 87 links and the contact page's own set contain not one link to Facebook, Instagram, LinkedIn, YouTube, X or Pinterest.
+
+- **Never invent a handle or a profile URL.** A guessed link sends a customer to a stranger's account, which is worse than no icon. Add an entry only from a URL the client has supplied.
+- Everything renders from `getSocialChannels()` in `lib/social.ts`, and `SocialLinks` renders **nothing at all** when that list is empty, heading included. The footer, the Contact page and the mobile sheet all use it, so one entry appears in all three at once, and in the organisation JSON-LD's `sameAs`, with no other edit.
+- WhatsApp is in that row but is **not** a profile. It is a phone number from `NEXT_PUBLIC_WHATSAPP_NUMBER`, so it appears only when that variable is set, exactly like the floating button.
+- `SocialPlatform` in `types/content.ts` is a closed union. A platform with no mark drawn in `SocialIcons.tsx` cannot be added to it, so a typo fails the build instead of rendering an empty circle on every page.
+
+**Opening hours are not published either.** The client's site does not state them, so the Contact page says so plainly and invites a call rather than printing hours nobody has confirmed.
 
 ## Indian market
 

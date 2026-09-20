@@ -7,13 +7,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { socialIcons, WhatsAppIcon } from "@/components/decor/SocialIcons";
 import { Button } from "@/components/ui/Button";
 import { primaryNav } from "@/data/navigation";
 import { site } from "@/config/site";
 import { cn } from "@/lib/cn";
 import { routes } from "@/lib/routes";
 import { visibleLinks } from "@/lib/visibility";
-import type { ProductMenuLink } from "@/types/content";
+import type { ProductMenuLink, SocialChannel } from "@/types/content";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -33,9 +34,12 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 export function MobileMenu({
   tone = "ink",
   productMenu,
+  socialChannels,
 }: {
   tone?: "ink" | "on-band";
   productMenu: readonly ProductMenuLink[];
+  /** Resolved on the server, like `productMenu`. Empty until a channel exists. */
+  socialChannels: readonly SocialChannel[];
 }) {
   const [open, setOpen] = useState(false);
   const [productsOpen, setProductsOpen] = useState(false);
@@ -274,6 +278,38 @@ export function MobileMenu({
                   <Phone className="h-4 w-4" strokeWidth={1.7} />
                   {site.contact.phone}
                 </a>
+                {socialChannels.length > 0 ? (
+                  <ul
+                    aria-label="Message us"
+                    className="mt-5 flex items-center justify-center gap-2.5 border-t border-hairline-soft pt-5"
+                  >
+                    {socialChannels.map((channel) => {
+                      const Icon =
+                        channel.label === "WhatsApp"
+                          ? WhatsAppIcon
+                          : socialIcons[channel.label as keyof typeof socialIcons];
+                      if (!Icon) return null;
+
+                      return (
+                        <li key={channel.label}>
+                          <a
+                            href={channel.href}
+                            target="_blank"
+                            rel="noreferrer noopener"
+                            aria-label={
+                              channel.label === "WhatsApp"
+                                ? "Message Jiva Greens on WhatsApp"
+                                : `Jiva Greens on ${channel.label}`
+                            }
+                            className="grid h-11 w-11 place-items-center rounded-full border border-hairline text-muted transition-colors duration-200 hover:border-brand hover:text-brand"
+                          >
+                            <Icon className="h-[17px] w-[17px]" />
+                          </a>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                ) : null}
               </div>
             </m.div>
           </m.div>
